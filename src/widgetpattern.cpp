@@ -1,0 +1,248 @@
+#include "widgetpattern.h"
+#include "lang.h"
+#include "dialogs.h"
+#include "CONSTANTS.h"
+#include "core.h"
+#include "window.h"
+#include "core.h"
+#include "dnd.h"
+#include "patterns.h"
+#include "wmml.h"
+
+#include <iostream>
+#include <string>
+#include <filesystem>
+#include <fstream>
+#include <QFrame>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QTimer>
+
+CObjectList::CObjectList () {
+    setMaximumWidth(1000);
+    setMinimumWidth(230);
+    QVBoxLayout* privateObjectList = new QVBoxLayout;
+    setLayout(privateObjectList);
+    QHBoxLayout* objectButtonBox = new QHBoxLayout();
+    privateObjectList->addLayout(objectButtonBox);
+    CLinkTumbler* Collection = new CLinkTumbler(Lang::LANG_BUTTON_COLLECTIONS);
+    CLinkTumbler* Preset     = new CLinkTumbler(Lang::LANG_BUTTON_PRESETS, Collection);
+    objectButtonBox->addWidget(Collection);
+    objectButtonBox->addWidget(Preset);
+    Collection->isTarget(true);
+    Collection->setMinimumHeight(35);
+    Preset->setMinimumHeight(35);
+    
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    privateObjectList->addWidget(line);
+    
+    objectList = new QVBoxLayout();
+    CScrollWindow* scrollWidnow = new CScrollWindow(privateObjectList, objectList);
+    privateObjectList->setAlignment(Qt::AlignTop);
+    objectList->setAlignment(Qt::AlignTop);
+    
+    connect(Collection, &QPushButton::clicked, this, [=]{TypeTarget = false;
+                                                        render();
+                                                        });
+    
+    connect(Preset,     &QPushButton::clicked, this, [=]{TypeTarget = true;
+                                                        render();
+                                                        });
+    updateList();
+    render();
+}
+
+void CObjectList::newObject (CNewObjectDialog* dialog) {
+    QString tab = dialog->nameTab->text();
+    CreteObject(tab.toStdString());
+    dialog->reject();
+}
+
+
+void CObjectList::CreteObject (std::string name) {
+    std::string path;
+    if (TypeTarget) path = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS     + name + EXPANSION;
+    else            path = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION;
+    if (!std::filesystem::exists(path)) {
+        std::filesystem::path dir = path;
+        std::filesystem::create_directories(dir.parent_path());
+        wmml file(path, GRID_WIDTH);
+        if (!std::filesystem::exists(RAM)) std::filesystem::create_directory(RAM);
+        updateList();
+        render();
+    }
+    else {
+        ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
+        // errorR34->show();
+        // errorR34->apply->hide();
+        // QLayout* tempLay = new QVBoxLayout(errorR34->list);
+        // tempLay->setAlignment(Qt::AlignTop);
+        // QLabel* label = new QLabel(QString::fromStdString(Lang::LANG_LABEL_R34));
+        // tempLay->addWidget(label);
+    }
+}
+
+void CObjectList::updateList (std::string toggledButton) {
+    std::string stringDir1 = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS;
+    std::string stringDir2 = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS;
+    std::filesystem::path directory1 = stringDir1;
+    std::filesystem::path directory2 = stringDir2;
+    int counter = 0;
+    CObjectsButton* lastTumbler = nullptr;
+    QLayoutItem* item;
+    while ((item = objectList->takeAt(0)) != nullptr) {
+        delete item->widget();
+        delete item;
+    }
+    if (std::filesystem::exists(directory1))
+        for (auto const& objects : std::filesystem::directory_iterator{directory1})
+            ++counter;
+    if (std::filesystem::exists(directory2))
+        for (auto const& objects : std::filesystem::directory_iterator{directory2})
+            ++counter;
+    list.resize(counter);
+    counter = 0;
+    if (std::filesystem::exists(directory1)) {
+        for (auto const& objects : std::filesystem::directory_iterator{directory1}) {
+            std::string newButton = objects.path().string();
+            size_t part = newButton.find_last_of('/');
+            newButton = newButton.substr(part + 1);
+            newButton = newButton.substr(0, newButton.size() - MAIN_PART);
+            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
+            button->setMinimumHeight(35);
+            button->SetLeftAlignment(true);
+            button->type = true;
+            objectList->addWidget(button);
+            connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
+                                                             targetName = newButton;
+                                                             });
+            button->hide();
+            list[counter] = button;
+            lastTumbler = button;
+            ++counter;
+        }
+    }
+    if (std::filesystem::exists(directory2)) {
+        for (auto const& objects : std::filesystem::directory_iterator{directory2}) {
+            std::string newButton = objects.path().string();
+            size_t part = newButton.find_last_of('/');
+            newButton = newButton.substr(part + 1);
+            newButton = newButton.substr(0, newButton.size() - MAIN_PART);
+            // QPushButton* button = new QPushButton(QString::fromStdString(newButton).replace("&", "&&"));
+            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
+            button->setMinimumHeight(35);
+            button->SetLeftAlignment(true);
+            button->type = false;
+            objectList->addWidget(button);
+            connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
+                                                             targetName = newButton;
+                                                             });
+            button->hide();
+            list[counter] = button;
+            lastTumbler = button;
+            ++counter;
+        }
+    }
+}
+
+void CObjectList::render() {
+    if (TypeTarget) {
+        for (CObjectsButton* target : list)
+            if  (target->type == true) target->show();
+            else target->hide();
+    }
+    else {
+        for (CObjectsButton* target : list)
+            if  (target->type == false) target->show();
+            else target->hide();
+    }
+}
+
+
+
+
+
+CContentList::CContentList () {
+    setMinimumWidth(200);
+    QVBoxLayout* BaseContainer = new QVBoxLayout();
+    setLayout(BaseContainer);
+    
+    QFrame* sbFrame = new QFrame;
+    QHBoxLayout* splitterBox = new QHBoxLayout(sbFrame);
+    BaseContainer->addWidget(sbFrame);
+    
+    spl1 = new QSplitter;
+    spl2 = new QSplitter;
+    QLabel* lblName     = new QLabel(QString::fromStdString(Lang::LANG_LABEL_NAME));
+    QLabel* lblVersion  = new QLabel(QString::fromStdString(Lang::LANG_LABEL_VERSION));
+    QLabel* lblType     = new QLabel(QString::fromStdString(Lang::LANG_LABEL_TYPE));
+    QLabel* lblSwitcher = new QLabel(QString::fromStdString(Lang::LANG_LABEL_SWITCHER));
+    
+    splitterBox->addWidget(spl1);
+    splitterBox->addWidget(spl2);
+    splitterBox->addWidget(lblSwitcher);
+    lblName->resize(400, 0);
+    spl1->addWidget(lblName);
+    spl1->addWidget(spl2);
+    spl2->addWidget(lblVersion);
+    spl2->addWidget(lblType);
+    
+    contentList = new QVBoxLayout;
+    contentList->setAlignment(Qt::AlignTop);
+    CScrollWindow* scrollWidnow = new CScrollWindow(BaseContainer, contentList);
+    dnd = new CDND(BaseContainer, Lang::LANG_LABEL_DND);
+}
+
+
+void CContentList::updateList (CObjectsButton* pointer, bool type) {
+    targetName = pointer->name;
+    targetType = type;
+    QLayoutItem* child;
+    while ((child = contentList->takeAt(0)) != nullptr) {
+        delete child->widget(); 
+        delete child;
+    }
+    if (type) sPath = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS     + pointer->name + EXPANSION;
+    else      sPath = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + pointer->name + EXPANSION;
+    wmml file(sPath);
+    std::vector<std::string> v(GRID_WIDTH);
+    while (file.read(v)) {
+        CContentBox* buttonWidget = new CContentBox(contentList);
+        buttonWidget->index = std::stoi(v[0]);
+        buttonWidget->name->setText(QString::fromStdString(v[1]));
+        buttonWidget->version->setText(QString::fromStdString(v[2]));
+        buttonWidget->type->setText(QString::fromStdString(v[3]));
+        if (v[5] == "1") buttonWidget->switcher->isTarget(true);
+        else             buttonWidget->switcher->isTarget(false);
+        
+        // Crutch. It will need to be fixed
+        double sz11 = spl1->size().width();
+        double sz21 = spl1->size().height();
+        double sz31 = sz11 / (sz21 / 14.5);
+        double sz12 = spl2->size().width();
+        double sz22 = spl2->size().height();
+        double sz32 = sz12 / (sz22 / 10.5);
+        QTimer::singleShot(0, buttonWidget, [buttonWidget, sz31, sz32]() {
+            buttonWidget->spl1->moveSplitter(sz31, 1);
+            buttonWidget->spl2->moveSplitter(sz32, 1);
+        });
+        //
+        
+        connect(spl1, &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
+        connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
+        connect(buttonWidget, &CContentBox::ON,  this, &CContentList::changeStatusOn);
+        connect(buttonWidget, &CContentBox::OFF, this, &CContentList::changeStatusOff);        
+    }
+}
+
+void CContentList::changeStatusOn(CContentBox* toggledElements) {
+    wmml file(sPath);
+    file.overwriting(toggledElements->index, 5, "1");
+}
+void CContentList::changeStatusOff(CContentBox* toggledElements) {
+    wmml file(sPath);
+    file.overwriting(toggledElements->index, 5, "0");
+}
