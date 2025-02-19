@@ -14,7 +14,6 @@ namespace fs = std::filesystem;
 std::string CConfigs::CONFIG_LANGUAGES;
 std::string CConfigs::CONFIG_ARCHIVE_ITERATION;
 std::string CConfigs::CONFIG_GAME;
-// std::string CConfigs::CONFIG_GAME_VERSION;
 std::string CConfigs::CONFIG_GAME_PATH;
 std::string CConfigs::CONFIG_EXECUTABLE_FILE;
 
@@ -39,12 +38,9 @@ void CConfigs::config_reader () {
     std::string parameter;
     std::string indicator;
     while (configRead(readedFile, parameter, indicator)) {
-        if (parameter == "Languages")         CONFIG_LANGUAGES         = indicator;
-        if (parameter == "Archive_iteration") CONFIG_ARCHIVE_ITERATION = indicator;
-        if (parameter == "Game")              CONFIG_GAME              = indicator;
-        // if (parameter == "Game_version")      CONFIG_GAME_VERSION      = indicator;
-        // if (parameter == "Game_path")         CONFIG_GAME_PATH         = indicator;
-        // if (parameter == "Executable_file")   CONFIG_EXECUTABLE_FILE   = indicator;
+             if (parameter == "Languages")         CONFIG_LANGUAGES         = indicator;
+        else if (parameter == "Archive_iteration") CONFIG_ARCHIVE_ITERATION = indicator;
+        else if (parameter == "Game")              CONFIG_GAME              = indicator;
     }
     CGameConfig tmp;
     CONFIG_GAME_PATH = tmp.config_game_path;
@@ -63,9 +59,6 @@ void CConfigs::config_test () {
         config << "Languages=lang/EN.ini" << "\n";
         config << "Archive_iteration=None" << "\n";
         config << "Game=None" << "\n";
-        // config << "Game_version=None" << "\n";
-        // config << "Game_path=None" << "\n";
-        // config << "Executable_file=None" << "\n";
         config.close();
         config_reader();
     }
@@ -76,13 +69,6 @@ void CConfigs::config_save () {
     file << "Languages=" << CONFIG_LANGUAGES << "\n";
     file << "Archive_iteration=" << CONFIG_ARCHIVE_ITERATION << "\n";
     file << "Game=" << CONFIG_GAME << "\n";
-    
-    // Next comes the outdated data. In the future, I intend to cut them out.
-    
-    // file << "Game_version=" << CONFIG_GAME_VERSION << "\n";
-    // file << "Game_path=" << CONFIG_GAME_PATH << "\n";
-    // file << "Executable_file=" << CONFIG_EXECUTABLE_FILE << "\n";
-    //
     file.close();
 }
 
@@ -197,8 +183,6 @@ void CGameConfig::symlink_deliting () {
     std::string testFile = config_game_path + "/" + CONST_FILE + EXPANSION;
     if (fs::exists(testFile)) dir_comparison(testFile);
     try {
-        // fs::path source_path(config_game_path);
-        // for (const auto& entry : fs::recursive_directory_iterator(source_path)) {
         for (const auto& entry : fs::recursive_directory_iterator(config_game_path)) {
             const auto& status = entry.symlink_status();
             if (fs::is_symlink(status)) fs::remove(entry);
@@ -223,11 +207,10 @@ void CGameConfig::dir_comparison (std::string& file) {
         for (std::string p : MGD) {
             std::string pt = config_game_path + "/" + p;
             for (const auto& entry : fs::recursive_directory_iterator(pt)) {
-                fs::path relative = fs::relative(entry.path(), config_game_path);    // Путь от корневой директории до файлов в директории
-                fs::path target_path = targetpath / relative;                        // Создаёт путь для копирования файла в директорию бекапа
+                fs::path relative = fs::relative(entry.path(), config_game_path);
+                fs::path target_path = targetpath / relative;
                 fs::path backup_path = (COLLECTIONS + CConfigs::CONFIG_GAME + "/" + v[1]) / relative;
-                if (!fs::exists(target_path)) fs::rename(entry.path(), backup_path); // Если подобного файла не существует в бекапе, то он его перемещает
-                                                                                     // туда из игры. Нахуя??????
+                if (!fs::exists(target_path)) fs::rename(entry.path(), backup_path);
             }
         }
     }
@@ -237,18 +220,9 @@ void CGameConfig::dir_comparison (std::string& file) {
 }
 
 void CGameConfig::symlink_creating (std::string& targetCollection) {
-    // std::string tcTemp = targetCollection;
-    // tcTemp = tcTemp.substr(0, tcTemp.size() - MAIN_PART);
-    // size_t part = tcTemp.find_last_of('/');
-    // // std::string type = tcTemp.substr(0, part);
-    // std::string collect = tcTemp.substr(part + 1);
-    // collect = COLLECTIONS + collect;
     std::string collect = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + targetCollection;
-    // fs::path collections_path(collect);
     try {
-        // for (const auto& entry : fs::recursive_directory_iterator(collections_path)) {
-        for (const auto& entry : fs::recursive_directory_iterator(collect)) {           // рекурсивно проходится по директории сборки
-            // fs::path relative = fs::relative(entry.path(), collections_path);
+        for (const auto& entry : fs::recursive_directory_iterator(collect)) {
             fs::path relative = fs::relative(entry.path(), collect);
             fs::path target_path = config_game_path / relative;
             fs::path current_dir = QCoreApplication::applicationDirPath().toStdString();
@@ -352,7 +326,6 @@ void configurator::collector(std::string name, bool type) {
     std::string file;
     std::string dir = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + name;
     std::string oldFile = dir + "/" + CONST_FILE + EXPANSION;
-    // if (type) file = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS     + name + EXPANSION;
     if (type) {
         std::cerr << "Exporting presets is not supported" << std::endl;
         abort();

@@ -30,8 +30,13 @@ class SList : public QWidget
 public:
     QVBoxLayout* firstlist;
     QVBoxLayout* lastlist;
+    QString buffer;
+    CLinkTumbler* target = nullptr;
     
     SList();
+private:
+    void chooseLang(QPushButton* parent);
+    CLinkTumbler* tmptarget = nullptr;
 public slots:
     void sorce();
     void lang();

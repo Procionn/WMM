@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "CONSTANTS.h"
 #include "patterns.h"
 #include "lang.h"
 #include "dialogs.h"
@@ -7,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QFileDialog>
+#include <iostream>
 
 
 CSettings::CSettings () {
@@ -45,7 +47,14 @@ CSettings::CSettings () {
 }
 
 void CSettings::save () {
-    // list
+    CGameConfig config;
+    CConfigs core;
+    if (!slist->buffer.isEmpty())
+        config.game_path(slist->buffer.toStdString());
+    if (slist->target != nullptr) {
+        CConfigs::CONFIG_GAME = slist->target->name;
+        core.config_save();
+    }
 }
 
 
@@ -123,26 +132,25 @@ SList::SList () {
     dirBTN->setText(QString::fromStdString(CConfigs::CONFIG_GAME_PATH));
     connect(dirBTN, &QPushButton::clicked, [=]{
         if (CConfigs::CONFIG_GAME != "None") {
-            QString buffer = QFileDialog::getOpenFileName(
+            buffer = QFileDialog::getOpenFileName(
                 nullptr,
                 QString::fromStdString(Lang::LANG_LABEL_CHOOSE_GAME_FILE),
                 "",
                 QString::fromStdString(Lang::LANG_LABEL_ALL_FILE + " (*.exe)"));
             if (!buffer.isEmpty()) {
                 dirBTN->setText(buffer);
-                CGameConfig config;
-                config.game_path(buffer.toStdString());
             }
         }
         else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R33);
-        });
+    });
     connect(backupBTN, &QPushButton::clicked, [=]{
         if (CConfigs::CONFIG_GAME != "None") {
             CGameConfig config;
             config.game_dir_backup();
         }
         else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R32);
-        });
+    });
+    connect(gameBTN, &QPushButton::clicked, [=]{chooseLang(gameBTN);});
 }
 
 void SList::sorce () {
@@ -154,5 +162,26 @@ void SList::lang () {
 }
 
 void SList::support () {
+    
+}
+
+void SList::chooseLang(QPushButton* parent) {
+    CFastDialog* dialog = new CFastDialog;
+    QVBoxLayout* content = new QVBoxLayout;
+    CScrollWindow* scrollwindow = new CScrollWindow(dialog->list, content);
+    
+    dialog->show();
+    content->setAlignment(Qt::AlignTop);
+    CLinkTumbler* lastBTN = nullptr;
+    for (const auto& entry : std::filesystem::directory_iterator(GAMES)) {
+        std::string game = entry.path().generic_string().substr(0, entry.path().generic_string().size() - INI_MAIN_PART);
+        size_t part = game.find_last_of('/');
+        game = game.substr(part + 1);
+        CLinkTumbler* button = new CLinkTumbler(game, lastBTN);
+        lastBTN = button;
+        content->addWidget(button);
+        connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
+        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget; dialog->reject();});
+    }
     
 }
