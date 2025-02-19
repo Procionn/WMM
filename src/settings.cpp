@@ -181,7 +181,7 @@ void SList::chooseLang(QPushButton* parent) {
         lastBTN = button;
         content->addWidget(button);
         connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
-        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget; dialog->reject();});
+        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget; parent->setText(QString::fromStdString(game)); dialog->reject();});
     }
     
 }
