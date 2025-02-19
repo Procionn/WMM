@@ -12,7 +12,7 @@
 namespace fs = std::filesystem;
 
 std::string CConfigs::CONFIG_LANGUAGES;
-std::string CConfigs::CONFIG_ARCHIVE_ITERATION;
+//std::string CConfigs::CONFIG_ARCHIVE_ITERATION;
 std::string CConfigs::CONFIG_GAME;
 std::string CConfigs::CONFIG_GAME_PATH;
 std::string CConfigs::CONFIG_EXECUTABLE_FILE;
@@ -39,7 +39,7 @@ void CConfigs::config_reader () {
     std::string indicator;
     while (configRead(readedFile, parameter, indicator)) {
              if (parameter == "Languages")         CONFIG_LANGUAGES         = indicator;
-        else if (parameter == "Archive_iteration") CONFIG_ARCHIVE_ITERATION = indicator;
+//        else if (parameter == "Archive_iteration") CONFIG_ARCHIVE_ITERATION = indicator;
         else if (parameter == "Game")              CONFIG_GAME              = indicator;
     }
     CGameConfig tmp;
@@ -57,7 +57,7 @@ void CConfigs::config_test () {
     else {
         std::ofstream config(CONFIG, std::ios::app);
         config << "Languages=lang/EN.ini" << "\n";
-        config << "Archive_iteration=None" << "\n";
+//        config << "Archive_iteration=None" << "\n";
         config << "Game=None" << "\n";
         config.close();
         config_reader();
@@ -67,7 +67,7 @@ void CConfigs::config_test () {
 void CConfigs::config_save () {
     std::ofstream file(CONFIG, std::ios::out);
     file << "Languages=" << CONFIG_LANGUAGES << "\n";
-    file << "Archive_iteration=" << CONFIG_ARCHIVE_ITERATION << "\n";
+//    file << "Archive_iteration=" << CONFIG_ARCHIVE_ITERATION << "\n";
     file << "Game=" << CONFIG_GAME << "\n";
     file.close();
 }
