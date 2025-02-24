@@ -1,7 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include <string>
-#include "core.h"
 
 const int INI_MAIN_PART         = 4;
 const int MAIN_PART             = 5;
@@ -14,7 +13,7 @@ static std::string MODS         = "mods/";
 static std::string GAMES        = "games/";
 static std::string GAME         = "game/";
 static std::string PRESETS      = "presets/";
-static std::string COLLECTIONS  = "collectioms/";
+static std::string COLLECTIONS  = "collections/";
 static std::string TEMP         = "temp/";
 static std::string MLBW         = "ModListByWirus/";
 static std::string EXPANSION    = ".wmml";
