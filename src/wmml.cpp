@@ -1,35 +1,38 @@
 #include "wmml.h"
 
+#include <filesystem>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <iostream>
 
-wmml::wmml (std::string& file) : targetFile(file.c_str(), std::ios::binary | std::ios::in | std::ios::out) {
+wmml::wmml (std::filesystem::path file) : targetFile(file, std::ios::binary | std::ios::in | std::ios::out) {
     if (!targetFile.is_open()) {
-        abcerr("file " + file + " is not found");
+        targetFile.open(file, std::ios::binary | std::ios::in | std::ios::out);
+        if (!targetFile.is_open())
+            abcerr("In constructor exists file: " + file.generic_string() + " is not found");
     }
     else {
         targetFile.seekp(0);
         targetFile.read(reinterpret_cast<char*>(&ObjectsInThread), sizeof(unsigned short int));
     }
-    filename = file;
+    filename = file.generic_string();
 }
-wmml::wmml (std::string& file, int OIT) : targetFile(file.c_str(), std::ios::binary | std::ios::in | std::ios::out) {
+wmml::wmml (std::filesystem::path file, int OIT) : targetFile(file, std::ios::binary | std::ios::in | std::ios::out) {
     if (!targetFile.is_open()) {
         ObjectsInThread = OIT;
-        std::ofstream File(file.c_str(), std::ios::binary);
+        std::ofstream File(file, std::ios::binary);
         File.close();
-        targetFile.open(file.c_str(), std::ios::binary | std::ios::in | std::ios::out);
+        targetFile.open(file, std::ios::binary | std::ios::in | std::ios::out);
         targetFile.seekp(0);
         targetFile.write(reinterpret_cast<const char*>(&ObjectsInThread), sizeof(ObjectsInThread));
     }
     else {
         targetFile.seekp(0);
         targetFile.read(reinterpret_cast<char*>(&ObjectsInThread), sizeof(unsigned short int));
-        abcerr("file is exists");
+        abcerr("In constructor not exists file: " + file.generic_string() + " is exists");
     }
-    filename = file;
+    filename = file.generic_string();
 }
 
 wmml::~wmml() {
@@ -180,6 +183,6 @@ void wmml::replace (int tag, std::vector<std::string>& in) {
 }
 
 void wmml::abcerr (std::string error) {
-    std::cerr << error << std::endl;
+    std::cerr << "WMML_ERROR: " << error << std::endl;
     abort();
 }

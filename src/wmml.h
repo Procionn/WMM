@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <filesystem>
 
 class wmml
 {
@@ -12,8 +13,8 @@ private:
     std::string filename;
     std::fstream targetFile;
 public:
-    wmml(std::string& file);
-    wmml(std::string& file, int OIT);
+    wmml(std::filesystem::path file);
+    wmml(std::filesystem::path file, int OIT);
     ~wmml();
     
     unsigned short int size();

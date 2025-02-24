@@ -141,7 +141,7 @@ void ArchiveExtractor::extractAll(const std::string& outputDir) {
     struct archive_entry* entry;
     int r;
     while ((r = archive_read_next_header(archive, &entry)) == ARCHIVE_OK) {
-        std::string entryPath = std::filesystem::path(outputDir) / archive_entry_pathname(entry);
+        std::string entryPath = (std::filesystem::path(outputDir) / archive_entry_pathname(entry)).generic_string();
         
         if      (archive_entry_filetype(entry) == AE_IFDIR) extractDirectory(entryPath, entry);
         else if (archive_entry_filetype(entry) == AE_IFREG) extractFile(entryPath, entry);

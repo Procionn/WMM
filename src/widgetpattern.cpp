@@ -3,7 +3,6 @@
 #include "dialogs.h"
 #include "CONSTANTS.h"
 #include "core.h"
-#include "window.h"
 #include "core.h"
 #include "dnd.h"
 #include "patterns.h"
@@ -12,7 +11,6 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
-#include <fstream>
 #include <QFrame>
 #include <QPushButton>
 #include <QLineEdit>
@@ -74,15 +72,7 @@ void CObjectList::CreteObject (std::string name) {
         updateList();
         render();
     }
-    else {
-        ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
-        // errorR34->show();
-        // errorR34->apply->hide();
-        // QLayout* tempLay = new QVBoxLayout(errorR34->list);
-        // tempLay->setAlignment(Qt::AlignTop);
-        // QLabel* label = new QLabel(QString::fromStdString(Lang::LANG_LABEL_R34));
-        // tempLay->addWidget(label);
-    }
+    else ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
 }
 
 void CObjectList::updateList (std::string toggledButton) {
