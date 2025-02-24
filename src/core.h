@@ -75,5 +75,7 @@ namespace configurator {
     void compiller(std::string file, std::string directory);
 }
 
+void replace (std::string& input, char replaceable, char target);
+
 
 #endif // CORE_H

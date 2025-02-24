@@ -37,6 +37,7 @@ set(PROJECT_SOURCES
     patterns.h patterns.cpp
     wmml.h wmml.cpp
     settings.h settings.cpp
+    methods.cpp methods.h
 )
 
 

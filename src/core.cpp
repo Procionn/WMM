@@ -326,7 +326,7 @@ void configurator::collector(std::string name, bool type) {
         std::cerr << "Exporting presets is not supported" << std::endl;
         abort();
     }
-    else      file = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION;
+    else file = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION;
     
     if (fs::exists(dir)) {
         int NFS;
@@ -346,7 +346,7 @@ void configurator::collector(std::string name, bool type) {
         for (int counter = 0; counter != OFS; ++counter) {
             if (oldstruct[counter]) {
                 std::string path = ARCHIVE + CConfigs::CONFIG_GAME + "/" + std::to_string(oldstruct[counter]->id) +
-                                   oldstruct[counter]->version + EXPANSION2;
+                                   "/" + oldstruct[counter]->version + EXPANSION2;
                 std::string str;
                 std::ifstream readedFile(path);
                 while (std::getline(readedFile, str)) {
@@ -388,3 +388,4 @@ void configurator::collector(std::string name, bool type) {
         tmp.add(v);
     }
 }
+

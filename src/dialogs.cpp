@@ -4,6 +4,7 @@
 #include "CONSTANTS.h"
 #include "core.h"
 #include "wmml.h"
+#include "methods.h"
 
 #include <fstream>
 #include <iostream>
@@ -178,6 +179,7 @@ void CInpad::reader () {
     if (std::filesystem::exists(directory1)) {
         for (auto const& objects : std::filesystem::directory_iterator{directory1}) {
             std::string newButton = objects.path().string();
+            stc::string::replace(newButton, '\\', '/');
             if (nameTest(existsElements, arraySize, newButton)) {
                 size_t part = newButton.find_last_of('/');
                 newButton = newButton.substr(part + 1);
@@ -194,6 +196,7 @@ void CInpad::reader () {
     if (std::filesystem::exists(directory2)) {
         for (auto const& objects : std::filesystem::directory_iterator{directory2}) {
             std::string newButton = objects.path().string();
+            stc::string::replace(newButton, '\\', '/');
             if (nameTest(existsElements, arraySize, newButton)) {
                 size_t part = newButton.find_last_of('/');
                 newButton = newButton.substr(part + 1);
