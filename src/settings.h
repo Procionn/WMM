@@ -35,7 +35,7 @@ public:
     
     SList();
 private:
-    void chooseLang(QPushButton* parent);
+    void chooseGame(QPushButton* parent);
     CLinkTumbler* tmptarget = nullptr;
 public slots:
     void sorce();

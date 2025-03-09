@@ -21,6 +21,8 @@ public:
     static std::string LANG_BUTTON_SUPPORT;
     static std::string LANG_BUTTON_LINKING;
     static std::string LANG_BUTTON_GAME_BACKUP;
+    static std::string LANG_BUTTON_GAME_CLEAR;
+    static std::string LANG_BUTTON_GAME_RECOVERY;
     static std::string LANG_LABEL_NAME;
     static std::string LANG_LABEL_R36;
     static std::string LANG_LABEL_R35;
@@ -39,6 +41,8 @@ public:
     static std::string LANG_LABEL_ALL_FILE;
     static std::string LANG_LABEL_CHOOSE_GAME_FILE;
     static std::string LANG_LABEL_GAME_BACKUP;
+    static std::string LANG_LABEL_GAME_CLEAR;
+    static std::string LANG_LABEL_GAME_RECOVERY;
     void set_lang();
 };
 

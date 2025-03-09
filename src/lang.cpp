@@ -20,6 +20,8 @@ std::string Lang::LANG_BUTTON_LANG;
 std::string Lang::LANG_BUTTON_SUPPORT;
 std::string Lang::LANG_BUTTON_LINKING;
 std::string Lang::LANG_BUTTON_GAME_BACKUP;
+std::string Lang::LANG_BUTTON_GAME_CLEAR;
+std::string Lang::LANG_BUTTON_GAME_RECOVERY;
 std::string Lang::LANG_LABEL_NAME;
 std::string Lang::LANG_LABEL_R36;
 std::string Lang::LANG_LABEL_R35;
@@ -39,6 +41,8 @@ std::string Lang::LANG_LABEL_GAME_CHOOSE;
 std::string Lang::LANG_LABEL_ALL_FILE;
 std::string Lang::LANG_LABEL_CHOOSE_GAME_FILE;
 std::string Lang::LANG_LABEL_GAME_BACKUP;
+std::string Lang::LANG_LABEL_GAME_CLEAR;
+std::string Lang::LANG_LABEL_GAME_RECOVERY;
 
 void Lang::set_lang() {
     std::ifstream readedFile (CConfigs::CONFIG_LANGUAGES.c_str());
@@ -61,6 +65,8 @@ void Lang::set_lang() {
         else if (parameter == "LANG_BUTTON_ACCEPT")          LANG_BUTTON_ACCEPT          = indicator;
         else if (parameter == "LANG_BUTTON_LINKING")         LANG_BUTTON_LINKING         = indicator;
         else if (parameter == "LANG_BUTTON_GAME_BACKUP")     LANG_BUTTON_GAME_BACKUP     = indicator;
+        else if (parameter == "LANG_BUTTON_GAME_CLEAR")      LANG_BUTTON_GAME_CLEAR      = indicator;
+        else if (parameter == "LANG_BUTTON_GAME_RECOVERY")   LANG_BUTTON_GAME_RECOVERY   = indicator;
         else if (parameter == "LANG_LABEL_NAME")             LANG_LABEL_NAME             = indicator;
         else if (parameter == "LANG_LABEL_R36")              LANG_LABEL_R36              = indicator;
         else if (parameter == "LANG_LABEL_R35")              LANG_LABEL_R35              = indicator;
@@ -79,6 +85,8 @@ void Lang::set_lang() {
         else if (parameter == "LANG_LABEL_ALL_FILE")         LANG_LABEL_ALL_FILE         = indicator;
         else if (parameter == "LANG_LABEL_CHOOSE_GAME_FILE") LANG_LABEL_CHOOSE_GAME_FILE = indicator;
         else if (parameter == "LANG_LABEL_GAME_BACKUP")      LANG_LABEL_GAME_BACKUP      = indicator;
+        else if (parameter == "LANG_LABEL_GAME_CLEAR")       LANG_LABEL_GAME_CLEAR       = indicator;
+        else if (parameter == "LANG_LABEL_GAME_RECOVERY")    LANG_LABEL_GAME_RECOVERY    = indicator;
         // else if (parameter == "")  = indicator;
     }
 }

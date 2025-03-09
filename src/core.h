@@ -36,8 +36,8 @@ public:
 class CGameConfig : public CBaseConfig
 {
 public:
-    std::vector<std::string> OMD;
-    std::vector<std::string> MGD;
+    std::vector<std::string> OMD; // Only Mods Directory
+    std::vector<std::string> MGD; // Mixed Game Directory
     std::string core_dir_name;
     int GAME_CORE_DIR_STAGE;
     std::string config_game_path;
@@ -48,8 +48,9 @@ public:
     void game_path(std::string path);
     void game_dir_backup();
     void symlink_deliting();
-    void dir_comparison(std::string& file);
+    void dir_comparison(std::filesystem::path& file);
     void symlink_creating(std::string& targetCollection);
+    void game_recovery();
 private:
     int size = 3;
     void write(wmml& input, std::string str);

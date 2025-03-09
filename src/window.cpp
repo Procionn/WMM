@@ -34,10 +34,6 @@ Window::Window () {
     connect(assembling, &QAction::triggered,    this,   [=]{if (target != nullptr) {
                                                                 if (ObjectList->TypeTarget)
                                                                     ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R30);
-                                                                // else if (std::filesystem::exists(COLLECTIONS + CConfigs::CONFIG_GAME + "/" + target->name)) {
-                                                                //     std::filesystem::remove_all(COLLECTIONS + CConfigs::CONFIG_GAME + "/" + target->name);
-                                                                //     configurator::collector(target->name, ObjectList->TypeTarget);
-                                                                // }
                                                                 else  configurator::collector(target->name, ObjectList->TypeTarget);
                                                             }
                                                             else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R31);});

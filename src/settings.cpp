@@ -100,9 +100,13 @@ SList::SList () {
     QLabel* dir = new QLabel(QString::fromStdString(Lang::LANG_LABEL_DIRECTORY_CHOOSE));
     QLabel* game = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CHOOSE));
     QLabel* backup = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_BACKUP));
+    QLabel* clear = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CLEAR));
+    QLabel* recovery = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_RECOVERY));
     QPushButton* dirBTN = new QPushButton(QString::fromStdString(""));
     QPushButton* gameBTN = new QPushButton(QString::fromStdString(CConfigs::CONFIG_GAME));
     QPushButton* backupBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_BACKUP));
+    QPushButton* clearBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_CLEAR));
+    QPushButton* recoveryBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_RECOVERY));
     
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Raised);    
@@ -122,12 +126,23 @@ SList::SList () {
     firstlist->addWidget(dir);
     firstlist->addWidget(game);
     firstlist->addWidget(backup);
+    firstlist->addWidget(clear);
+    firstlist->addWidget(recovery);
     dir->setMinimumHeight(35);
     game->setMinimumHeight(35);
     backup->setMinimumHeight(35);
+    clear->setMinimumHeight(35);
+    recovery->setMinimumHeight(35);
+    dirBTN->setMinimumHeight(35);
+    gameBTN->setMinimumHeight(35);
+    backupBTN->setMinimumHeight(35);
+    clearBTN->setMinimumHeight(35);
+    recoveryBTN->setMinimumHeight(35);
     lastlist->addWidget(dirBTN);
     lastlist->addWidget(gameBTN);
     lastlist->addWidget(backupBTN);
+    lastlist->addWidget(clearBTN);
+    lastlist->addWidget(recoveryBTN);
     
     dirBTN->setText(QString::fromStdString(CConfigs::CONFIG_GAME_PATH));
     connect(dirBTN, &QPushButton::clicked, [=]{
@@ -150,7 +165,13 @@ SList::SList () {
         }
         else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R32);
     });
-    connect(gameBTN, &QPushButton::clicked, [=]{chooseLang(gameBTN);});
+    connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
+    connect(clearBTN, &QPushButton::clicked, [=]{CGameConfig config;
+                                                 config.symlink_deliting();
+                                                });
+    connect(recoveryBTN, &QPushButton::clicked, [=]{CGameConfig config;
+                                                   config.game_recovery();
+                                                  });
 }
 
 void SList::sorce () {
@@ -165,7 +186,8 @@ void SList::support () {
     
 }
 
-void SList::chooseLang(QPushButton* parent) {
+
+void SList::chooseGame(QPushButton* parent) {
     CFastDialog* dialog = new CFastDialog;
     QVBoxLayout* content = new QVBoxLayout;
     CScrollWindow* scrollwindow = new CScrollWindow(dialog->list, content);

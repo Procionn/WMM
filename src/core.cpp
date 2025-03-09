@@ -1,6 +1,7 @@
 #include "core.h"
 #include "CONSTANTS.h"
 #include "wmml.h"
+#include "methods.h"
 
 #include <vector>
 #include <string>
@@ -9,6 +10,10 @@
 #include <iostream>
 #include <cassert>
 #include <QCoreApplication>
+#ifdef _WIN32
+    #include <windows.h>
+    #include <sys/stat.h>
+#endif
 namespace fs = std::filesystem;
 
 std::string CConfigs::CONFIG_LANGUAGES;
@@ -165,7 +170,7 @@ void CGameConfig::game_dir_backup () {
                     fs::path target_path_new(fs::relative(entry.path(), sorce_path));
                     target_path_new = target_path / p / target_path_new;
                     fs::create_directories(target_path_new.parent_path());
-                    fs::copy_file(entry.path(), target_path_new);
+                    fs::copy_file(stc::string::replace(entry.path(), '\\', '/'), stc::string::replace(target_path_new, '\\', '/'));
                 }
             }
         }
@@ -176,20 +181,38 @@ void CGameConfig::game_dir_backup () {
 }
 
 void CGameConfig::symlink_deliting () {
-    std::string testFile = config_game_path + "/" + CONST_FILE + EXPANSION;
+    std::string string =  config_game_path + "/" + CONST_FILE + EXPANSION;
+    fs::path testFile = string;
+    std::cout << testFile << std::endl;
     if (fs::exists(testFile)) dir_comparison(testFile);
     try {
+#ifdef _WIN32
+        auto is_symlink = [](const std::filesystem::path& p) -> bool {
+            DWORD attrs = GetFileAttributesA(p.string().c_str());
+            return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
+        };
+
+        for (const auto& entry : fs::recursive_directory_iterator(config_game_path)) {
+            if (is_symlink(entry.path())) {
+                DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
+            }
+        }
+#elif defined(__linux__)
         for (const auto& entry : fs::recursive_directory_iterator(config_game_path)) {
             const auto& status = entry.symlink_status();
-            if (fs::is_symlink(status)) fs::remove(entry);
+            if (fs::is_symlink(status)) {
+                std::cout << entry.path() << " is symlink" << std::endl;
+                fs::remove(entry);
+            }
         }
+#endif
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
     }
 }
 
-void CGameConfig::dir_comparison (std::string& file) {
+void CGameConfig::dir_comparison (std::filesystem::path& file) {
     wmml targetFile(file);
     std::vector<std::string> v(GRID_WIDTH);
     while(targetFile.read(v))
@@ -206,7 +229,25 @@ void CGameConfig::dir_comparison (std::string& file) {
                 fs::path relative = fs::relative(entry.path(), config_game_path);
                 fs::path target_path = targetpath / relative;
                 fs::path backup_path = (COLLECTIONS + CConfigs::CONFIG_GAME + "/" + v[1]) / relative;
-                if (!fs::exists(target_path)) fs::rename(entry.path(), backup_path);
+                if (!fs::exists(target_path)) {
+#ifdef _WIN32
+                    auto is_symlink = [](const std::filesystem::path& p) -> bool {
+                        DWORD attrs = GetFileAttributesA(p.string().c_str());
+                        return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
+                    };
+
+                    if (is_symlink(entry.path())) continue;
+                    struct stat info;
+                    if (stat(entry.path().string().c_str(), &info) == 0 && S_ISDIR(info.st_mode)) continue;
+
+                    fs::create_directories(backup_path.parent_path());
+                    if (fs::exists(backup_path)) fs::remove(backup_path);
+                    fs::rename(stc::string::replace(entry.path(), '\\', '/'), stc::string::replace(backup_path, '\\', '/'));
+#elif defined(__linux__)
+                    if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path())) continue;
+                    fs::rename(stc::string::replace(entry.path(), '\\', '/'), stc::string::replace(backup_path, '\\', '/'));
+#endif
+                }
             }
         }
     }
@@ -235,12 +276,51 @@ void CGameConfig::symlink_creating (std::string& targetCollection) {
             }
             else {
                 fs::create_directories(target_path.parent_path());
-                fs::create_symlink(global_target_path, target_path);
+#ifdef _WIN32
+                if (!CreateSymbolicLinkA(stc::string::replace(target_path, '\\', '/').string().c_str(), stc::string::replace(global_target_path, '\\', '/').string().c_str(), 0x2))
+                    std::cerr << "AHTUNG!!! I'm facking hate windows!!!"
+                              << "\n"
+                              << stc::string::replace(target_path, '\\', '/')
+                              << "\n" << stc::string::replace(global_target_path, '\\', '/')
+                              << std::endl;
+#elif defined(__linux__)
+                fs::create_symlink(stc::string::replace(global_target_path, '\\', '/'), stc::string::replace(target_path, '\\', '/'));
+#endif
             }
         }
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
+    }
+}
+
+void CGameConfig::game_recovery () {
+    symlink_deliting();
+
+    auto deleteig_cycle = [=](std::vector<std::string>& vector) -> void {
+        for (std::string& target : vector) {
+            std::string path = config_game_path + "/" + target;
+            if (!fs::exists(path)) continue;
+            for (const auto& entry : fs::recursive_directory_iterator(path)) {
+                if (fs::is_directory(entry.path())) continue;
+                else {
+                    fs::permissions(entry, fs::perms::owner_write, fs::perm_options::add);
+                    fs::remove(entry.path());
+                }
+            }
+            fs::remove_all(path);
+        }
+    };
+
+    deleteig_cycle(OMD);
+    deleteig_cycle(MGD);
+    std::string backup = stc::cwmm::backup_path();
+    for (const auto& entry : fs::recursive_directory_iterator(backup)) {
+        if (fs::is_directory(entry.path())) continue;
+        fs::path relative = fs::relative(entry.path(), backup);
+        fs::path path = config_game_path + "/" + relative.string();
+        fs::create_directories(path.parent_path());
+        fs::copy(entry.path(), path);
     }
 }
 
@@ -304,7 +384,7 @@ std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& p
                 std::string tmp = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + v[1] + EXPANSION;
                 wmml tmpFile(tmp);
                 while(tmpFile.read(v)) {
-                    assert(v[4] == "mod");
+                    assert(v[3] == "mod");
                     presets[publicCounter] = new configurator::wmmb(v);
                     ++publicCounter;
                 }
@@ -321,6 +401,7 @@ std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& p
 void configurator::collector(std::string name, bool type) {
     std::string file;
     std::string dir = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + name;
+    fs::path fsDir = dir;
     std::string oldFile = dir + "/" + CONST_FILE + EXPANSION;
     if (type) {
         std::cerr << "Exporting presets is not supported" << std::endl;
@@ -362,7 +443,7 @@ void configurator::collector(std::string name, bool type) {
                 for (const auto& entry : fs::recursive_directory_iterator(path)) {
                     if (fs::is_regular_file(entry.path())) {
                         fs::path relative_path = fs::relative(entry.path(), path);
-                        fs::path target_file_path = dir / relative_path;
+                        fs::path target_file_path = fsDir / relative_path;
                         fs::create_directories(target_file_path.parent_path());
                         fs::copy_file(entry.path(), target_file_path, fs::copy_options::overwrite_existing);
                     }
