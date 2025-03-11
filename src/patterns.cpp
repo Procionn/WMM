@@ -274,10 +274,10 @@ void CObjectsButton::DELETE() {
     if (this->type) std::filesystem::remove(stc::cwmm::ram_preset(this->name));
     else            std::filesystem::remove(stc::cwmm::ram_collection(this->name));
     emit remove(this);
-    // std::cout << "1 " << this->name << std::endl;
+
 }
 void CObjectsButton::INFO () {
-    std::cout << "2 " << this->name << std::endl;
+    // std::cout << "2 " << this->name << std::endl;
 }
 
 
