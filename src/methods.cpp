@@ -15,6 +15,7 @@ void stc::string::replace (std::string& input, char replaceable, char target) {
         if (input[i] == replaceable)
             input[i] = target;
 }
+
 std::filesystem::path stc::string::replace (const std::filesystem::path input, char replaceable, char target) {
     std::string sorce = input.string();
     std::replace(sorce.begin(), sorce.end(), '\\', '/');
@@ -23,9 +24,27 @@ std::filesystem::path stc::string::replace (const std::filesystem::path input, c
 }
 
 
+
 std::string stc::cwmm::backup_path () {
     return (GAME + "/" + CConfigs::CONFIG_GAME);
 }
+
+std::string stc::cwmm::ram_preset () {
+    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS);
+}
+
+std::string stc::cwmm::ram_preset (std::string& name) {
+    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + "/" + name + EXPANSION);
+}
+
+std::string stc::cwmm::ram_collection () {
+    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS);
+}
+
+std::string stc::cwmm::ram_collection (std::string& name) {
+    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + "/" + name + EXPANSION);
+}
+
 
 
 void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem::path& name) {

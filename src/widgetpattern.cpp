@@ -108,7 +108,11 @@ void CObjectList::updateList (std::string toggledButton) {
             objectList->addWidget(button);
             connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
                                                              targetName = newButton;
-                                                             });
+                                                            });
+            connect(button, &CObjectsButton::remove, this, [=]{updateList();
+                                                               render();
+                                                               emit remove();
+                                                              });
             button->hide();
             list[counter] = button;
             lastTumbler = button;
@@ -128,7 +132,11 @@ void CObjectList::updateList (std::string toggledButton) {
             objectList->addWidget(button);
             connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
                                                              targetName = newButton;
-                                                             });
+                                                            });
+            connect(button, &CObjectsButton::remove, this, [=]{updateList();
+                                                               render();
+                                                               emit remove();
+                                                              });
             button->hide();
             list[counter] = button;
             lastTumbler = button;
@@ -224,6 +232,14 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
         connect(buttonWidget, &CContentBox::ON,  this, &CContentList::changeStatusOn);
         connect(buttonWidget, &CContentBox::OFF, this, &CContentList::changeStatusOff);        
+    }
+}
+
+void CContentList::clear () {
+    QLayoutItem* child;
+    while ((child = contentList->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
     }
 }
 

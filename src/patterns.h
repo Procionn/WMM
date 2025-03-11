@@ -140,9 +140,12 @@ public:
     bool type;
     CObjectsButton* link = nullptr;
     CObjectsButton(std::string name = "", CObjectsButton* linked = nullptr, QWidget* parent = nullptr);
-    void mousePressEvent(QMouseEvent* event);
-// signals:
-    // void right_click(CObjectsButton* button);
+private slots:
+    void context(const QPoint &pos);
+    void DELETE();
+    void INFO();
+signals:
+    void remove(CObjectsButton* button);
 };
 
 

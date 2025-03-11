@@ -23,6 +23,8 @@ public:
     static std::string LANG_BUTTON_GAME_BACKUP;
     static std::string LANG_BUTTON_GAME_CLEAR;
     static std::string LANG_BUTTON_GAME_RECOVERY;
+    static std::string LANG_BUTTON_DELETE;
+    static std::string LANG_BUTTON_INFO;
     static std::string LANG_LABEL_NAME;
     static std::string LANG_LABEL_R36;
     static std::string LANG_LABEL_R35;

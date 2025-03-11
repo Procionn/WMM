@@ -54,12 +54,11 @@ Window::Window () {
                                                                 if (CConfigs::CONFIG_GAME_PATH != "") {
                                                                     CGameConfig cgc;
                                                                     cgc.symlink_deliting();
-                                                                    // cgc.dir_comparison();
                                                                     cgc.symlink_creating(target->name);
                                                                 }
                                                             }
                                                             else if (ObjectList->TypeTarget)
-                                                                ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R30);
+                                                                 ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R30);
                                                             else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R36);
                                                             });
     menuBar->addAction(linking);
@@ -76,6 +75,7 @@ Window::Window () {
     inpad->target = &target;
     connect(content,            &QAction::triggered,         this,          &Window::inpadShow);
     connect(ObjectList,         &CObjectList::objectChoosed, ContentWidget, &CContentList::updateList);
+    connect(ObjectList,         &CObjectList::remove,        ContentWidget, &CContentList::clear);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::updatePointer);
     connect(ObjectList,         &CObjectList::objectChoosed, inpad,         [=]{inpad->reset();});
     connect(inpad,              &CFastDialog::canselClicked, inpad,         [=]{inpad->reset();});

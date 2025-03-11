@@ -1,5 +1,7 @@
 #include "patterns.h"
 #include "CONSTANTS.h"
+#include "lang.h"
+#include "methods.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -8,6 +10,7 @@
 #include <string>
 #include <iostream>
 #include <QMouseEvent>
+#include <QMenu>
 
 CContentBox::CContentBox (QVBoxLayout* parent) {
     parent->addWidget(this);
@@ -252,15 +255,31 @@ CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget
             connect(linked, &CObjectsButton::clicked, this, &CObjectsButton::reset);
         }
     }
-}
-
-void CObjectsButton::mousePressEvent(QMouseEvent* event) {
-    if (event->button() == Qt::RightButton) {
-
-        // emit right_click(this);
-    }
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &CObjectsButton::context);
 
 }
+
+
+void CObjectsButton::context (const QPoint &pos) {
+    QMenu* contextMenu = new QMenu(this);
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    QAction *action2 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_INFO));
+    connect(action1, &QAction::triggered, this, &CObjectsButton::DELETE);
+    connect(action2, &QAction::triggered, this, &CObjectsButton::INFO);
+    contextMenu->exec(this->mapToGlobal(pos));
+}
+
+void CObjectsButton::DELETE() {
+    if (this->type) std::filesystem::remove(stc::cwmm::ram_preset(this->name));
+    else            std::filesystem::remove(stc::cwmm::ram_collection(this->name));
+    emit remove(this);
+    // std::cout << "1 " << this->name << std::endl;
+}
+void CObjectsButton::INFO () {
+    std::cout << "2 " << this->name << std::endl;
+}
+
 
 
 

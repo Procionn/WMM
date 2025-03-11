@@ -22,6 +22,8 @@ std::string Lang::LANG_BUTTON_LINKING;
 std::string Lang::LANG_BUTTON_GAME_BACKUP;
 std::string Lang::LANG_BUTTON_GAME_CLEAR;
 std::string Lang::LANG_BUTTON_GAME_RECOVERY;
+std::string Lang::LANG_BUTTON_DELETE;
+std::string Lang::LANG_BUTTON_INFO;
 std::string Lang::LANG_LABEL_NAME;
 std::string Lang::LANG_LABEL_R36;
 std::string Lang::LANG_LABEL_R35;
@@ -67,6 +69,8 @@ void Lang::set_lang() {
         else if (parameter == "LANG_BUTTON_GAME_BACKUP")     LANG_BUTTON_GAME_BACKUP     = indicator;
         else if (parameter == "LANG_BUTTON_GAME_CLEAR")      LANG_BUTTON_GAME_CLEAR      = indicator;
         else if (parameter == "LANG_BUTTON_GAME_RECOVERY")   LANG_BUTTON_GAME_RECOVERY   = indicator;
+        else if (parameter == "LANG_BUTTON_DELETE")          LANG_BUTTON_DELETE          = indicator;
+        else if (parameter == "LANG_BUTTON_INFO")            LANG_BUTTON_INFO            = indicator;
         else if (parameter == "LANG_LABEL_NAME")             LANG_LABEL_NAME             = indicator;
         else if (parameter == "LANG_LABEL_R36")              LANG_LABEL_R36              = indicator;
         else if (parameter == "LANG_LABEL_R35")              LANG_LABEL_R35              = indicator;
