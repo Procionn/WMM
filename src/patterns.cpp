@@ -7,6 +7,7 @@
 #include <QFrame>
 #include <string>
 #include <iostream>
+#include <QMouseEvent>
 
 CContentBox::CContentBox (QVBoxLayout* parent) {
     parent->addWidget(this);
@@ -251,6 +252,14 @@ CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget
             connect(linked, &CObjectsButton::clicked, this, &CObjectsButton::reset);
         }
     }
+}
+
+void CObjectsButton::mousePressEvent(QMouseEvent* event) {
+    if (event->button() == Qt::RightButton) {
+
+        // emit right_click(this);
+    }
+
 }
 
 

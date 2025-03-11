@@ -121,7 +121,6 @@ void CObjectList::updateList (std::string toggledButton) {
             size_t part = newButton.find_last_of('/');
             newButton = newButton.substr(part + 1);
             newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-            // QPushButton* button = new QPushButton(QString::fromStdString(newButton).replace("&", "&&"));
             CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
             button->setMinimumHeight(35);
             button->SetLeftAlignment(true);

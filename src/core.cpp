@@ -122,6 +122,7 @@ void CGameConfig::write(wmml& input, std::string str) {
 }
 
 void CGameConfig::game_path (std::string path) {
+    // create a save of game
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
         int counter = 0;
@@ -150,7 +151,6 @@ void CGameConfig::game_path (std::string path) {
         wmml file(SAVE, size);
         write(file, path);
     }
-    
 }
 
 void CGameConfig::game_dir_backup () {
@@ -270,23 +270,10 @@ void CGameConfig::symlink_creating (std::string& targetCollection) {
             if (fs::exists(target_path)) {
                 if (!fs::is_directory(target_path)) {
                     fs::remove(target_path);
-                    fs::create_directories(target_path.parent_path());
-                    fs::create_symlink(global_target_path, target_path);
+                    stc::fs::symlink(global_target_path, target_path);
                 }
             }
-            else {
-                fs::create_directories(target_path.parent_path());
-#ifdef _WIN32
-                if (!CreateSymbolicLinkA(stc::string::replace(target_path, '\\', '/').string().c_str(), stc::string::replace(global_target_path, '\\', '/').string().c_str(), 0x2))
-                    std::cerr << "AHTUNG!!! I'm facking hate windows!!!"
-                              << "\n"
-                              << stc::string::replace(target_path, '\\', '/')
-                              << "\n" << stc::string::replace(global_target_path, '\\', '/')
-                              << std::endl;
-#elif defined(__linux__)
-                fs::create_symlink(stc::string::replace(global_target_path, '\\', '/'), stc::string::replace(target_path, '\\', '/'));
-#endif
-            }
+            else stc::fs::symlink(global_target_path, target_path);
         }
     }
     catch (const std::exception& e) {
@@ -399,6 +386,7 @@ std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& p
 }
 
 void configurator::collector(std::string name, bool type) {
+    // collected all mods file in directory
     std::string file;
     std::string dir = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + name;
     fs::path fsDir = dir;
@@ -414,6 +402,7 @@ void configurator::collector(std::string name, bool type) {
         int OFS;
         std::vector<wmmb*> newstruct = parser(file, NFS);
         std::vector<wmmb*> oldstruct = parser(oldFile, OFS);
+        // Collection optimization cycle. Checks if the mod was available in the previous collection iteration
         for (int firstcounter = 0; firstcounter != OFS; ++firstcounter) {
             for (int lastcounter = 0; lastcounter != NFS; ++lastcounter) {
                 if (*oldstruct[firstcounter] == *newstruct[lastcounter]) {
