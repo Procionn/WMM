@@ -2,25 +2,33 @@
 #include "CONSTANTS.h"
 #include "lang.h"
 #include "methods.h"
+#include "dialogs.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QFrame>
+#include <QMenu>
 #include <string>
 #include <iostream>
-#include <QMouseEvent>
-#include <QMenu>
+#include <vector>
 
-CContentBox::CContentBox (QVBoxLayout* parent) {
+CContentBox::CContentBox (QVBoxLayout* parent, std::vector<std::string>& v) {
     parent->addWidget(this);
     Box = new QHBoxLayout(this);
-    name = new QLabel;
-    version = new QLabel;
-    type = new QLabel;
+    index = std::stoi(v[0]);
+    name = new QLabel(QString::fromStdString(v[1]));
+    version = new QLabel(QString::fromStdString(v[2]));
+    type = new QLabel(QString::fromStdString(v[3]));
     switcher = new CSwitchButton;
     switcher->setTheme("orange");
     switcher->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    if (v[5] == "1") switcher->isTarget(true);
+    else             switcher->isTarget(false);
+    aid = v[4];
+    aname = v[1];
+    atype = v[3];
+    std::cout << atype << std::endl;
     name->resize(400, 0);
     setFrameShape(QFrame::Panel);
     setFrameShadow(QFrame::Sunken);
@@ -34,6 +42,34 @@ CContentBox::CContentBox (QVBoxLayout* parent) {
     Box->addWidget(switcher);
     connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
     connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &CContentBox::context);
+}
+
+void CContentBox::context (const QPoint &pos) {
+    QMenu* contextMenu = new QMenu(this);
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    connect(action1, &QAction::triggered, this, &CContentBox::DELETE);
+    if (atype == "mod") {
+        QAction *action2 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_INFO));
+        connect(action2, &QAction::triggered, this, &CContentBox::INFO);
+    }
+    contextMenu->exec(this->mapToGlobal(pos));
+}
+
+void CContentBox::DELETE() {
+    // if (atype == "preset") std::filesystem::remove(stc::cwmm::ram_preset(aname));
+    // else                   std::filesystem::remove_all(stc::cwmm::ram_mods(aname));
+    // emit remove(this);
+}
+
+void CContentBox::INFO() {
+    std::ifstream file(stc::cwmm::ram_mods_info(aname));
+    std::string id;
+    for (int i = 0; i != 3; ++i)
+        std::getline(file, id);
+    stc::net::openURL(stc::cwmm::modsURL(id));
 }
 
 
@@ -257,16 +293,13 @@ CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget
     }
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested, this, &CObjectsButton::context);
-
 }
 
 
 void CObjectsButton::context (const QPoint &pos) {
     QMenu* contextMenu = new QMenu(this);
     QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
-    QAction *action2 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_INFO));
     connect(action1, &QAction::triggered, this, &CObjectsButton::DELETE);
-    connect(action2, &QAction::triggered, this, &CObjectsButton::INFO);
     contextMenu->exec(this->mapToGlobal(pos));
 }
 
@@ -274,11 +307,8 @@ void CObjectsButton::DELETE() {
     if (this->type) std::filesystem::remove(stc::cwmm::ram_preset(this->name));
     else            std::filesystem::remove(stc::cwmm::ram_collection(this->name));
     emit remove(this);
+}
 
-}
-void CObjectsButton::INFO () {
-    // std::cout << "2 " << this->name << std::endl;
-}
 
 
 

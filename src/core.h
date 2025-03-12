@@ -35,6 +35,12 @@ public:
 
 class CGameConfig : public CBaseConfig
 {
+    std::string config_string[4] {
+        "ModCoreDirectoryStage",
+        "OnlyModDirectory",
+        "MixedGameDirectory",
+        "URLtemplate"
+    };
 public:
     std::vector<std::string> OMD; // Only Mods Directory
     std::vector<std::string> MGD; // Mixed Game Directory
@@ -42,6 +48,7 @@ public:
     int GAME_CORE_DIR_STAGE;
     std::string config_game_path;
     std::string config_executable_file;
+    std::string config_url;
     
     
     CGameConfig ();

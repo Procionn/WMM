@@ -17,6 +17,9 @@ class CContentBox : public QFrame
     Q_OBJECT
 public:
     int index;
+    std::string aid;
+    std::string aname;
+    std::string atype;
     QHBoxLayout* Box;
     QLabel* name;
     QLabel* version;
@@ -26,10 +29,14 @@ public:
     CSplitter* spl2;
     CSplitter* spl3;
     
-    CContentBox(QVBoxLayout* parent = nullptr);
+    CContentBox(QVBoxLayout* parent, std::vector<std::string>& v);
 signals:
     void ON(CContentBox* pointer);
     void OFF(CContentBox* pointer);
+private slots:
+    void context(const QPoint &pos);
+    void DELETE();
+    void INFO();
 };
 
 
@@ -143,7 +150,6 @@ public:
 private slots:
     void context(const QPoint &pos);
     void DELETE();
-    void INFO();
 signals:
     void remove(CObjectsButton* button);
 };

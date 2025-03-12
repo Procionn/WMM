@@ -207,13 +207,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     wmml file(sPath);
     std::vector<std::string> v(GRID_WIDTH);
     while (file.read(v)) {
-        CContentBox* buttonWidget = new CContentBox(contentList);
-        buttonWidget->index = std::stoi(v[0]);
-        buttonWidget->name->setText(QString::fromStdString(v[1]));
-        buttonWidget->version->setText(QString::fromStdString(v[2]));
-        buttonWidget->type->setText(QString::fromStdString(v[3]));
-        if (v[5] == "1") buttonWidget->switcher->isTarget(true);
-        else             buttonWidget->switcher->isTarget(false);
+        CContentBox* buttonWidget = new CContentBox(contentList, v);
         
         // Crutch. It will need to be fixed
         double sz11 = spl1->size().width();

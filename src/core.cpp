@@ -103,9 +103,10 @@ CGameConfig::CGameConfig () {
     std::string parameter;
     std::string indicator;
     while (configRead(readedFile, parameter, indicator)) {
-        if (parameter == "ModCoreDirectoryStage") GAME_CORE_DIR_STAGE = std::stoi(indicator);
-        else if (parameter == "OnlyModDirectory") OMD.push_back(indicator);
-        else if (parameter == "MixedGameDirectory") MGD.push_back(indicator);
+             if (parameter == config_string[0]) GAME_CORE_DIR_STAGE = std::stoi(indicator);
+        else if (parameter == config_string[1]) OMD.push_back(indicator);
+        else if (parameter == config_string[2]) MGD.push_back(indicator);
+        else if (parameter == config_string[3]) config_url =  indicator;
     }
 }
 
