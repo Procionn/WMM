@@ -221,7 +221,10 @@ void CInpad::application(std::string targetName, bool targetType) {
     wmml file(name);
     while (file.read(v));
     int i;
-    if (v[0] != "") i = std::stoi(v[0]);
+    if (v[0] != "") {
+        i = std::stoi(v[0]);
+        ++i;
+    }
     else i = 0;
     for (CInpadsButton* target : vlist) {
         if (target->selected) {
