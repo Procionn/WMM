@@ -89,6 +89,19 @@ void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem:
     }
 }
 
+void stc::fs::remove_all (const std::filesystem::path& path) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+        if (std::filesystem::is_directory(entry.path())) continue;
+        else {
+            std::filesystem::permissions(entry,
+                                         std::filesystem::perms::owner_write,
+                                         std::filesystem::perm_options::add);
+            std::filesystem::remove(entry.path());
+        }
+    }
+    std::filesystem::remove_all(path);
+}
+
 
 
 void stc::net::openURL (const std::string& url) {

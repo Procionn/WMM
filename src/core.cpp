@@ -155,8 +155,8 @@ void CGameConfig::game_path (std::string path) {
 }
 
 void CGameConfig::game_dir_backup () {
-    std::string targetpath = GAME + "/" + core_dir_name;
-    if (fs::exists(targetpath)) fs::remove_all(targetpath);
+    std::string targetpath = GAME + core_dir_name;
+    if (fs::exists(targetpath)) stc::fs::remove_all(targetpath);
     try {
         for (std::string p : MGD) {
             std::string pt = config_game_path + "/" + p;
@@ -289,14 +289,7 @@ void CGameConfig::game_recovery () {
         for (std::string& target : vector) {
             std::string path = config_game_path + "/" + target;
             if (!fs::exists(path)) continue;
-            for (const auto& entry : fs::recursive_directory_iterator(path)) {
-                if (fs::is_directory(entry.path())) continue;
-                else {
-                    fs::permissions(entry, fs::perms::owner_write, fs::perm_options::add);
-                    fs::remove(entry.path());
-                }
-            }
-            fs::remove_all(path);
+            stc::fs::remove_all(path);
         }
     };
 

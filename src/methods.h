@@ -22,6 +22,7 @@ namespace stc {
     }
     namespace fs {   // file system
         void symlink(const std::filesystem::path& file, const std::filesystem::path& name);
+        void remove_all(const std::filesystem::path& path);
     }
     namespace net {
         void openURL (const std::string& url);
