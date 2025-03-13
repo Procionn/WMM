@@ -27,7 +27,8 @@ public:
     bool skip(int counter);
     bool skip_sector(int counter); 
     std::string read_field();
-    void replace(int tag, std::vector<std::string>& in);
+    void replace(int& tag, std::vector<std::string>& in);
+    void remove(int& tag);
 private:
     void abcerr (std::string error);
 };

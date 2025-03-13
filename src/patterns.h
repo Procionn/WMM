@@ -33,6 +33,7 @@ public:
 signals:
     void ON(CContentBox* pointer);
     void OFF(CContentBox* pointer);
+    void remove(CContentBox* pointer);
 private slots:
     void context(const QPoint &pos);
     void DELETE();

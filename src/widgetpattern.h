@@ -59,6 +59,7 @@ public slots:
 private slots:
     void changeStatusOn(CContentBox* toggledElements);
     void changeStatusOff(CContentBox* toggledElements);
+    void deleting(CContentBox* pointer);
 };
 
 #endif // WIDGETPATTERN_H

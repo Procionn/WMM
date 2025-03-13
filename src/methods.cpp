@@ -35,7 +35,7 @@ std::string stc::cwmm::ram_preset () {
 }
 
 std::string stc::cwmm::ram_preset (const std::string& name) {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + "/" + name + EXPANSION);
+    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + name + EXPANSION);
 }
 
 std::string stc::cwmm::ram_collection () {
@@ -43,7 +43,7 @@ std::string stc::cwmm::ram_collection () {
 }
 
 std::string stc::cwmm::ram_collection (const std::string& name) {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + "/" + name + EXPANSION);
+    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION);
 }
 
 std::string stc::cwmm::ram_mods() {

@@ -28,7 +28,6 @@ CContentBox::CContentBox (QVBoxLayout* parent, std::vector<std::string>& v) {
     aid = v[4];
     aname = v[1];
     atype = v[3];
-    std::cout << atype << std::endl;
     name->resize(400, 0);
     setFrameShape(QFrame::Panel);
     setFrameShadow(QFrame::Sunken);
@@ -59,9 +58,7 @@ void CContentBox::context (const QPoint &pos) {
 }
 
 void CContentBox::DELETE() {
-    // if (atype == "preset") std::filesystem::remove(stc::cwmm::ram_preset(aname));
-    // else                   std::filesystem::remove_all(stc::cwmm::ram_mods(aname));
-    // emit remove(this);
+    emit remove(this);
 }
 
 void CContentBox::INFO() {

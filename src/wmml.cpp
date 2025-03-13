@@ -121,8 +121,6 @@ void wmml::overwriting (int tag, int field, std::string newStr) {
         targetFile.write(newStr.data(), stringSize);
     }
     else {
-        // std::cout << "string: " << newStr << std::endl;
-        // std::cout << stringSize << "->" << newStr.size() << std::endl;
         abcerr("the size of the new value does not match the size of the field being overwritten!");
     }
 }
@@ -160,7 +158,7 @@ bool wmml::skip_sector (int counter) {
     return false;
 }
 
-void wmml::replace (int tag, std::vector<std::string>& in) {
+void wmml::replace (int& tag, std::vector<std::string>& in) {
     reset();
     int fn = sizeRequest();
     std::vector<std::vector<std::string>> gv(fn);
@@ -171,6 +169,28 @@ void wmml::replace (int tag, std::vector<std::string>& in) {
         gv[i] = v;
     }
     gv[tag] = in;
+    targetFile.close();
+    std::ofstream rmfile(filename.c_str(), std::ios::binary | std::ios::trunc);
+    rmfile.close();
+    targetFile.open(filename.c_str(), std::ios::binary | std::ios::in | std::ios::out);
+    targetFile.seekp(0);
+    targetFile.write(reinterpret_cast<const char*>(&ObjectsInThread), sizeof(ObjectsInThread));
+    for (std::vector<std::string> v : gv) {
+        add(v);
+    }
+}
+
+void wmml::remove (int& tag) {
+    reset();
+    int fn = sizeRequest();
+    std::vector<std::vector<std::string>> gv(fn);
+    reset();
+    for (int i = 0; i != fn; ++i) {
+        if (i == tag) continue;
+        std::vector<std::string> v(ObjectsInThread);
+        read(v);
+        gv[i] = v;
+    }
     targetFile.close();
     std::ofstream rmfile(filename.c_str(), std::ios::binary | std::ios::trunc);
     rmfile.close();

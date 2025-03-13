@@ -7,6 +7,7 @@
 #include "dnd.h"
 #include "patterns.h"
 #include "wmml.h"
+#include "methods.h"
 
 #include <iostream>
 #include <string>
@@ -202,8 +203,8 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         delete child->widget(); 
         delete child;
     }
-    if (type) sPath = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS     + pointer->name + EXPANSION;
-    else      sPath = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + pointer->name + EXPANSION;
+    if (type) sPath = stc::cwmm::ram_preset(targetName);
+    else      sPath = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
     std::vector<std::string> v(GRID_WIDTH);
     while (file.read(v)) {
@@ -224,8 +225,9 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         
         connect(spl1, &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
         connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
-        connect(buttonWidget, &CContentBox::ON,  this, &CContentList::changeStatusOn);
-        connect(buttonWidget, &CContentBox::OFF, this, &CContentList::changeStatusOff);        
+        connect(buttonWidget, &CContentBox::ON,     this, &CContentList::changeStatusOn);
+        connect(buttonWidget, &CContentBox::OFF,    this, &CContentList::changeStatusOff);
+        connect(buttonWidget, &CContentBox::remove, this, &CContentList::deleting);
     }
 }
 
@@ -244,4 +246,12 @@ void CContentList::changeStatusOn(CContentBox* toggledElements) {
 void CContentList::changeStatusOff(CContentBox* toggledElements) {
     wmml file(sPath);
     file.overwriting(toggledElements->index, 5, "0");
+}
+void CContentList::deleting (CContentBox* pointer) {
+    std::string path;
+    if (targetType) path = stc::cwmm::ram_preset(targetName);
+    else            path = stc::cwmm::ram_collection(targetName);
+    wmml file(path);
+    file.remove(pointer->index);
+    delete pointer;
 }
