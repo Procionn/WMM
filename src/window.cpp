@@ -85,9 +85,13 @@ Window::Window () {
 }
 
 void Window::NewObjectDialog() {
-    newObjectDialog = new CNewObjectDialog();
-    newObjectDialog->show();
-    connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList, [=]{ObjectList->newObject(newObjectDialog);});
+    if (CConfigs::CONFIG_GAME != "None") {
+        newObjectDialog = new CNewObjectDialog();
+        newObjectDialog->show();
+        connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList, [=]{ObjectList->newObject(newObjectDialog);});
+    }
+    else
+        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R37);
 }
 
 void Window::settings() {

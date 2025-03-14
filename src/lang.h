@@ -26,6 +26,7 @@ public:
     static std::string LANG_BUTTON_DELETE;
     static std::string LANG_BUTTON_INFO;
     static std::string LANG_LABEL_NAME;
+    static std::string LANG_LABEL_R37;
     static std::string LANG_LABEL_R36;
     static std::string LANG_LABEL_R35;
     static std::string LANG_LABEL_R34;

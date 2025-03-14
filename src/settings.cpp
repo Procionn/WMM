@@ -48,9 +48,9 @@ CSettings::CSettings () {
 
 void CSettings::save () {
     CGameConfig config;
-    CConfigs core;
     if (!slist->buffer.isEmpty())
         config.game_path(slist->buffer.toStdString());
+    CConfigs core;
     if (slist->target != nullptr) {
         CConfigs::CONFIG_GAME = slist->target->name;
         core.config_save();

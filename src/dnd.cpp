@@ -1,6 +1,8 @@
 #include "dnd.h"
 #include "CONSTANTS.h"
 #include "core.h"
+#include "dialogs.h"
+#include "lang.h"
 
 #include <QLabel>
 #include <iostream>
@@ -49,34 +51,38 @@ void CDND::dragEnterEvent(QDragEnterEvent* e) {
 }
 
 void CDND::dropEvent(QDropEvent* e) {
-    foreach (const QUrl &url, e->mimeData()->urls()) {
-        QString fileName = url.toLocalFile();
-        std::cout << "Dropped file:" << fileName.toStdString() << std::endl;
-        try {
-            ArchiveExtractor extractor(fileName.toStdString());
-            std::string modsDir = MODS + CConfigs::CONFIG_GAME + "/" + extractor.regex(fileName.toStdString());
-            std::filesystem::path fsPath = modsDir;
-             if (std::filesystem::exists(modsDir)) {
-                std::filesystem::remove_all(fsPath);
-            }
-            extractor.modInfoSave();
-            extractor.extractAll(modsDir);
-            
-            std::string dad = ARCHIVE + CConfigs::CONFIG_GAME + "/" + extractor.id; // deep archive directory
-            std::filesystem::create_directories(dad);
-            std::ofstream daf(dad + "/" + extractor.version + EXPANSION2);          // deep archive file
-            for (const auto& entry : std::filesystem::recursive_directory_iterator(modsDir)) {
-                if (std::filesystem::is_regular_file(entry.path())) {
-                    std::filesystem::path relative = std::filesystem::relative(entry.path(), fsPath);
-                    daf << relative.generic_string() << "\n";
+    if (CConfigs::CONFIG_GAME == "None")
+        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R37);
+    else {
+        foreach (const QUrl &url, e->mimeData()->urls()) {
+            QString fileName = url.toLocalFile();
+            std::cout << "Dropped file:" << fileName.toStdString() << std::endl;
+            try {
+                ArchiveExtractor extractor(fileName.toStdString());
+                std::string modsDir = MODS + CConfigs::CONFIG_GAME + "/" + extractor.regex(fileName.toStdString());
+                std::filesystem::path fsPath = modsDir;
+                 if (std::filesystem::exists(modsDir)) {
+                    std::filesystem::remove_all(fsPath);
                 }
+                extractor.modInfoSave();
+                extractor.extractAll(modsDir);
+
+                std::string dad = ARCHIVE + CConfigs::CONFIG_GAME + "/" + extractor.id; // deep archive directory
+                std::filesystem::create_directories(dad);
+                std::ofstream daf(dad + "/" + extractor.version + EXPANSION2);          // deep archive file
+                for (const auto& entry : std::filesystem::recursive_directory_iterator(modsDir)) {
+                    if (std::filesystem::is_regular_file(entry.path())) {
+                        std::filesystem::path relative = std::filesystem::relative(entry.path(), fsPath);
+                        daf << relative.generic_string() << "\n";
+                    }
+                }
+                emit launch();
+                daf.close();
+
+                std::cout << "The archive has been successfully extracted to the folder: " << modsDir << std::endl;
+            } catch (const std::exception& ex) {
+                std::cerr << "ERROR: " << ex.what() << std::endl;
             }
-            emit launch();
-            daf.close();
-            
-            std::cout << "The archive has been successfully extracted to the folder: " << modsDir << std::endl;
-        } catch (const std::exception& ex) {
-            std::cerr << "ERROR: " << ex.what() << std::endl;
         }
     }
 }

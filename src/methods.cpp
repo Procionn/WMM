@@ -77,7 +77,7 @@ void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem:
     std::filesystem::create_directories(newName.parent_path());
     try {
 #ifdef _WIN32
-        if (!CreateSymbolicLinkA(newName.string().c_str(), newFile.string().c_str(), 0x2))
+        if (!CreateSymbolicLinkW(newName.wstring().c_str(), newFile.wstring().c_str(), 0x2))
             std::cerr << "AHTUNG!!! I'm facking hate windows!!!"
                       << "\n" << newName << "\n" << newFile << std::endl;
 #elif defined(__linux__)
