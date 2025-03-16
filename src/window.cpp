@@ -3,7 +3,7 @@
 #include "dialogs.h"
 #include "widgetpattern.h"
 #include "CONSTANTS.h"
-#include "settings.h"
+#include "settings/settings.h"
 
 #include <filesystem>
 #include <iostream>

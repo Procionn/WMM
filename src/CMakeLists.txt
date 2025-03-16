@@ -36,8 +36,12 @@ set(PROJECT_SOURCES
     dnd.h dnd.cpp
     patterns.h patterns.cpp
     wmml.h wmml.cpp
-    settings.h settings.cpp
     methods.cpp methods.h
+    settings/settings.h settings/settings.cpp
+    settings/setlang.h settings/setlang.cpp
+    settings/setsupport.h settings/setsupport.cpp
+    settings/setsource.h settings/setsource.cpp
+    settings/setextensions.h settings/setextensions.cpp
 )
 
 

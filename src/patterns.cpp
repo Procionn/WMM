@@ -80,7 +80,7 @@ void CSplitter::moveSplitter(int pos, int index){
     if(index >= sizes().size()) return;
     bool oldState = blockSignals(true);
     // std::cout << " " << pos << std::endl;
-    pos -= 5;
+    // pos -= 5;
     QSplitter::moveSplitter(pos, index);
     blockSignals(oldState);
 }

@@ -18,6 +18,7 @@ std::string Lang::LANG_BUTTON_REASSEMBLY;
 std::string Lang::LANG_BUTTON_SORCE;
 std::string Lang::LANG_BUTTON_LANG;
 std::string Lang::LANG_BUTTON_SUPPORT;
+std::string Lang::LANG_BUTTON_EXTENSIONS;
 std::string Lang::LANG_BUTTON_LINKING;
 std::string Lang::LANG_BUTTON_GAME_BACKUP;
 std::string Lang::LANG_BUTTON_GAME_CLEAR;
@@ -93,6 +94,7 @@ void Lang::set_lang() {
         else if (parameter == "LANG_LABEL_GAME_BACKUP")      LANG_LABEL_GAME_BACKUP      = indicator;
         else if (parameter == "LANG_LABEL_GAME_CLEAR")       LANG_LABEL_GAME_CLEAR       = indicator;
         else if (parameter == "LANG_LABEL_GAME_RECOVERY")    LANG_LABEL_GAME_RECOVERY    = indicator;
+        else if (parameter == "LANG_BUTTON_EXTENSIONS")      LANG_BUTTON_EXTENSIONS      = indicator;
         // else if (parameter == "")  = indicator;
     }
 }

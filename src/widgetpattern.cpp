@@ -213,7 +213,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         // Crutch. It will need to be fixed
         double sz11 = spl1->size().width();
         double sz21 = spl1->size().height();
-        double sz31 = sz11 / (sz21 / 14.5);
+        double sz31 = sz11 / (sz21 / 13);
         double sz12 = spl2->size().width();
         double sz22 = spl2->size().height();
         double sz32 = sz12 / (sz22 / 10.5);

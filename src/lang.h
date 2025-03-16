@@ -19,6 +19,7 @@ public:
     static std::string LANG_BUTTON_SORCE;
     static std::string LANG_BUTTON_LANG;
     static std::string LANG_BUTTON_SUPPORT;
+    static std::string LANG_BUTTON_EXTENSIONS;
     static std::string LANG_BUTTON_LINKING;
     static std::string LANG_BUTTON_GAME_BACKUP;
     static std::string LANG_BUTTON_GAME_CLEAR;

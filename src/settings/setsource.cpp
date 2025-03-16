@@ -1,95 +1,9 @@
-#include "settings.h"
-#include "CONSTANTS.h"
-#include "patterns.h"
-#include "lang.h"
-#include "dialogs.h"
+#include "setsource.h"
 
-#include <QDialog>
-#include <QVBoxLayout>
-#include <QSplitter>
+#include <filesystem>
 #include <QFileDialog>
-#include <iostream>
 
-
-CSettings::CSettings () {
-    setMinimumHeight(200);
-    setMinimumWidth(400);
-    resize(1000, 600);
-    QVBoxLayout* dialogLayout = new QVBoxLayout(this);
-    QHBoxLayout* dialogButtonBox = new QHBoxLayout();
-    QPushButton* accept = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_ACCEPT));
-    QPushButton* cansel = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_CANSEL));
-    QWidget* separator = new QWidget;
-    QSplitter* splitter = new QSplitter;
-    QFrame* line = new QFrame();
-    sobjects = new SObjects;
-    slist = new SList;
-    
-    slist->resize(500, 10);
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-    separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    connect(cansel, &QPushButton::clicked, this, [=]{this->reject();});
-    connect(accept, &QPushButton::clicked, this, &CSettings::save);
-    connect(sobjects->sorce,   &CLinkTumbler::toggled, slist, &SList::sorce);
-    connect(sobjects->lang,    &CLinkTumbler::toggled, slist, &SList::lang);
-    connect(sobjects->support, &CLinkTumbler::toggled, slist, &SList::support);
-    
-    dialogLayout->addLayout(dialogButtonBox);
-    dialogLayout->addWidget(line);
-    dialogButtonBox->addWidget(accept);
-    dialogButtonBox->addWidget(separator);
-    dialogButtonBox->addWidget(cansel);
-    dialogLayout->addWidget(splitter);
-    splitter->addWidget(sobjects);
-    splitter->addWidget(slist);
-    show();
-}
-
-void CSettings::save () {
-    CGameConfig config;
-    if (!slist->buffer.isEmpty())
-        config.game_path(slist->buffer.toStdString());
-    CConfigs core;
-    if (slist->target != nullptr) {
-        CConfigs::CONFIG_GAME = slist->target->name;
-        core.config_save();
-    }
-}
-
-
-
-
-
-SObjects::SObjects () {
-    list = new QVBoxLayout;
-    CScrollWindow* scrollWindow = new CScrollWindow(this, list);
-    sorce = new CLinkTumbler(Lang::LANG_BUTTON_SORCE);
-    lang = new CLinkTumbler(Lang::LANG_BUTTON_LANG, sorce);
-    support = new CLinkTumbler(Lang::LANG_BUTTON_SUPPORT, lang);
-    
-    list->setAlignment(Qt::AlignTop);
-    sorce->SetLeftAlignment(true);
-    lang->SetLeftAlignment(true);
-    
-    lang->hide();
-    support->hide();
-    
-    support->SetLeftAlignment(true);
-    sorce->setMinimumHeight(35);
-    lang->setMinimumHeight(35);
-    support->setMinimumHeight(35);
-    
-    list->addWidget(sorce);
-    list->addWidget(lang);
-    list->addWidget(support);
-}
-
-
-
-
-
-SList::SList () {
+setsource::setsource() {
     QHBoxLayout* list = new QHBoxLayout;
     QFrame* line = new QFrame();
     firstlist = new QVBoxLayout;
@@ -107,10 +21,10 @@ SList::SList () {
     QPushButton* backupBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_BACKUP));
     QPushButton* clearBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_CLEAR));
     QPushButton* recoveryBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_RECOVERY));
-    
+
     line->setFrameShape(QFrame::VLine);
-    line->setFrameShadow(QFrame::Raised);    
-    
+    line->setFrameShadow(QFrame::Raised);
+
     list->addWidget(firstwidget);
     list->addWidget(line);
     list->addWidget(lastwidget);
@@ -119,7 +33,7 @@ SList::SList () {
     list->setStretch(0, 0);
     list->setStretch(1, 0);
     list->setStretch(2, 1);
-    
+
     firstlist->setAlignment(Qt::AlignTop);
     lastlist->setAlignment(Qt::AlignTop);
     firstlist->setSizeConstraint(QLayout::SetMinimumSize);
@@ -143,7 +57,7 @@ SList::SList () {
     lastlist->addWidget(backupBTN);
     lastlist->addWidget(clearBTN);
     lastlist->addWidget(recoveryBTN);
-    
+
     dirBTN->setText(QString::fromStdString(CConfigs::CONFIG_GAME_PATH));
     connect(dirBTN, &QPushButton::clicked, [=]{
         if (CConfigs::CONFIG_GAME != "None") {
@@ -167,31 +81,20 @@ SList::SList () {
     });
     connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
     connect(clearBTN, &QPushButton::clicked, [=]{CGameConfig config;
-                                                 config.symlink_deliting();
-                                                });
+        config.symlink_deliting();
+    });
     connect(recoveryBTN, &QPushButton::clicked, [=]{CGameConfig config;
-                                                   config.game_recovery();
-                                                  });
-}
-
-void SList::sorce () {
-    
-}
-
-void SList::lang () {
-    
-}
-
-void SList::support () {
-    
+        config.game_recovery();
+    });
 }
 
 
-void SList::chooseGame(QPushButton* parent) {
+
+void setsource::chooseGame (QPushButton* parent) {
     CFastDialog* dialog = new CFastDialog;
     QVBoxLayout* content = new QVBoxLayout;
     CScrollWindow* scrollwindow = new CScrollWindow(dialog->list, content);
-    
+
     dialog->show();
     content->setAlignment(Qt::AlignTop);
     CLinkTumbler* lastBTN = nullptr;
@@ -205,5 +108,4 @@ void SList::chooseGame(QPushButton* parent) {
         connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
         connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget; parent->setText(QString::fromStdString(game)); dialog->reject();});
     }
-    
 }

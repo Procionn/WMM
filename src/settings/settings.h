@@ -1,7 +1,11 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "patterns.h"
+#include "../patterns.h"
+#include "setlang.h"
+#include "setsource.h"
+#include "setsupport.h"
+#include "setextensions.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -16,6 +20,7 @@ public:
     CLinkTumbler* sorce;
     CLinkTumbler* lang;
     CLinkTumbler* support;
+    CLinkTumbler* extensions;
     
     SObjects();
 };
@@ -27,20 +32,19 @@ public:
 class SList : public QWidget
 {
     Q_OBJECT
-public:
-    QVBoxLayout* firstlist;
-    QVBoxLayout* lastlist;
-    QString buffer;
-    CLinkTumbler* target = nullptr;
-    
+public:  
     SList();
-private:
-    void chooseGame(QPushButton* parent);
-    CLinkTumbler* tmptarget = nullptr;
+
+    setsource* ss;
+    setlang* sl;
+    setsupport* sup;
+    setextensions* se;
+
 public slots:
     void sorce();
     void lang();
     void support();
+    void extensions();
 };
 
 
