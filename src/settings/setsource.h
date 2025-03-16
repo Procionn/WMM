@@ -22,6 +22,8 @@ public:
     setsource();
 private slots:
     void chooseGame(QPushButton* parent);
+    void chooseExe(QPushButton* dirBTN);
+    void createBackup();
 };
 
 #endif // SETSOURCE_H

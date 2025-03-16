@@ -47,9 +47,11 @@ std::string Lang::LANG_LABEL_CHOOSE_GAME_FILE;
 std::string Lang::LANG_LABEL_GAME_BACKUP;
 std::string Lang::LANG_LABEL_GAME_CLEAR;
 std::string Lang::LANG_LABEL_GAME_RECOVERY;
+std::string Lang::LANG_LABEL_CHOOSE_LANG;
+std::string Lang::LANG_LABEL_CUSTOM_LANG;
 
 void Lang::set_lang() {
-    std::ifstream readedFile (CConfigs::CONFIG_LANGUAGES.c_str());
+    std::ifstream readedFile (CConfigs::CONFIG_LANGUAGES);
     std::string parameter;
     std::string indicator;
     while (configRead(readedFile, parameter, indicator)) {
@@ -95,6 +97,8 @@ void Lang::set_lang() {
         else if (parameter == "LANG_LABEL_GAME_CLEAR")       LANG_LABEL_GAME_CLEAR       = indicator;
         else if (parameter == "LANG_LABEL_GAME_RECOVERY")    LANG_LABEL_GAME_RECOVERY    = indicator;
         else if (parameter == "LANG_BUTTON_EXTENSIONS")      LANG_BUTTON_EXTENSIONS      = indicator;
+        else if (parameter == "LANG_LABEL_CHOOSE_LANG")      LANG_LABEL_CHOOSE_LANG      = indicator;
+        else if (parameter == "LANG_LABEL_CUSTOM_LANG")      LANG_LABEL_CUSTOM_LANG      = indicator;
         // else if (parameter == "")  = indicator;
     }
 }

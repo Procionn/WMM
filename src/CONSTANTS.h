@@ -16,6 +16,7 @@ static std::string PRESETS      = "presets/";
 static std::string COLLECTIONS  = "collections/";
 static std::string TEMP         = "temp/";
 static std::string MLBW         = "ModListByWirus/";
+static std::string LANG         = "lang/";
 static std::string EXPANSION    = ".wmml";
 static std::string EXPANSION2   = ".txt";
 static std::string EXPANSION3   = ".ini";

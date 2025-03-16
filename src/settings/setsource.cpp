@@ -59,33 +59,15 @@ setsource::setsource() {
     lastlist->addWidget(recoveryBTN);
 
     dirBTN->setText(QString::fromStdString(CConfigs::CONFIG_GAME_PATH));
-    connect(dirBTN, &QPushButton::clicked, [=]{
-        if (CConfigs::CONFIG_GAME != "None") {
-            buffer = QFileDialog::getOpenFileName(
-                nullptr,
-                QString::fromStdString(Lang::LANG_LABEL_CHOOSE_GAME_FILE),
-                "",
-                QString::fromStdString(Lang::LANG_LABEL_ALL_FILE + " (*.exe)"));
-            if (!buffer.isEmpty()) {
-                dirBTN->setText(buffer);
-            }
-        }
-        else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R33);
-    });
-    connect(backupBTN, &QPushButton::clicked, [=]{
-        if (CConfigs::CONFIG_GAME != "None") {
-            CGameConfig config;
-            config.game_dir_backup();
-        }
-        else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R32);
-    });
+    connect(dirBTN, &QPushButton::clicked, [=]{chooseExe(dirBTN);});
+    connect(backupBTN, &QPushButton::clicked, [=]{createBackup();});
     connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
     connect(clearBTN, &QPushButton::clicked, [=]{CGameConfig config;
-        config.symlink_deliting();
-    });
+                                                 config.symlink_deliting();
+                                                });
     connect(recoveryBTN, &QPushButton::clicked, [=]{CGameConfig config;
-        config.game_recovery();
-    });
+                                                    config.game_recovery();
+                                                   });
 }
 
 
@@ -106,6 +88,33 @@ void setsource::chooseGame (QPushButton* parent) {
         lastBTN = button;
         content->addWidget(button);
         connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
-        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget; parent->setText(QString::fromStdString(game)); dialog->reject();});
+        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget;
+                                                          parent->setText(QString::fromStdString(button->name));
+                                                          dialog->reject();
+                                                         });
     }
+}
+
+
+void setsource::chooseExe (QPushButton* dirBTN) {
+    if (CConfigs::CONFIG_GAME != "None") {
+        buffer = QFileDialog::getOpenFileName(
+            nullptr,
+            QString::fromStdString(Lang::LANG_LABEL_CHOOSE_GAME_FILE),
+            "",
+            QString::fromStdString(Lang::LANG_LABEL_ALL_FILE + " (*.exe)"));
+        if (!buffer.isEmpty()) {
+            dirBTN->setText(buffer);
+        }
+    }
+    else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R33);
+}
+
+
+void setsource::createBackup () {
+    if (CConfigs::CONFIG_GAME != "None") {
+        CGameConfig config;
+        config.game_dir_backup();
+    }
+    else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R32);
 }

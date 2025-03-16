@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QFileDialog>
+#include <iostream>
 
 
 CSettings::CSettings () {
@@ -53,6 +54,11 @@ void CSettings::save () {
     CConfigs core;
     if (slist->ss->target != nullptr) {
         CConfigs::CONFIG_GAME = slist->ss->target->name;
+        core.config_save();
+    }
+    if (slist->sl->target != nullptr) {
+        CConfigs::CONFIG_LANGUAGES = LANG + slist->sl->target->name + EXPANSION3;
+        std::cout << CConfigs::CONFIG_LANGUAGES << std::endl;
         core.config_save();
     }
 }
