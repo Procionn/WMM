@@ -58,8 +58,10 @@ void CSettings::save () {
     }
     if (slist->sl->target != nullptr) {
         CConfigs::CONFIG_LANGUAGES = LANG + slist->sl->target->name + EXPANSION3;
-        std::cout << CConfigs::CONFIG_LANGUAGES << std::endl;
         core.config_save();
+        Lang newlang;
+        newlang.set_lang();
+        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_NEW_LANG);
     }
 }
 

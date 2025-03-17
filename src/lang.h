@@ -49,6 +49,7 @@ public:
     static std::string LANG_LABEL_GAME_RECOVERY;
     static std::string LANG_LABEL_CHOOSE_LANG;
     static std::string LANG_LABEL_CUSTOM_LANG;
+    static std::string LANG_LABEL_NEW_LANG;
     void set_lang();
 };
 

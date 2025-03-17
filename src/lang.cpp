@@ -49,6 +49,7 @@ std::string Lang::LANG_LABEL_GAME_CLEAR;
 std::string Lang::LANG_LABEL_GAME_RECOVERY;
 std::string Lang::LANG_LABEL_CHOOSE_LANG;
 std::string Lang::LANG_LABEL_CUSTOM_LANG;
+std::string Lang::LANG_LABEL_NEW_LANG;
 
 void Lang::set_lang() {
     std::ifstream readedFile (CConfigs::CONFIG_LANGUAGES);
@@ -99,6 +100,7 @@ void Lang::set_lang() {
         else if (parameter == "LANG_BUTTON_EXTENSIONS")      LANG_BUTTON_EXTENSIONS      = indicator;
         else if (parameter == "LANG_LABEL_CHOOSE_LANG")      LANG_LABEL_CHOOSE_LANG      = indicator;
         else if (parameter == "LANG_LABEL_CUSTOM_LANG")      LANG_LABEL_CUSTOM_LANG      = indicator;
+        else if (parameter == "LANG_LABEL_NEW_LANG")         LANG_LABEL_NEW_LANG         = indicator;
         // else if (parameter == "")  = indicator;
     }
 }
