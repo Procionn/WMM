@@ -5,7 +5,7 @@
 #include "core.h"
 #include "core.h"
 #include "dnd.h"
-#include "patterns.h"
+#include "patterns\CLinkTumbler.h"
 #include "wmml.h"
 #include "methods.h"
 
@@ -217,6 +217,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         double sz12 = spl2->size().width();
         double sz22 = spl2->size().height();
         double sz32 = sz12 / (sz22 / 10.5);
+
         QTimer::singleShot(0, buttonWidget, [buttonWidget, sz31, sz32]() {
             buttonWidget->spl1->moveSplitter(sz31, 1);
             buttonWidget->spl2->moveSplitter(sz32, 1);

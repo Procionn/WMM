@@ -37,7 +37,6 @@ wmml::wmml (std::filesystem::path file, int OIT) : targetFile(file, std::ios::bi
 
 wmml::~wmml() {
     targetFile.close();
-    // std::cout << filename << " is closed" << std::endl;
 }
 
 unsigned short int wmml::size() {return ObjectsInThread;}

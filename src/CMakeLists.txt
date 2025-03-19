@@ -42,12 +42,17 @@ set(PROJECT_SOURCES
     settings/setsupport.h settings/setsupport.cpp
     settings/setsource.h settings/setsource.cpp
     settings/setextensions.h settings/setextensions.cpp
+    window/modlist/cobjectscontainer.h window/modlist/cobjectscontainer.cpp
+    window/modlist/cobject.h window/modlist/cobject.cpp
+    patterns/CSwitchButton.h patterns/CSwitchButton.cpp
+    patterns/CToggledButton.h patterns/CToggledButton.cpp
 )
 
 
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    patterns/CLinkTumbler.h patterns/CLinkTumbler.cpp
 )
 
 

@@ -1,8 +1,6 @@
 #include "patterns.h"
-#include "CONSTANTS.h"
 #include "lang.h"
 #include "methods.h"
-#include "dialogs.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -139,143 +137,6 @@ CScrollWindow::CScrollWindow (QVBoxLayout* parent, QHBoxLayout* child) {
 
 
 
-CToggledButton::CToggledButton(std::string setName, bool type) {
-    name = setName;
-    selected = type;
-    setText(QString::fromStdString(setName));
-    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-}
-CToggledButton::CToggledButton(QWidget* parent, std::string setName, bool type) : QPushButton(parent) {
-    name = setName;
-    selected = type;
-    setText(QString::fromStdString(setName));
-    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-}
-CToggledButton::CToggledButton(QVBoxLayout* parent, std::string setName, bool type){
-    parent->addWidget(this);
-    name = setName;
-    selected = type;
-    setText(QString::fromStdString(setName));
-    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-}
-CToggledButton::CToggledButton(QHBoxLayout* parent, std::string setName, bool type){
-    parent->addWidget(this);
-    name = setName;
-    selected = type;
-    setText(QString::fromStdString(setName));
-    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-}
-
-void CToggledButton::SetLeftAlignment(bool type) {
-    if (type) {
-        setStyleSheet("text-align: left; padding-left: 10px; background-color: #31363b;");
-        leftAlignment = true;
-    }
-}
-
-void CToggledButton::ChangeOfState() {
-    if (selected) {
-        emit untoggled(this, name);
-        this->setText(QString::fromStdString(name));
-        selected = false;
-        if (leftAlignment) setStyleSheet(QString::fromStdString(leftAlign + untoggledColor));
-        else setStyleSheet(QString::fromStdString(untoggledColor));
-    }
-    else {
-        emit toggled(this, name);
-        this->setText(QString::fromStdString(TBC1 + name + TBC2));
-        selected = true;
-        if (leftAlignment) setStyleSheet(QString::fromStdString(leftAlign + toggledColor));
-        else setStyleSheet(QString::fromStdString(toggledColor));
-    }
-}
-
-void CToggledButton::setTheme(std::string type) {
-    if (type == "base") {
-        untoggledColor = " background-color: #31363b;";
-        toggledColor = " background-color: #444b52;";
-    }
-    else if (type == "orange") {
-        toggledColor = " background-color: #d67418";
-    }
-    else if (type == "red") {
-        toggledColor = " background-color: #c22124";
-    }
-    if (leftAlignment) setStyleSheet(QString::fromStdString(leftAlign + untoggledColor));
-    else setStyleSheet(QString::fromStdString(untoggledColor));
-}
-
-void CToggledButton::setColor(std::string toggled, std::string untoggled){
-    untoggledColor = " background-color: " + untoggled + ";";
-    toggledColor   = " background-color: " + toggled   + ";";
-}
-void CToggledButton::isTarget(bool type) {
-    if (type)
-        ChangeOfState();
-}
-
-
-
-
-
-
-CSwitchButton::CSwitchButton(QWidget* parent) : CToggledButton(parent){setText("OFF");}
-
-void CSwitchButton::ChangeOfState() {
-    if (selected) {
-        emit untoggled(this);
-        this->setText("OFF");
-        selected = false;
-        setStyleSheet(QString::fromStdString(untoggledColor));
-    }
-    else {
-        emit toggled(this);
-        this->setText("ON");
-        selected = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
-    }
-}
-
-
-
-
-
-
-CLinkTumbler::CLinkTumbler(std::string name, CLinkTumbler* linked, QWidget* parent) : CToggledButton(parent, name){
-    this->name = name;
-    if (linked != nullptr) {
-        link = linked;
-        connect(this, &CLinkTumbler::clicked, linked, &CLinkTumbler::reset);
-        connect(linked, &CLinkTumbler::clicked, this, &CLinkTumbler::reset);
-        while (linked->link != nullptr) {
-            linked = linked->link;
-            connect(this, &CLinkTumbler::clicked, linked, &CLinkTumbler::reset);
-            connect(linked, &CLinkTumbler::clicked, this, &CLinkTumbler::reset);
-        }
-    }
-}
-
-void CLinkTumbler::ChangeOfState() {
-    if (!selected) {
-        emit toggled(this, name);
-        selected = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
-        if (leftAlignment) setStyleSheet(QString::fromStdString(leftAlign + toggledColor));
-        else setStyleSheet(QString::fromStdString(toggledColor));
-    }
-}
-void CLinkTumbler::reset() {
-    if (selected) {
-        selected = false;
-        if (leftAlignment) setStyleSheet(QString::fromStdString(leftAlign + untoggledColor));
-        else setStyleSheet(QString::fromStdString(untoggledColor));
-    }
-}
-
-
-
-
-
 CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget* parent) : CLinkTumbler(name){
     this->name = name;
     if (linked != nullptr) {
@@ -312,6 +173,7 @@ void CObjectsButton::DELETE() {
 
 
 
-CInpadsButton::CInpadsButton(QVBoxLayout* parent, std::string setName, bool type) : CToggledButton(parent, setName){
+CInpadsButton::CInpadsButton(QVBoxLayout* parent, std::string setName, bool type) : CToggledButton(setName){
     this->type = type;
+    parent->addWidget(this);
 }
