@@ -65,7 +65,9 @@ std::string stc::cwmm::modsURL (const std::string& id) {
     std::string tmp = game.config_url;
     size_t mark1 = tmp.find_last_of('[');
     size_t mark2 = tmp.find_last_of(']');
+#ifndef NDEBUG
     std::cout << "Opening URL: " << (tmp.substr(0, mark1) + id +  tmp.substr(mark2 + 1)) << std::endl;
+#endif
     return (tmp.substr(0, mark1) + id +  tmp.substr(mark2 + 1));
 }
 

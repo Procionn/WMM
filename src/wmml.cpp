@@ -169,9 +169,9 @@ void wmml::replace (int& tag, std::vector<std::string>& in) {
     }
     gv[tag] = in;
     targetFile.close();
-    std::ofstream rmfile(filename.c_str(), std::ios::binary | std::ios::trunc);
+    std::ofstream rmfile(filename, std::ios::binary | std::ios::trunc);
     rmfile.close();
-    targetFile.open(filename.c_str(), std::ios::binary | std::ios::in | std::ios::out);
+    targetFile.open(filename, std::ios::binary | std::ios::in | std::ios::out);
     targetFile.seekp(0);
     targetFile.write(reinterpret_cast<const char*>(&ObjectsInThread), sizeof(ObjectsInThread));
     for (std::vector<std::string> v : gv) {
@@ -180,20 +180,28 @@ void wmml::replace (int& tag, std::vector<std::string>& in) {
 }
 
 void wmml::remove (int& tag) {
+    bool search = true;
     reset();
     int fn = sizeRequest();
+    --fn;
     std::vector<std::vector<std::string>> gv(fn);
     reset();
-    for (int i = 0; i != fn; ++i) {
-        if (i == tag) continue;
+    for (int i = 0; i != fn;) {
         std::vector<std::string> v(ObjectsInThread);
         read(v);
+        if (i == tag)
+            if (search) {
+                search = false;
+                continue;
+            }
+        // v[0] = (std::stoi(v[0]) - 1);
         gv[i] = v;
+        ++i;
     }
     targetFile.close();
-    std::ofstream rmfile(filename.c_str(), std::ios::binary | std::ios::trunc);
+    std::ofstream rmfile(filename, std::ios::binary | std::ios::trunc);
     rmfile.close();
-    targetFile.open(filename.c_str(), std::ios::binary | std::ios::in | std::ios::out);
+    targetFile.open(filename, std::ios::binary | std::ios::in | std::ios::out);
     targetFile.seekp(0);
     targetFile.write(reinterpret_cast<const char*>(&ObjectsInThread), sizeof(ObjectsInThread));
     for (std::vector<std::string> v : gv) {

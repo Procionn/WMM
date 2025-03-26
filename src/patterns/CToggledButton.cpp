@@ -12,21 +12,22 @@ CToggledButton::CToggledButton(QWidget* parent, std::string setName, bool type) 
     setText(QString::fromStdString(setName));
     connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
 }
-// CToggledButton::CToggledButton(QVBoxLayout* parent, std::string setName, bool type){
-//     parent->addWidget(this);
-//     name = setName;
-//     selected = type;
-//     setText(QString::fromStdString(setName));
-//     connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-// }
-// CToggledButton::CToggledButton(QHBoxLayout* parent, std::string setName, bool type){
-//     parent->addWidget(this);
-//     name = setName;
-//     selected = type;
-//     setText(QString::fromStdString(setName));
-//     connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
-// }
-
+#if 0
+CToggledButton::CToggledButton(QVBoxLayout* parent, std::string setName, bool type){
+    parent->addWidget(this);
+    name = setName;
+    selected = type;
+    setText(QString::fromStdString(setName));
+    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
+}
+CToggledButton::CToggledButton(QHBoxLayout* parent, std::string setName, bool type){
+    parent->addWidget(this);
+    name = setName;
+    selected = type;
+    setText(QString::fromStdString(setName));
+    connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
+}
+#endif
 void CToggledButton::SetLeftAlignment(bool type) {
     if (type) {
         setStyleSheet("text-align: left; padding-left: 10px; background-color: #31363b;");

@@ -9,11 +9,9 @@ class CLinkTumbler : public CToggledButton
 public:
     CLinkTumbler* link = nullptr;
     CLinkTumbler(std::string name = "", CLinkTumbler* linked = nullptr, QWidget* parent = nullptr);
-private slots:
+protected slots:
     void ChangeOfState();
     void reset();
-private:
-    friend class CObjectsButton;
 };
 
 

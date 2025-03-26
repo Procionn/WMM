@@ -168,9 +168,9 @@ CContentList::CContentList () {
     QVBoxLayout* BaseContainer = new QVBoxLayout();
     setLayout(BaseContainer);
     
-    QFrame* sbFrame = new QFrame;
-    QHBoxLayout* splitterBox = new QHBoxLayout(sbFrame);
-    BaseContainer->addWidget(sbFrame);
+    QFrame* siFrame = new QFrame; // subinfo Fareme
+    QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
+    BaseContainer->addWidget(siFrame);
     
     spl1 = new QSplitter;
     spl2 = new QSplitter;
@@ -188,9 +188,8 @@ CContentList::CContentList () {
     spl2->addWidget(lblVersion);
     spl2->addWidget(lblType);
     
-    contentList = new QVBoxLayout;
-    contentList->setAlignment(Qt::AlignTop);
-    CScrollWindow* scrollWidnow = new CScrollWindow(BaseContainer, contentList);
+    contentList = new CObjectsContainer;
+    BaseContainer->addWidget(contentList);
     dnd = new CDND(BaseContainer, Lang::LANG_LABEL_DND);
 }
 
@@ -198,17 +197,14 @@ CContentList::CContentList () {
 void CContentList::updateList (CObjectsButton* pointer, bool type) {
     targetName = pointer->name;
     targetType = type;
-    QLayoutItem* child;
-    while ((child = contentList->takeAt(0)) != nullptr) {
-        delete child->widget(); 
-        delete child;
-    }
+    contentList->clear();
     if (type) sPath = stc::cwmm::ram_preset(targetName);
     else      sPath = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
     std::vector<std::string> v(GRID_WIDTH);
     while (file.read(v)) {
-        CContentBox* buttonWidget = new CContentBox(contentList, v);
+        CObject* buttonWidget = new CObject(v);
+        contentList->add(buttonWidget);
         
         // Crutch. It will need to be fixed
         double sz11 = spl1->size().width();
@@ -226,33 +222,29 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         
         connect(spl1, &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
         connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
-        connect(buttonWidget, &CContentBox::ON,     this, &CContentList::changeStatusOn);
-        connect(buttonWidget, &CContentBox::OFF,    this, &CContentList::changeStatusOff);
-        connect(buttonWidget, &CContentBox::remove, this, &CContentList::deleting);
+        connect(buttonWidget, &CObject::ON,     this, &CContentList::changeStatusOn);
+        connect(buttonWidget, &CObject::OFF,    this, &CContentList::changeStatusOff);
+        connect(buttonWidget, &CObject::remove, this, &CContentList::deleting);
     }
 }
 
 void CContentList::clear () {
-    QLayoutItem* child;
-    while ((child = contentList->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
-    }
+    contentList->clear();
 }
 
-void CContentList::changeStatusOn(CContentBox* toggledElements) {
+void CContentList::changeStatusOn(CObject* toggledElements) {
     wmml file(sPath);
     file.overwriting(toggledElements->index, 5, "1");
 }
-void CContentList::changeStatusOff(CContentBox* toggledElements) {
+void CContentList::changeStatusOff(CObject* toggledElements) {
     wmml file(sPath);
     file.overwriting(toggledElements->index, 5, "0");
 }
-void CContentList::deleting (CContentBox* pointer) {
-    std::string path;
-    if (targetType) path = stc::cwmm::ram_preset(targetName);
-    else            path = stc::cwmm::ram_collection(targetName);
-    wmml file(path);
+void CContentList::deleting (CObject* pointer) {
+    // std::string path;
+    // if (targetType) path = stc::cwmm::ram_preset(targetName);
+    // else            path = stc::cwmm::ram_collection(targetName);
+    wmml file(sPath);
     file.remove(pointer->index);
     delete pointer;
 }

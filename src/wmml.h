@@ -10,7 +10,7 @@ class wmml
 {
 private:
     unsigned short int ObjectsInThread = 0;
-    std::string filename;
+    std::filesystem::path filename;
     std::fstream targetFile;
 public:
     wmml(std::filesystem::path file);

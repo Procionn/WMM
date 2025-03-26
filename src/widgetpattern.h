@@ -4,6 +4,8 @@
 #include "dialogs.h"
 #include "patterns.h"
 #include "dnd.h"
+#include "window/modlist/cobject.h"
+#include "window/modlist/cobjectscontainer.h"
 
 #include <string>
 #include <vector>
@@ -44,7 +46,7 @@ class CContentList : public QWidget
 public:
     QSplitter* spl1;
     QSplitter* spl2;
-    QVBoxLayout* contentList;
+    CObjectsContainer* contentList;
     QWidget* contentWidget;
     CDND* dnd;
     
@@ -57,9 +59,9 @@ public slots:
     void updateList(CObjectsButton* pointer, bool type);
     void clear();
 private slots:
-    void changeStatusOn(CContentBox* toggledElements);
-    void changeStatusOff(CContentBox* toggledElements);
-    void deleting(CContentBox* pointer);
+    void changeStatusOn(CObject* toggledElements);
+    void changeStatusOff(CObject* toggledElements);
+    void deleting(CObject* pointer);
 };
 
 #endif // WIDGETPATTERN_H
