@@ -109,8 +109,6 @@ void stc::fs::remove_all (const std::filesystem::path& path) {
 void stc::net::openURL (const std::string& url) {
 #ifdef _WIN32
     std::string command = "start " + url;
-#elif __APPLE__
-    std::string command = "open " + url;
 #elif __linux__
     std::string command = "xdg-open " + url;
 #else

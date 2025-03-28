@@ -29,23 +29,26 @@ set(PROJECT_SOURCES
     window.h window.cpp
 
     CONSTANTS.h
-    core.h core.cpp
-    lang.h lang.cpp
-    dialogs.h dialogs.cpp
-    widgetpattern.h widgetpattern.cpp
-    dnd.h dnd.cpp
-    patterns.h patterns.cpp
-    wmml.h wmml.cpp
-    methods.cpp methods.h
-    settings/settings.h settings/settings.cpp
-    settings/setlang.h settings/setlang.cpp
-    settings/setsupport.h settings/setsupport.cpp
-    settings/setsource.h settings/setsource.cpp
-    settings/setextensions.h settings/setextensions.cpp
-    window/modlist/cobjectscontainer.h window/modlist/cobjectscontainer.cpp
-    window/modlist/cobject.h window/modlist/cobject.cpp
-    patterns/CSwitchButton.h patterns/CSwitchButton.cpp
-    patterns/CToggledButton.h patterns/CToggledButton.cpp
+    core.h                              core.cpp
+    lang.h                              lang.cpp
+    dialogs.h                           dialogs.cpp
+    widgetpattern.h                     widgetpattern.cpp
+    dnd.h                               dnd.cpp
+    patterns.h                          patterns.cpp
+    wmml.h                              wmml.cpp
+    methods.cpp                         methods.h
+    settings/settings.h                 settings/settings.cpp
+    settings/setlang.h                  settings/setlang.cpp
+    settings/setsupport.h               settings/setsupport.cpp
+    settings/setsource.h                settings/setsource.cpp
+    settings/setextensions.h            settings/setextensions.cpp
+    window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
+    window/modlist/cobject.h            window/modlist/cobject.cpp
+    patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
+    patterns/CToggledButton.h           patterns/CToggledButton.cpp
+    patterns/CSmartList.h
+    patterns/CSmartObject.h             patterns/CSmartObject.cpp
+    patterns/templatelist.h             patterns/templatelist.cpp
 )
 
 

@@ -36,8 +36,8 @@ CObject::CObject(const std::vector<std::string>& v) {
     setStyleSheet(QString::fromStdString(untoggledColor));
     // This signal is captured, supplemented with information about this widget,
     // and redirected to the parent container for processing.
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, &QWidget::customContextMenuRequested, this, &CObject::rightClickController);
+    // setContextMenuPolicy(Qt::CustomContextMenu);
+    // connect(this, &QWidget::customContextMenuRequested, this, &CObject::rightClickController);
 }
 
 
@@ -65,20 +65,20 @@ void CObject::INFO() {
     stc::net::openURL(stc::cwmm::modsURL(id));
 }
 
-void CObject::mousePressEvent (QMouseEvent* event) {
-    emit clicked(event, this);
-}
+// void CObject::mousePressEvent (QMouseEvent* event) {
+//     emit clicked(event, this);
+// }
 
-void CObject::ChangeOfState () {
-    if (toggl_condition)  {
-        toggl_condition = false;
-        setStyleSheet(QString::fromStdString(untoggledColor));
-    }
-    else {
-        toggl_condition = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
-    }
-}
+// void CObject::ChangeOfState () {
+//     if (toggl_condition)  {
+//         toggl_condition = false;
+//         setStyleSheet(QString::fromStdString(untoggledColor));
+//     }
+//     else {
+//         toggl_condition = true;
+//         setStyleSheet(QString::fromStdString(toggledColor));
+//     }
+// }
 
 void CObject::turnOff () {
     if (toggl_condition) {
@@ -95,9 +95,9 @@ void CObject::turnOn () {
 }
 
 
-void CObject::rightClickController (const QPoint& pos) {
-    emit rightClick(pos, this);
-}
+// void CObject::rightClickController (const QPoint& pos) {
+//     emit rightClick(pos, this);
+// }
 
 
 

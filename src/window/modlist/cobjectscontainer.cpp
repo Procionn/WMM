@@ -10,7 +10,7 @@ CObjectsContainer::CObjectsContainer() {
     scrolledWidget->setLayout(list);
 
 }
-
+#if 0
 void CObjectsContainer::add (CObject* target) {
     list->addWidget(target);
     childList.emplace_back(target);
@@ -76,6 +76,13 @@ void CObjectsContainer::rightClickController (const QPoint& pos, CObject* target
         connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
         contextMenu->exec(this->mapToGlobal(pos));
     }
+}
+#endif
+void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
+    QMenu* contextMenu = new QMenu(this);
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
+    contextMenu->exec(this->mapToGlobal(pos));
 }
 
 void CObjectsContainer::deletionSignals () {

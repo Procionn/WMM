@@ -4,6 +4,7 @@
 #include "../../lang.h"
 #include "../../methods.h"
 #include "../../patterns/CSwitchButton.h"
+#include "../../patterns/CSmartObject.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -16,7 +17,7 @@
 
 class CSplitter;
 
-class CObject : public QFrame
+class CObject : public CSmartObject
 {
     Q_OBJECT
 public:
@@ -25,7 +26,6 @@ public:
     std::string name;
     std::string type;
     std::string version;
-    bool toggl_condition = false;
 protected:
     std::string untoggledColor = " background-color: #1e1e1e;";
     std::string toggledColor = " background-color: #444b52;";
@@ -39,23 +39,17 @@ public:
     CSwitchButton* switcher;
 public:
     CObject(const std::vector<std::string>& v);
-private:
-    void mousePressEvent(QMouseEvent* event) override;
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);
     void remove(CObject* pointer);
-    void clicked(QMouseEvent* event, CObject* target);
-    void rightClick(const QPoint& pos, CObject* target);
 public slots:
-    void ChangeOfState();
-    void turnOff();
-    void turnOn();
-    void context(const QPoint& pos);
+    void turnOff() override;
+    void turnOn() override;
+    void context(const QPoint& pos) override;
     void DELETE();
 private slots:
     void INFO();
-    void rightClickController(const QPoint& pos);
 };
 
 

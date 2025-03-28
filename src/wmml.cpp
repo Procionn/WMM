@@ -194,7 +194,6 @@ void wmml::remove (int& tag) {
                 search = false;
                 continue;
             }
-        // v[0] = (std::stoi(v[0]) - 1);
         gv[i] = v;
         ++i;
     }
