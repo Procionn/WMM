@@ -1,7 +1,7 @@
 #include "dnd.h"
 #include "CONSTANTS.h"
 #include "core.h"
-#include "dialogs.h"
+#include "patterns/ERRORdialog.h"
 #include "lang.h"
 
 #include <QLabel>

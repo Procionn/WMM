@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "dialogs.h"
+#include "dialog_window/cinpad/CInpad.h"
 #include "widgetpattern.h"
 
 #include <QMainWindow>

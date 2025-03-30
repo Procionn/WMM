@@ -2,66 +2,6 @@
 #include "lang.h"
 #include "methods.h"
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QScrollArea>
-#include <QFrame>
-#include <QMenu>
-#include <string>
-#include <iostream>
-#include <vector>
-
-
-CScrollWindow::CScrollWindow (QWidget* parent, QVBoxLayout* child) : QScrollArea(parent) {
-    QVBoxLayout* lay = new QVBoxLayout(parent);
-    lay->addWidget(this);
-    setWidgetResizable(true);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-CScrollWindow::CScrollWindow (QWidget* parent, QHBoxLayout* child) : QScrollArea(parent) {
-    QVBoxLayout* lay = new QVBoxLayout(parent);
-    lay->addWidget(this);
-    setWidgetResizable(true);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-
-CScrollWindow::CScrollWindow (QVBoxLayout* parent, QVBoxLayout* child) {
-    setWidgetResizable(true);
-    parent->addWidget(this);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-CScrollWindow::CScrollWindow (QHBoxLayout* parent, QVBoxLayout* child) {
-    setWidgetResizable(true);
-    parent->addWidget(this);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-CScrollWindow::CScrollWindow (QHBoxLayout* parent, QHBoxLayout* child) {
-    setWidgetResizable(true);
-    parent->addWidget(this);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-CScrollWindow::CScrollWindow (QVBoxLayout* parent, QHBoxLayout* child) {
-    setWidgetResizable(true);
-    parent->addWidget(this);
-    QWidget* scrolledWidget = new QWidget;
-    this->setWidget(scrolledWidget);
-    scrolledWidget->setLayout(child);
-}
-
-
-
-
-
 CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget* parent) : CLinkTumbler(name){
     this->name = name;
     if (linked != nullptr) {
@@ -87,18 +27,7 @@ void CObjectsButton::context (const QPoint &pos) {
 }
 
 void CObjectsButton::DELETE() {
-    if (this->type) std::filesystem::remove(stc::cwmm::ram_preset(this->name));
-    else            std::filesystem::remove(stc::cwmm::ram_collection(this->name));
+    if (type) std::filesystem::remove(stc::cwmm::ram_preset(name));
+    else      std::filesystem::remove(stc::cwmm::ram_collection(name));
     emit remove(this);
-}
-
-
-
-
-
-
-
-CInpadsButton::CInpadsButton(QVBoxLayout* parent, std::string setName, bool type) : CToggledButton(setName){
-    this->type = type;
-    parent->addWidget(this);
 }

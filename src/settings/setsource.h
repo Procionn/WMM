@@ -1,8 +1,9 @@
 #ifndef SETSOURCE_H
 #define SETSOURCE_H
 
+#include "../patterns/CScrollWindow.h"
+#include "../patterns/ERRORdialog.h"
 #include "../patterns.h"
-#include "../dialogs.h"
 #include "../CONSTANTS.h"
 #include "../lang.h"
 

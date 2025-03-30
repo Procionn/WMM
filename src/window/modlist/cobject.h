@@ -12,8 +12,6 @@
 #include <QSplitter>
 #include <QMouseEvent>
 #include <string>
-#include <vector>
-#include <iostream>
 
 class CSplitter;
 

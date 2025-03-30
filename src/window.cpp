@@ -1,6 +1,5 @@
 #include "window.h"
 #include "lang.h"
-#include "dialogs.h"
 #include "widgetpattern.h"
 #include "CONSTANTS.h"
 #include "settings/settings.h"

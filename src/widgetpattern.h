@@ -1,7 +1,9 @@
 #ifndef WIDGETPATTERN_H
 #define WIDGETPATTERN_H
 
-#include "dialogs.h"
+#include "dialog_window/CNewObjectDialog.h"
+#include "patterns/ERRORdialog.h"
+#include "patterns/CScrollWindow.h"
 #include "patterns.h"
 #include "dnd.h"
 #include "window/modlist/cobject.h"

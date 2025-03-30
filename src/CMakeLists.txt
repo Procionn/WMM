@@ -31,7 +31,7 @@ set(PROJECT_SOURCES
     CONSTANTS.h
     core.h                              core.cpp
     lang.h                              lang.cpp
-    dialogs.h                           dialogs.cpp
+
     widgetpattern.h                     widgetpattern.cpp
     dnd.h                               dnd.cpp
     patterns.h                          patterns.cpp
@@ -49,13 +49,20 @@ set(PROJECT_SOURCES
     patterns/CSmartList.h
     patterns/CSmartObject.h             patterns/CSmartObject.cpp
     patterns/templatelist.h             patterns/templatelist.cpp
+    patterns/CLinkTumbler.h             patterns/CLinkTumbler.cpp
+    patterns/CFastDialog.h              patterns/CFastDialog.cpp
+    patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
+    dialog_window/CNewObjectDialog.h    dialog_window/CNewObjectDialog.cpp
+    dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
+    dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
+    patterns/CScrollWindow.h
 )
 
 
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    patterns/CLinkTumbler.h patterns/CLinkTumbler.cpp
+    dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
 )
 
 

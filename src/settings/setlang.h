@@ -1,6 +1,8 @@
 #ifndef SETLANG_H
 #define SETLANG_H
 
+#include "../patterns/CScrollWindow.h"
+#include "../patterns/CFastDialog.h"
 #include "../patterns.h"
 
 #include <QWidget>

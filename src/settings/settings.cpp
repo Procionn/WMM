@@ -1,8 +1,7 @@
 #include "settings.h"
 #include "../CONSTANTS.h"
-#include "../patterns.h"
+#include "../patterns/CScrollWindow.h"
 #include "../lang.h"
-#include "../dialogs.h"
 
 #include <QDialog>
 #include <QVBoxLayout>
@@ -71,7 +70,7 @@ void CSettings::save () {
 
 SObjects::SObjects () {
     list = new QVBoxLayout;
-    CScrollWindow* scrollWindow = new CScrollWindow(this, list);
+    addScrollable(this, list);
     sorce = new CLinkTumbler(Lang::LANG_BUTTON_SORCE);
     lang = new CLinkTumbler(Lang::LANG_BUTTON_LANG, sorce);
     support = new CLinkTumbler(Lang::LANG_BUTTON_SUPPORT, lang);

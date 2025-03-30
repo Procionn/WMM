@@ -1,6 +1,5 @@
 #include "widgetpattern.h"
 #include "lang.h"
-#include "dialogs.h"
 #include "CONSTANTS.h"
 #include "core.h"
 #include "core.h"
@@ -39,7 +38,7 @@ CObjectList::CObjectList () {
     privateObjectList->addWidget(line);
     
     objectList = new QVBoxLayout();
-    CScrollWindow* scrollWidnow = new CScrollWindow(privateObjectList, objectList);
+    addScrollable(privateObjectList, objectList);
     privateObjectList->setAlignment(Qt::AlignTop);
     objectList->setAlignment(Qt::AlignTop);
     
@@ -168,7 +167,7 @@ CContentList::CContentList () {
     QVBoxLayout* BaseContainer = new QVBoxLayout();
     setLayout(BaseContainer);
     
-    QFrame* siFrame = new QFrame; // subinfo Fareme
+    QFrame* siFrame = new QFrame; // subinfo Frame
     QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
     BaseContainer->addWidget(siFrame);
     

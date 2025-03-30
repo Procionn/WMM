@@ -2,7 +2,6 @@
 #include "../lang.h"
 #include "../core.h"
 #include "../CONSTANTS.h"
-#include "../dialogs.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -17,7 +16,7 @@ setlang::setlang () {
     QLabel* lang = new QLabel(QString::fromStdString(Lang::LANG_LABEL_CHOOSE_LANG));
     QLabel* community = new QLabel(QString::fromStdString(Lang::LANG_LABEL_CUSTOM_LANG).replace("\\n", "\n"));
     QPushButton* button = new QPushButton(QString::fromStdString(strlang.substr(0, strlang.size() - INI_MAIN_PART)));
-    CScrollWindow* scroll = new CScrollWindow(this, list);
+    addScrollable(this, list);
 
     list->setAlignment(Qt::AlignTop);
     hbox->setAlignment(Qt::AlignLeft);
@@ -35,7 +34,7 @@ setlang::setlang () {
 void setlang::chooseLang (QPushButton* parent) {
     CFastDialog* chooser = new CFastDialog;
     QVBoxLayout* list = new QVBoxLayout;
-    CScrollWindow* scroll = new CScrollWindow(chooser->list, list);
+    addScrollable(chooser->list, list);
 
     chooser->show();
     list->setAlignment(Qt::AlignTop);

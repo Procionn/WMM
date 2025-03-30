@@ -10,7 +10,7 @@ setsource::setsource() {
     lastlist = new QVBoxLayout;
     QWidget* firstwidget = new QWidget;
     QWidget* lastwidget = new QWidget;
-    CScrollWindow* scrollWindow = new CScrollWindow(this, list);
+    addScrollable(this, list);
     QLabel* dir = new QLabel(QString::fromStdString(Lang::LANG_LABEL_DIRECTORY_CHOOSE));
     QLabel* game = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CHOOSE));
     QLabel* backup = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_BACKUP));
@@ -75,7 +75,7 @@ setsource::setsource() {
 void setsource::chooseGame (QPushButton* parent) {
     CFastDialog* dialog = new CFastDialog;
     QVBoxLayout* content = new QVBoxLayout;
-    CScrollWindow* scrollwindow = new CScrollWindow(dialog->list, content);
+    addScrollable(dialog->list, content);
 
     dialog->show();
     content->setAlignment(Qt::AlignTop);

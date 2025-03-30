@@ -9,8 +9,6 @@
 class CObjectsContainer final : public CSmartList<CObject>
 {
     Q_OBJECT
-private:
-    CObject* lastTarget = nullptr;
 public:
     CObjectsContainer();
 private slots:
