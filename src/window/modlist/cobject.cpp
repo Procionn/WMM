@@ -1,6 +1,6 @@
 #include "cobject.h"
 
-CObject::CObject(const std::vector<std::string>& v) {
+CObject::CObject(const std::vector<std::string>& v, bool& counter) {
     Box = new QHBoxLayout(this);
     Lname = new QLabel(QString::fromStdString(v[1]));
     Lversion = new QLabel(QString::fromStdString(v[2]));
@@ -18,8 +18,10 @@ CObject::CObject(const std::vector<std::string>& v) {
     else             switcher->isTarget(false);
 
     Lname->resize(400, 0);
-    setFrameShape(QFrame::Panel);
-    setFrameShadow(QFrame::Sunken);
+    // setFrameShape(QFrame::Panel);
+    // setFrameShadow(QFrame::Sunken);
+    setFrameShape(QFrame::Box);
+    setFrameShadow(QFrame::Raised);
     // or use it ->
     // setFrameShadow(QFrame::Raised);
     spl1 = new CSplitter(Box);
@@ -32,8 +34,16 @@ CObject::CObject(const std::vector<std::string>& v) {
 
     connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
     connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
-
-    setStyleSheet(QString::fromStdString(untoggledColor));
+    if (counter) {
+        setStyleSheet(QString::fromStdString(untoggledColor1));
+        counter = false;
+    }
+    else {
+        setStyleSheet(QString::fromStdString(untoggledColor2));
+        counter = true;
+    }
+    count_type = counter;
+    // setStyleSheet("background-color: #444b52; border-radius: 10px;");
 }
 
 
@@ -63,14 +73,20 @@ void CObject::INFO() {
 void CObject::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
-        setStyleSheet(QString::fromStdString(untoggledColor));
+        if (count_type)
+            setStyleSheet(QString::fromStdString(untoggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2));
     }
 }
 
 void CObject::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
+        if (count_type)
+            setStyleSheet(QString::fromStdString(toggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2));
     }
 }
 

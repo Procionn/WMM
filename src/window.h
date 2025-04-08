@@ -28,6 +28,8 @@ public slots:
     void settings();
     void updatePointer(CObjectsButton* pointer);
     void inpadShow();
+private slots:
+    void inpad_reset();
 };
 
 #endif // WINDOW_H

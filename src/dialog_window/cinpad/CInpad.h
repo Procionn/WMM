@@ -47,7 +47,7 @@ private:
     void render();
     void reader();
     void fsScaner(const std::filesystem::path& directory, const bool& type,
-                  const int& arraySize, Cbox existsElements[]);
+                  const int& arraySize, Cbox existsElements[], bool& count_type);
     void distributor();
     bool nameTest(Cbox existsElements[], int indicator, std::string str);
 };

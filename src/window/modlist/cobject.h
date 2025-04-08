@@ -25,8 +25,11 @@ public:
     std::string type;
     std::string version;
 protected:
-    std::string untoggledColor = " background-color: #1e1e1e;";
-    std::string toggledColor = " background-color: #444b52;";
+    std::string untoggledColor1 = " background-color: #2e2e2e;";
+    std::string untoggledColor2 = " background-color: #404040;";
+    std::string toggledColor1   = " background-color: #444b52;";
+    std::string toggledColor2   = " background-color: #535b63;";
+    bool count_type;
 public:
     QHBoxLayout* Box;
     QLabel* Lname;
@@ -36,7 +39,7 @@ public:
     CSplitter* spl2;
     CSwitchButton* switcher;
 public:
-    CObject(const std::vector<std::string>& v);
+    CObject(const std::vector<std::string>& v, bool& counter);
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);

@@ -5,6 +5,11 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
+#include <filesystem>
+#include <iostream>
+#include <cassert>
+#include <QCoreApplication>
 
 class CBaseConfig
 {
@@ -58,6 +63,7 @@ public:
     void dir_comparison(std::filesystem::path& file);
     void symlink_creating(std::string& targetCollection);
     void game_recovery();
+    void restorer();
 private:
     int size = 3;
     void write(wmml& input, std::string str);
@@ -78,9 +84,9 @@ namespace configurator {
     };
     bool operator==(wmmb& first, wmmb& last);
     
-    std::vector<configurator::wmmb*> parser(std::string& file, int& publicCounter);
-    void collector(std::string name, bool type);
-    void compiller(std::string file, std::string directory);
+    std::vector<configurator::wmmb*> parser(std::filesystem::path& file, int& publicCounter);
+    void collector(std::filesystem::path name, bool type);
+    void compiller(std::filesystem::path& file, std::filesystem::path& directory);
 }
 
 void replace (std::string& input, char replaceable, char target);

@@ -72,13 +72,14 @@ Window::Window () {
     ContentWidget->resize(1000, 0);
     inpad = new CInpad(ObjectList->TypeTarget);
     inpad->target = &target;
+
     connect(content,            &QAction::triggered,         this,          &Window::inpadShow);
     connect(ObjectList,         &CObjectList::objectChoosed, ContentWidget, &CContentList::updateList);
     connect(ObjectList,         &CObjectList::remove,        ContentWidget, &CContentList::clear);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::updatePointer);
-    connect(ObjectList,         &CObjectList::objectChoosed, inpad,         [=]{inpad->reset();});
-    connect(inpad,              &CFastDialog::canselClicked, inpad,         [=]{inpad->reset();});
-    connect(ContentWidget->dnd, &CDND::launch,               inpad,         [=]{inpad->reset();});
+    connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::inpad_reset);
+    connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
+    connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
     connect(inpad,              &CInpad::applyClicked,       inpad,         [=]{inpad->application(ObjectList->targetName, ObjectList->TypeTarget);});
     connect(inpad,              &CInpad::applyClicked,       ContentWidget, [=]{ContentWidget->updateList(target, ContentWidget->targetType);});
 }
@@ -102,6 +103,12 @@ void Window::updatePointer(CObjectsButton* pointer) {
 }
 
 void Window::inpadShow () {
-    if (target != nullptr) inpad->show();
+    if (target != nullptr)
+        inpad->show();
     else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R35);
+}
+
+
+void Window::inpad_reset () {
+    inpad->reset();
 }

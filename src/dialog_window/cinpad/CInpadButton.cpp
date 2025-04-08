@@ -1,6 +1,6 @@
 #include "CInpadButton.h"
 
-CInpadButton::CInpadButton(const std::string& setName, const bool& type) {
+CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& counter) {
     this->type = type;
     name = setName;
     QVBoxLayout* list = new QVBoxLayout(this);
@@ -8,21 +8,35 @@ CInpadButton::CInpadButton(const std::string& setName, const bool& type) {
     list->addWidget(label);
     setFrameShape(QFrame::WinPanel);
     setFrameShadow(QFrame::Raised);
-    setStyleSheet(QString::fromStdString(untoggledColor));
+    if (counter) {
+        setStyleSheet(QString::fromStdString(untoggledColor1));
+        counter = false;
+    }
+    else {
+        setStyleSheet(QString::fromStdString(untoggledColor2));
+        counter = true;
+    }
+    count_type = counter;
 }
 
 
 void CInpadButton::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
-        setStyleSheet(QString::fromStdString(untoggledColor));
+        if (count_type)
+            setStyleSheet(QString::fromStdString(untoggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2));
     }
 }
 
 void CInpadButton::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
+        if (count_type)
+            setStyleSheet(QString::fromStdString(toggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2));
     }
 }
 

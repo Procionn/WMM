@@ -3,17 +3,14 @@
 #include "wmml.h"
 #include "methods.h"
 
-#include <vector>
-#include <string>
-#include <fstream>
-#include <filesystem>
-#include <iostream>
-#include <cassert>
-#include <QCoreApplication>
 #ifdef _WIN32
     #include <windows.h>
     #include <sys/stat.h>
 #endif
+#ifndef NDEBUG
+    #include <iomanip>
+#endif
+
 namespace fs = std::filesystem;
 
 std::string CConfigs::CONFIG_LANGUAGES;
@@ -87,7 +84,8 @@ CGameConfig::CGameConfig () {
         wmml file(SAVE);
         std::vector<std::string> v(size);
         while (file.read(v)) {
-            if (v[0] == CConfigs::CONFIG_GAME) break;
+            if (v[0] == CConfigs::CONFIG_GAME)
+                break;
         }
         config_game_path = v[2];
         config_executable_file = v[1];
@@ -123,7 +121,7 @@ void CGameConfig::write(wmml& input, std::string str) {
 }
 
 void CGameConfig::game_path (std::string path) {
-    // create a save of game
+    // create a save of game in save.wmml file
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
         int counter = 0;
@@ -158,7 +156,7 @@ void CGameConfig::game_dir_backup () {
     std::string targetpath = GAME + core_dir_name;
     if (fs::exists(targetpath)) stc::fs::remove_all(targetpath);
     try {
-        for (std::string p : MGD) {
+        for (std::string& p : MGD) {
             std::string pt = config_game_path + "/" + p;
             fs::path sorce_path(pt);
             fs::path target_path(targetpath);
@@ -237,15 +235,19 @@ void CGameConfig::dir_comparison (std::filesystem::path& file) {
                         return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
                     };
 
-                    if (is_symlink(entry.path())) continue;
+                    if (is_symlink(entry.path()))
+                        continue;
                     struct stat info;
-                    if (stat(entry.path().string().c_str(), &info) == 0 && S_ISDIR(info.st_mode)) continue;
+                    if (stat(entry.path().string().c_str(), &info) == 0 && S_ISDIR(info.st_mode))
+                        continue;
 
                     fs::create_directories(backup_path.parent_path());
-                    if (fs::exists(backup_path)) fs::remove(backup_path);
+                    if (fs::exists(backup_path))
+                        fs::remove(backup_path);
                     fs::rename(stc::string::replace(entry.path(), '\\', '/'), stc::string::replace(backup_path, '\\', '/'));
 #elif defined(__linux__)
-                    if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path())) continue;
+                    if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path()))
+                        continue;
                     fs::rename(stc::string::replace(entry.path(), '\\', '/'), stc::string::replace(backup_path, '\\', '/'));
 #endif
                 }
@@ -258,6 +260,7 @@ void CGameConfig::dir_comparison (std::filesystem::path& file) {
 }
 
 void CGameConfig::symlink_creating (std::string& targetCollection) {
+    restorer();
     std::string collect = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + targetCollection;
     try {
         for (const auto& entry : fs::recursive_directory_iterator(collect)) {
@@ -288,8 +291,10 @@ void CGameConfig::game_recovery () {
     auto deleteig_cycle = [=](std::vector<std::string>& vector) -> void {
         for (std::string& target : vector) {
             std::string path = config_game_path + "/" + target;
-            if (!fs::exists(path)) continue;
-            stc::fs::remove_all(path);
+            if (!fs::exists(path))
+                continue;
+            else
+                stc::fs::remove_all(path);
         }
     };
 
@@ -297,11 +302,28 @@ void CGameConfig::game_recovery () {
     deleteig_cycle(MGD);
     std::string backup = stc::cwmm::backup_path();
     for (const auto& entry : fs::recursive_directory_iterator(backup)) {
-        if (fs::is_directory(entry.path())) continue;
+        if (fs::is_directory(entry.path()))
+            continue;
         fs::path relative = fs::relative(entry.path(), backup);
         fs::path path = config_game_path + "/" + relative.string();
         fs::create_directories(path.parent_path());
         fs::copy(entry.path(), path);
+    }
+}
+
+void CGameConfig::restorer () {
+    for (const auto& entry : fs::recursive_directory_iterator(stc::cwmm::backup_path())) {
+        fs::path relative = fs::relative(entry.path(), stc::cwmm::backup_path());
+        fs::path target = config_game_path / relative;
+        if (!fs::exists(target)) {
+            fs::path global_backup = QCoreApplication::applicationDirPath().toStdString() / entry.path();
+#ifndef NDEBUG
+            std::cout << std::left << std::setw(100)
+                      << global_backup << " -> " << target << std::endl;
+#endif
+            fs::copy(global_backup, target);
+        }
+
     }
 }
 
@@ -317,37 +339,37 @@ configurator::wmmb::wmmb (std::vector<std::string>& v) {
 }
 
 bool configurator::operator== (wmmb& first, wmmb& last) {
-    if (first.id == last.id && first.version == last.version) return true;
+    if (first.id == last.id && first.version == last.version)
+        return true;
     else return false;
 }
 
-void configurator::compiller (std::string file, std::string directory) {
+void configurator::compiller (std::filesystem::path& file, std::filesystem::path& directory) {
     std::vector<std::string> v(GRID_WIDTH);
-    fs::path fsDir = directory;
     wmml openedFile(file);
     while (openedFile.read(v)) {
         if (v[5] == "1") {
             if (v[3] == "mod") {
-                std::string path = MODS + CConfigs::CONFIG_GAME + "/" + v[1];
+                std::string path = stc::cwmm::ram_mods(v[1]);
                 fs::path fsPath = path;
                 for (const auto& entry : fs::recursive_directory_iterator(fsPath)) {
                     if (fs::is_regular_file(entry.path())) {
                         fs::path relative_path = fs::relative(entry.path(), fsPath);
-                        fs::path target_file_path = fsDir / relative_path;
+                        fs::path target_file_path = directory / relative_path;
                         fs::create_directories(target_file_path.parent_path());
                         fs::copy_file(entry.path(), target_file_path, fs::copy_options::overwrite_existing);
                     }
                 }
             }
             else {
-                std::string nfile = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + v[1] + EXPANSION;
+                fs::path nfile = stc::cwmm::ram_preset(v[1]);
                 compiller(nfile, directory);
             }
         }
     }
 }
 
-std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& publicCounter) {
+std::vector<configurator::wmmb*> configurator::parser (std::filesystem::path& file, int& publicCounter) {
     const int constSize = 256;
     int targetSize = constSize;
     publicCounter = 0;
@@ -356,13 +378,14 @@ std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& p
     wmml targetfile(file);
     while (targetfile.read(v)) {
         if (publicCounter != targetSize) {
-            if (v[3] == "this") continue;
+            if (v[3] == "this")
+                continue;
             if (v[3] == "mod") {
                 presets[publicCounter] = new configurator::wmmb(v);
                 ++publicCounter;
             }
             else {
-                std::string tmp = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + v[1] + EXPANSION;
+                std::string tmp = stc::cwmm::ram_preset(v[1]);
                 wmml tmpFile(tmp);
                 while(tmpFile.read(v)) {
                     assert(v[3] == "mod");
@@ -379,19 +402,17 @@ std::vector<configurator::wmmb*> configurator::parser (std::string& file, int& p
     return presets;
 }
 
-void configurator::collector(std::string name, bool type) {
+void configurator::collector(std::filesystem::path name, bool type) {
     // collected all mods file in directory
-    std::string file;
-    std::string dir = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + name;
-    fs::path fsDir = dir;
-    std::string oldFile = dir + "/" + CONST_FILE + EXPANSION;
+    fs::path fsDir = (COLLECTIONS + CConfigs::CONFIG_GAME) / name;
+    fs::path oldFile = fsDir / (CONST_FILE + EXPANSION);
     if (type) {
         std::cerr << "Exporting presets is not supported" << std::endl;
         abort();
     }
-    else file = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION;
+    fs::path file = stc::cwmm::ram_collection(name.string());
     
-    if (fs::exists(dir)) {
+    if (fs::exists(fsDir)) {
         int NFS;
         int OFS;
         std::vector<wmmb*> newstruct = parser(file, NFS);
@@ -414,7 +435,7 @@ void configurator::collector(std::string name, bool type) {
                 std::string str;
                 std::ifstream readedFile(path);
                 while (std::getline(readedFile, str)) {
-                    std::string deletedFile = COLLECTIONS + CConfigs::CONFIG_GAME + "/" + name + "/" + str;
+                    fs::path deletedFile = (COLLECTIONS + CConfigs::CONFIG_GAME) / name / str;
                     fs::remove(deletedFile);
                 }
             }
@@ -422,12 +443,12 @@ void configurator::collector(std::string name, bool type) {
         for (int counter = 0; counter != NFS; ++counter) {
             if (newstruct[counter]) {
                 std::string path = MODS + CConfigs::CONFIG_GAME + "/" + newstruct[counter]->name;
-                
                 for (const auto& entry : fs::recursive_directory_iterator(path)) {
                     if (fs::is_regular_file(entry.path())) {
                         fs::path relative_path = fs::relative(entry.path(), path);
                         fs::path target_file_path = fsDir / relative_path;
                         fs::create_directories(target_file_path.parent_path());
+                        fs::remove(target_file_path);
                         fs::copy_file(entry.path(), target_file_path, fs::copy_options::overwrite_existing);
                     }
                 }
@@ -437,17 +458,17 @@ void configurator::collector(std::string name, bool type) {
         fs::path f2 = oldFile;
         fs::remove(f2);
         fs::copy_file(f1, f2);
-        std::vector<std::string> v{"this", name, "this", "this", "this", "this"};
+        std::vector<std::string> v{"this", name.string(), "this", "this", "this", "this"};
         wmml tmp(oldFile);
         tmp.add(v);
     }
     else {
-        fs::create_directories(dir);
-        compiller(file, dir);
+        fs::create_directories(fsDir);
+        compiller(file, fsDir);
         fs::path f1 = file;
         fs::path f2 = oldFile;
         fs::copy_file(f1, f2);
-        std::vector<std::string> v{"this", name, "this", "this", "this", "this"};
+        std::vector<std::string> v{"this", name.string(), "this", "this", "this", "this"};
         wmml tmp(oldFile);
         tmp.add(v);
     }

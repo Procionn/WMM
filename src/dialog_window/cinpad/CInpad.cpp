@@ -93,15 +93,17 @@ void CInpad::reader () {
         }
         arraySize++;
     }
-    fsScaner(stringDir1, true, arraySize, existsElements);
-    fsScaner(stringDir2, false, arraySize, existsElements);
+    bool count_type = false;
+    fsScaner(stringDir1, true, arraySize, existsElements, count_type);
+    fsScaner(stringDir2, false, arraySize, existsElements, count_type);
     vector = true;
 }
 
 
 void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
-                      const int& arraySize, Cbox existsElements[]) {
+                      const int& arraySize, Cbox existsElements[], bool& count_type) {
     if (std::filesystem::exists(directory)) {
+
         for (auto const& objects : std::filesystem::directory_iterator{directory}) {
             std::string newButton = objects.path().string();
             stc::string::replace(newButton, '\\', '/');
@@ -111,10 +113,10 @@ void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
                 CInpadButton* button;
                 if (type) {
                     newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-                    button = new CInpadButton(newButton, true);
+                    button = new CInpadButton(newButton, true, count_type);
                 }
                 else
-                    button = new CInpadButton(newButton, false);
+                    button = new CInpadButton(newButton, false, count_type);
                 newObjectList->add(button);
                 button->setMinimumHeight(35);
                 vlist.emplace_back(button);

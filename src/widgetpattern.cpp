@@ -201,8 +201,9 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     else      sPath = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
     std::vector<std::string> v(GRID_WIDTH);
+    bool counter = false;
     while (file.read(v)) {
-        CObject* buttonWidget = new CObject(v);
+        CObject* buttonWidget = new CObject(v, counter);
         contentList->add(buttonWidget);
         
         // Crutch. It will need to be fixed
