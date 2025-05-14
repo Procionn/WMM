@@ -170,6 +170,7 @@ CContentList::CContentList () {
     QFrame* siFrame = new QFrame; // subinfo Frame
     QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
     BaseContainer->addWidget(siFrame);
+    siFrame->setStyleSheet("background-color: #444b50; border-radius: 10px;");
     
     spl1 = new QSplitter;
     spl2 = new QSplitter;

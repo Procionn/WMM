@@ -37,13 +37,16 @@ set(PROJECT_SOURCES
     patterns.h                          patterns.cpp
     wmml.h                              wmml.cpp
     methods.cpp                         methods.h
+
     settings/settings.h                 settings/settings.cpp
     settings/setlang.h                  settings/setlang.cpp
     settings/setsupport.h               settings/setsupport.cpp
     settings/setsource.h                settings/setsource.cpp
     settings/setextensions.h            settings/setextensions.cpp
+
     window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
     window/modlist/cobject.h            window/modlist/cobject.cpp
+
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
     patterns/CToggledButton.h           patterns/CToggledButton.cpp
     patterns/CSmartList.h
@@ -52,17 +55,18 @@ set(PROJECT_SOURCES
     patterns/CLinkTumbler.h             patterns/CLinkTumbler.cpp
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
+    patterns/CScrollWindow.h
+
     dialog_window/CNewObjectDialog.h    dialog_window/CNewObjectDialog.cpp
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
-    patterns/CScrollWindow.h
+    dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
 )
 
 
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
 )
 
 

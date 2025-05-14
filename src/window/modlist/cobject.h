@@ -27,8 +27,10 @@ public:
 protected:
     std::string untoggledColor1 = " background-color: #2e2e2e;";
     std::string untoggledColor2 = " background-color: #404040;";
-    std::string toggledColor1   = " background-color: #444b52;";
+    std::string toggledColor1   = " background-color: #3f464d;";
     std::string toggledColor2   = " background-color: #535b63;";
+    // std::string border          = " border-radius: 10px;";
+    std::string border          = "";
     bool count_type;
 public:
     QHBoxLayout* Box;

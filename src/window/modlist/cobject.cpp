@@ -16,14 +16,12 @@ CObject::CObject(const std::vector<std::string>& v, bool& counter) {
     switcher->setTheme("orange");
     if (v[5] == "1") switcher->isTarget(true);
     else             switcher->isTarget(false);
+    switcher->setMinimumWidth(70);
+    switcher->setMinimumHeight(20);
 
     Lname->resize(400, 0);
-    // setFrameShape(QFrame::Panel);
-    // setFrameShadow(QFrame::Sunken);
     setFrameShape(QFrame::Box);
     setFrameShadow(QFrame::Raised);
-    // or use it ->
-    // setFrameShadow(QFrame::Raised);
     spl1 = new CSplitter(Box);
     spl2 = new CSplitter(Box);
     spl1->addWidget(Lname);
@@ -35,15 +33,14 @@ CObject::CObject(const std::vector<std::string>& v, bool& counter) {
     connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
     connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
     if (counter) {
-        setStyleSheet(QString::fromStdString(untoggledColor1));
+        setStyleSheet(QString::fromStdString(untoggledColor1 + border));
         counter = false;
     }
     else {
-        setStyleSheet(QString::fromStdString(untoggledColor2));
+        setStyleSheet(QString::fromStdString(untoggledColor2 + border));
         counter = true;
     }
     count_type = counter;
-    // setStyleSheet("background-color: #444b52; border-radius: 10px;");
 }
 
 
@@ -74,9 +71,9 @@ void CObject::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
         if (count_type)
-            setStyleSheet(QString::fromStdString(untoggledColor1));
+            setStyleSheet(QString::fromStdString(untoggledColor2 + border));
         else
-            setStyleSheet(QString::fromStdString(untoggledColor2));
+            setStyleSheet(QString::fromStdString(untoggledColor1 + border));
     }
 }
 
@@ -84,9 +81,9 @@ void CObject::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
-            setStyleSheet(QString::fromStdString(toggledColor1));
+            setStyleSheet(QString::fromStdString(toggledColor2 + border));
         else
-            setStyleSheet(QString::fromStdString(toggledColor2));
+            setStyleSheet(QString::fromStdString(toggledColor1 + border));
     }
 }
 

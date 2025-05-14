@@ -24,9 +24,9 @@ void CInpadButton::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
         if (count_type)
-            setStyleSheet(QString::fromStdString(untoggledColor1));
-        else
             setStyleSheet(QString::fromStdString(untoggledColor2));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor1));
     }
 }
 
@@ -34,9 +34,9 @@ void CInpadButton::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
-            setStyleSheet(QString::fromStdString(toggledColor1));
-        else
             setStyleSheet(QString::fromStdString(toggledColor2));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor1));
     }
 }
 
