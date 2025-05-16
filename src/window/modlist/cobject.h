@@ -19,11 +19,11 @@ class CObject : public CSmartObject
 {
     Q_OBJECT
 public:
-    int index;
-    std::string id;
     std::string name;
-    std::string type;
     std::string version;
+    bool type;
+    unsigned long int id;
+    unsigned long index;
 protected:
     std::string untoggledColor1 = " background-color: #2e2e2e;";
     std::string untoggledColor2 = " background-color: #404040;";
@@ -41,7 +41,7 @@ public:
     CSplitter* spl2;
     CSwitchButton* switcher;
 public:
-    CObject(const std::vector<std::string>& v, bool& counter);
+    CObject(const std::vector<wmml::variant>& v, bool& counter, const unsigned long& index);
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);

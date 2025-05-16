@@ -1,8 +1,6 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "wmml.h"
-
 #include <vector>
 #include <string>
 #include <fstream>
@@ -10,6 +8,7 @@
 #include <iostream>
 #include <cassert>
 #include <QCoreApplication>
+#include <wmml.h>
 
 class CBaseConfig
 {
@@ -46,11 +45,11 @@ class CGameConfig : public CBaseConfig
         "MixedGameDirectory",
         "URLtemplate"
     };
-public:
     std::vector<std::string> OMD; // Only Mods Directory
     std::vector<std::string> MGD; // Mixed Game Directory
     std::string core_dir_name;
     int GAME_CORE_DIR_STAGE;
+public:
     std::string config_game_path;
     std::string config_executable_file;
     std::string config_url;
@@ -75,12 +74,12 @@ private:
 namespace configurator {
     struct wmmb
     {
-        int id;
+        unsigned long int id;
         std::string version;
         std::string name;
         bool status = true;
         
-        wmmb(std::vector<std::string>& v);
+        wmmb(std::vector<wmml::variant>& v);
     };
     bool operator==(wmmb& first, wmmb& last);
     

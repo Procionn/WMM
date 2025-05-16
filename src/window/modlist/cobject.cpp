@@ -1,21 +1,26 @@
 #include "cobject.h"
 
-CObject::CObject(const std::vector<std::string>& v, bool& counter) {
+CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const unsigned long& index) {
     Box = new QHBoxLayout(this);
-    Lname = new QLabel(QString::fromStdString(v[1]));
-    Lversion = new QLabel(QString::fromStdString(v[2]));
-    Ltype = new QLabel(QString::fromStdString(v[3]));
+
+
+    Lname = new QLabel(QString::fromStdString(std::get<std::string>(v[0])));
+    Lversion = new QLabel(QString::fromStdString(std::get<std::string>(v[1])));
+    if (std::get<bool>(v[2]))
+         Ltype = new QLabel("Collection");
+    else Ltype = new QLabel("Mod");
     switcher = new CSwitchButton;
 
 
-    index = std::stoi(v[0]);
-    id = v[4];
-    name = v[1];
-    type = v[3];
-    version = v[2];
+    name = std::get<std::string>(v[0]);
+    version = std::get<std::string>(v[1]);
+    type = std::get<bool>(v[2]);
+    id = std::get<unsigned long int>(v[3]);
     switcher->setTheme("orange");
-    if (v[5] == "1") switcher->isTarget(true);
+    if (std::get<bool>(v[4])) switcher->isTarget(true);
     else             switcher->isTarget(false);
+    this->index = index;
+
     switcher->setMinimumWidth(70);
     switcher->setMinimumHeight(20);
 
@@ -48,7 +53,7 @@ void CObject::context (const QPoint &pos) {
     QMenu* contextMenu = new QMenu(this);
     QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
     connect(action1, &QAction::triggered, this, &CObject::DELETE);
-    if (type == "mod") {
+    if (type) {
         QAction *action2 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_INFO));
         connect(action2, &QAction::triggered, this, &CObject::INFO);
     }

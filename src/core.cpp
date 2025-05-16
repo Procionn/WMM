@@ -82,15 +82,15 @@ void CConfigs::config_save () {
 CGameConfig::CGameConfig () {
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
-        std::vector<std::string> v(size);
+        std::vector<wmml::variant> v(size);
         while (file.read(v)) {
-            if (v[0] == CConfigs::CONFIG_GAME)
+            if (std::get<std::string>(v[0]) == CConfigs::CONFIG_GAME)
                 break;
         }
-        config_game_path = v[2];
-        config_executable_file = v[1];
-        size_t part = v[2].find_last_of('/');
-        core_dir_name = v[2].substr(part + 1);
+        config_game_path = std::get<std::string>(v[2]);
+        config_executable_file = std::get<std::string>(v[1]);
+        size_t part = config_game_path.find_last_of('/');
+        core_dir_name = config_game_path.substr(part + 1);
     }
     else {
         config_game_path = "";
@@ -109,7 +109,7 @@ CGameConfig::CGameConfig () {
 }
 
 void CGameConfig::write(wmml& input, std::string str) {
-    std::vector<std::string> v(size);
+    std::vector<wmml::variant> v(size);
     v[0] = CConfigs::CONFIG_GAME;
     v[1] = str;
     for (int counter = GAME_CORE_DIR_STAGE; counter != 0; --counter) {
@@ -117,33 +117,19 @@ void CGameConfig::write(wmml& input, std::string str) {
         str = str.substr(0, part);
     }
     v[2] = str;
-    input.add(v);
+    input.write(v);
 }
 
 void CGameConfig::game_path (std::string path) {
     // create a save of game in save.wmml file
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
-        int counter = 0;
-        while (true) {
-            std::string rf = file.read_field();
-            if (rf == CConfigs::CONFIG_GAME){
-                std::vector<std::string> v(size);
-                v[0] = CConfigs::CONFIG_GAME;
-                v[1] = path;
-                for (int counter = GAME_CORE_DIR_STAGE; counter != 0; --counter) {
-                    size_t part = path.find_last_of('/');
-                    path = path.substr(0, part);
-                }
-                v[2] = path;
-                file.replace(counter, v);
-                break;
-            }
-            else if (!(file.skip(size - 1))) {
+        std::vector<wmml::variant> v(size);
+        for (int counter = 0; file.read(v); ++counter) {
+            if (std::get<std::string>(v[0]) == CConfigs::CONFIG_GAME) {
+                file.remove_object(counter);
                 write(file, path);
-                break;
             }
-            ++counter;
         }
     }
     else {
@@ -213,21 +199,21 @@ void CGameConfig::symlink_deliting () {
 
 void CGameConfig::dir_comparison (std::filesystem::path& file) {
     wmml targetFile(file);
-    std::vector<std::string> v(GRID_WIDTH);
+    std::vector<wmml::variant> v(GRID_WIDTH);
     while(targetFile.read(v))
-        if (v[0] == "this") break;
+        if (std::get<std::string>(v[0]) == "this") break;
     try {
         // targetpath       =  game/Cyberpunk 2077/
         // pt               =  C://Game/Cyberpunk 2077/[MGD]/
         // config_game_path =  C://Game/Cyberpunk 2077/
         
         std::string targetpath = GAME + "/" + core_dir_name;
-        for (std::string p : MGD) {
+        for (const std::string& p : MGD) {
             std::string pt = config_game_path + "/" + p;
             for (const auto& entry : fs::recursive_directory_iterator(pt)) {
                 fs::path relative = fs::relative(entry.path(), config_game_path);
                 fs::path target_path = targetpath / relative;
-                fs::path backup_path = (COLLECTIONS + CConfigs::CONFIG_GAME + "/" + v[1]) / relative;
+                fs::path backup_path = (COLLECTIONS + CConfigs::CONFIG_GAME + "/" + std::get<std::string>(v[0])) / relative;
                 if (!fs::exists(target_path)) {
 #ifdef _WIN32
                     auto is_symlink = [](const std::filesystem::path& p) -> bool {
@@ -332,10 +318,10 @@ void CGameConfig::restorer () {
 
 
 
-configurator::wmmb::wmmb (std::vector<std::string>& v) {
-    id = std::stoi(v[4]);
-    version = v[2];
-    name = v[1];
+configurator::wmmb::wmmb (std::vector<wmml::variant>& v) {
+    id = std::get<unsigned long int>(v[3]);
+    version = std::get<std::string>(v[1]);
+    name = std::get<std::string>(v[0]);
 }
 
 bool configurator::operator== (wmmb& first, wmmb& last) {
@@ -345,12 +331,12 @@ bool configurator::operator== (wmmb& first, wmmb& last) {
 }
 
 void configurator::compiller (std::filesystem::path& file, std::filesystem::path& directory) {
-    std::vector<std::string> v(GRID_WIDTH);
+    std::vector<wmml::variant> v(GRID_WIDTH);
     wmml openedFile(file);
     while (openedFile.read(v)) {
-        if (v[5] == "1") {
-            if (v[3] == "mod") {
-                std::string path = stc::cwmm::ram_mods(v[1]);
+        if (std::get<bool>(v[4])) {
+            if (!std::get<bool>(v[2])) {
+                std::string path = stc::cwmm::ram_mods(std::get<std::string>(v[0]));
                 fs::path fsPath = path;
                 for (const auto& entry : fs::recursive_directory_iterator(fsPath)) {
                     if (fs::is_regular_file(entry.path())) {
@@ -362,7 +348,7 @@ void configurator::compiller (std::filesystem::path& file, std::filesystem::path
                 }
             }
             else {
-                fs::path nfile = stc::cwmm::ram_preset(v[1]);
+                fs::path nfile = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
                 compiller(nfile, directory);
             }
         }
@@ -374,21 +360,21 @@ std::vector<configurator::wmmb*> configurator::parser (std::filesystem::path& fi
     int targetSize = constSize;
     publicCounter = 0;
     std::vector<configurator::wmmb*> presets(targetSize);
-    std::vector<std::string> v(GRID_WIDTH);
+    std::vector<wmml::variant> v(GRID_WIDTH);
     wmml targetfile(file);
     while (targetfile.read(v)) {
         if (publicCounter != targetSize) {
-            if (v[3] == "this")
+            if (std::get<std::string>(v[0]) == "this")
                 continue;
-            if (v[3] == "mod") {
+            if (!std::get<bool>(v[2])) {
                 presets[publicCounter] = new configurator::wmmb(v);
                 ++publicCounter;
             }
             else {
-                std::string tmp = stc::cwmm::ram_preset(v[1]);
+                std::string tmp = stc::cwmm::ram_preset(std::get<std::string>(v[1]));
                 wmml tmpFile(tmp);
                 while(tmpFile.read(v)) {
-                    assert(v[3] == "mod");
+                    assert(std::get<bool>(v[2]));
                     presets[publicCounter] = new configurator::wmmb(v);
                     ++publicCounter;
                 }
@@ -458,9 +444,9 @@ void configurator::collector(std::filesystem::path name, bool type) {
         fs::path f2 = oldFile;
         fs::remove(f2);
         fs::copy_file(f1, f2);
-        std::vector<std::string> v{"this", name.string(), "this", "this", "this", "this"};
+        std::vector<wmml::variant> v{"this", name.string(), "this", "this", "this"};
         wmml tmp(oldFile);
-        tmp.add(v);
+        tmp.write(v);
     }
     else {
         fs::create_directories(fsDir);
@@ -468,9 +454,9 @@ void configurator::collector(std::filesystem::path name, bool type) {
         fs::path f1 = file;
         fs::path f2 = oldFile;
         fs::copy_file(f1, f2);
-        std::vector<std::string> v{"this", name.string(), "this", "this", "this", "this"};
+        std::vector<wmml::variant> v{"this", name.string(), "this", "this", "this"};
         wmml tmp(oldFile);
-        tmp.add(v);
+        tmp.write(v);
     }
 }
 
