@@ -97,7 +97,7 @@ void setsource::chooseGame (QPushButton* parent) {
 
 
 void setsource::chooseExe (QPushButton* dirBTN) {
-    if (CConfigs::CONFIG_GAME != "None") {
+    if (CConfigs::CONFIG_GAME != "None" || target) {
         buffer = QFileDialog::getOpenFileName(
             nullptr,
             QString::fromStdString(Lang::LANG_LABEL_CHOOSE_GAME_FILE),

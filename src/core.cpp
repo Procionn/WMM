@@ -279,8 +279,7 @@ void CGameConfig::game_recovery () {
             std::string path = config_game_path + "/" + target;
             if (!fs::exists(path))
                 continue;
-            else
-                stc::fs::remove_all(path);
+            stc::fs::remove_all(path);
         }
     };
 
@@ -444,7 +443,7 @@ void configurator::collector(std::filesystem::path name, bool type) {
         fs::path f2 = oldFile;
         fs::remove(f2);
         fs::copy_file(f1, f2);
-        std::vector<wmml::variant> v{"this", name.string(), "this", "this", "this"};
+        std::vector<wmml::variant> v{"this", name.string(), false, 0, true};
         wmml tmp(oldFile);
         tmp.write(v);
     }
@@ -454,7 +453,7 @@ void configurator::collector(std::filesystem::path name, bool type) {
         fs::path f1 = file;
         fs::path f2 = oldFile;
         fs::copy_file(f1, f2);
-        std::vector<wmml::variant> v{"this", name.string(), "this", "this", "this"};
+        std::vector<wmml::variant> v{"this", name.string(), false, 0, true};
         wmml tmp(oldFile);
         tmp.write(v);
     }
