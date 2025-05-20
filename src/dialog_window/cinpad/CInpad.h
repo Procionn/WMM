@@ -20,7 +20,6 @@
 
 struct Cbox
 {
-    int index = 0;
     std::string path = "";
 };
 
@@ -37,7 +36,7 @@ public:
 
     CInpad(bool& type);
     void reset();
-    void application(std::string targetName, bool targetType);
+    void application(std::string& targetName, bool targetType);
 private:
     std::vector<CInpadButton*> vlist;
     bool vector = false;
@@ -47,9 +46,9 @@ private:
     void render();
     void reader();
     void fsScaner(const std::filesystem::path& directory, const bool& type,
-                  const int& arraySize, Cbox existsElements[]);
+                  const int& arraySize, std::vector<Cbox>& existsElements, bool& count_type);
     void distributor();
-    bool nameTest(Cbox existsElements[], int indicator, std::string str);
+    bool nameTest(std::vector<Cbox>& existsElements, int indicator, std::string str);
 };
 
 #endif // CINPAD_H

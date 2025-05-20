@@ -24,6 +24,13 @@ std::filesystem::path stc::string::replace (const std::filesystem::path& input, 
     return out;
 }
 
+std::string stc::string::get_name(const std::string& path) {
+    std::size_t part = path.find_last_of('/');
+    std::size_t expansion = path.find_last_of('.');
+    ++part;
+    return path.substr(part, (expansion - part));
+}
+
 
 
 std::string stc::cwmm::backup_path () {
@@ -116,4 +123,11 @@ void stc::net::openURL (const std::string& url) {
     return;
 #endif
     std::system(command.c_str());
+}
+
+
+
+void stc::wmm::new_object (const std::filesystem::path& path) {
+    std::filesystem::create_directories(path.parent_path());
+    wmml file(path, GRID_WIDTH);
 }

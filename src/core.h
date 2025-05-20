@@ -1,10 +1,14 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "wmml.h"
-
 #include <vector>
 #include <string>
+#include <fstream>
+#include <filesystem>
+#include <iostream>
+#include <cassert>
+#include <QCoreApplication>
+#include <wmml.h>
 
 class CBaseConfig
 {
@@ -41,11 +45,11 @@ class CGameConfig : public CBaseConfig
         "MixedGameDirectory",
         "URLtemplate"
     };
-public:
     std::vector<std::string> OMD; // Only Mods Directory
     std::vector<std::string> MGD; // Mixed Game Directory
     std::string core_dir_name;
     int GAME_CORE_DIR_STAGE;
+public:
     std::string config_game_path;
     std::string config_executable_file;
     std::string config_url;
@@ -58,6 +62,7 @@ public:
     void dir_comparison(std::filesystem::path& file);
     void symlink_creating(std::string& targetCollection);
     void game_recovery();
+    void restorer();
 private:
     int size = 3;
     void write(wmml& input, std::string str);
@@ -69,18 +74,18 @@ private:
 namespace configurator {
     struct wmmb
     {
-        int id;
+        unsigned long int id;
         std::string version;
         std::string name;
         bool status = true;
         
-        wmmb(std::vector<std::string>& v);
+        wmmb(std::vector<wmml::variant>& v);
     };
     bool operator==(wmmb& first, wmmb& last);
     
-    std::vector<configurator::wmmb*> parser(std::string& file, int& publicCounter);
-    void collector(std::string name, bool type);
-    void compiller(std::string file, std::string directory);
+    std::vector<configurator::wmmb*> parser(std::filesystem::path& file, int& publicCounter);
+    void collector(std::filesystem::path name, bool type);
+    void compiller(std::filesystem::path& file, std::filesystem::path& directory);
 }
 
 void replace (std::string& input, char replaceable, char target);

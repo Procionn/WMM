@@ -42,13 +42,15 @@ CObjectList::CObjectList () {
     privateObjectList->setAlignment(Qt::AlignTop);
     objectList->setAlignment(Qt::AlignTop);
     
-    connect(Collection, &QPushButton::clicked, this, [=]{TypeTarget = false;
-                                                        render();
-                                                        });
+    connect(Collection, &QPushButton::clicked, this, [=]{
+        TypeTarget = false;
+        render();
+    });
     
-    connect(Preset,     &QPushButton::clicked, this, [=]{TypeTarget = true;
-                                                        render();
-                                                        });
+    connect(Preset,     &QPushButton::clicked, this, [=]{
+        TypeTarget = true;
+        render();
+    });
     updateList();
     render();
 }
@@ -61,88 +63,56 @@ void CObjectList::newObject (CNewObjectDialog* dialog) {
 
 
 void CObjectList::CreteObject (std::string name) {
-    std::string path;
-    if (TypeTarget) path = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS     + name + EXPANSION;
-    else            path = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION;
+    std::filesystem::path path;
+    if (TypeTarget) path = stc::cwmm::ram_preset(name);
+    else            path = stc::cwmm::ram_collection(name);
     if (!std::filesystem::exists(path)) {
-        std::filesystem::path dir = path;
-        std::filesystem::create_directories(dir.parent_path());
-        wmml file(path, GRID_WIDTH);
-        if (!std::filesystem::exists(RAM)) std::filesystem::create_directory(RAM);
+        stc::wmm::new_object(path);
         updateList();
         render();
     }
     else ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
 }
 
+
+
+void CObjectList::scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler) {
+    if (std::filesystem::exists(directory)) {
+        for (auto const& object : std::filesystem::directory_iterator(directory)) {
+            std::string newButton = stc::string::get_name(object.path().string());
+            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
+            button->setMinimumHeight(35);
+            button->SetLeftAlignment(true);
+            button->type = type;
+            objectList->addWidget(button);
+            connect(button, &QPushButton::clicked, this, [=]{
+                emit objectChoosed(button, TypeTarget);
+                targetName = newButton;
+            });
+            connect(button, &CObjectsButton::remove, this, [=]{
+                updateList();
+                render();
+                emit remove();
+            });
+            button->hide();
+            list.emplace_back(button);
+            lastTumbler = button;
+        }
+    }
+}
+
+
 void CObjectList::updateList (std::string toggledButton) {
-    std::string stringDir1 = RAM + CConfigs::CONFIG_GAME + "/" + PRESETS;
-    std::string stringDir2 = RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS;
-    std::filesystem::path directory1 = stringDir1;
-    std::filesystem::path directory2 = stringDir2;
+    std::filesystem::path directory1 = stc::cwmm::ram_preset();
+    std::filesystem::path directory2 = stc::cwmm::ram_collection();
     int counter = 0;
     CObjectsButton* lastTumbler = nullptr;
-    QLayoutItem* item;
-    while ((item = objectList->takeAt(0)) != nullptr) {
-        delete item->widget();
-        delete item;
-    }
-    if (std::filesystem::exists(directory1))
-        for (auto const& objects : std::filesystem::directory_iterator{directory1})
-            ++counter;
-    if (std::filesystem::exists(directory2))
-        for (auto const& objects : std::filesystem::directory_iterator{directory2})
-            ++counter;
-    list.resize(counter);
-    counter = 0;
-    if (std::filesystem::exists(directory1)) {
-        for (auto const& objects : std::filesystem::directory_iterator{directory1}) {
-            std::string newButton = objects.path().string();
-            size_t part = newButton.find_last_of('/');
-            newButton = newButton.substr(part + 1);
-            newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
-            button->setMinimumHeight(35);
-            button->SetLeftAlignment(true);
-            button->type = true;
-            objectList->addWidget(button);
-            connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
-                                                             targetName = newButton;
-                                                            });
-            connect(button, &CObjectsButton::remove, this, [=]{updateList();
-                                                               render();
-                                                               emit remove();
-                                                              });
-            button->hide();
-            list[counter] = button;
-            lastTumbler = button;
-            ++counter;
-        }
-    }
-    if (std::filesystem::exists(directory2)) {
-        for (auto const& objects : std::filesystem::directory_iterator{directory2}) {
-            std::string newButton = objects.path().string();
-            size_t part = newButton.find_last_of('/');
-            newButton = newButton.substr(part + 1);
-            newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
-            button->setMinimumHeight(35);
-            button->SetLeftAlignment(true);
-            button->type = false;
-            objectList->addWidget(button);
-            connect(button, &QPushButton::clicked, this, [=]{emit objectChoosed(button, TypeTarget);
-                                                             targetName = newButton;
-                                                            });
-            connect(button, &CObjectsButton::remove, this, [=]{updateList();
-                                                               render();
-                                                               emit remove();
-                                                              });
-            button->hide();
-            list[counter] = button;
-            lastTumbler = button;
-            ++counter;
-        }
-    }
+    for (const auto& entry : list)
+        delete entry;
+    list.clear();
+
+    scan_directory(directory1, true, lastTumbler);
+    scan_directory(directory2, false, lastTumbler);
 }
 
 void CObjectList::render() {
@@ -170,6 +140,7 @@ CContentList::CContentList () {
     QFrame* siFrame = new QFrame; // subinfo Frame
     QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
     BaseContainer->addWidget(siFrame);
+    siFrame->setStyleSheet("background-color: #444b50; border-radius: 10px;");
     
     spl1 = new QSplitter;
     spl2 = new QSplitter;
@@ -200,9 +171,10 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     if (type) sPath = stc::cwmm::ram_preset(targetName);
     else      sPath = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
-    std::vector<std::string> v(GRID_WIDTH);
-    while (file.read(v)) {
-        CObject* buttonWidget = new CObject(v);
+    std::vector<wmml::variant> v(file.width());
+    bool counter = false;
+    for (unsigned long index = 0; file.read(v); ++index) {
+        CObject* buttonWidget = new CObject(v, counter, index);
         contentList->add(buttonWidget);
         
         // Crutch. It will need to be fixed
@@ -233,17 +205,16 @@ void CContentList::clear () {
 
 void CContentList::changeStatusOn(CObject* toggledElements) {
     wmml file(sPath);
-    file.overwriting(toggledElements->index, 5, "1");
+    auto bol = true;
+    file.overwriting_sector(toggledElements->index, 4, bol);
 }
 void CContentList::changeStatusOff(CObject* toggledElements) {
     wmml file(sPath);
-    file.overwriting(toggledElements->index, 5, "0");
+    auto bol = false;
+    file.overwriting_sector(toggledElements->index, 4, bol);
 }
 void CContentList::deleting (CObject* pointer) {
-    // std::string path;
-    // if (targetType) path = stc::cwmm::ram_preset(targetName);
-    // else            path = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
-    file.remove(pointer->index);
+    file.remove_object(pointer->index);
     delete pointer;
 }

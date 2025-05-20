@@ -20,22 +20,26 @@
 class CObjectList : public QWidget
 {
     Q_OBJECT
+    std::vector<CObjectsButton*> list;
 public:
     QVBoxLayout* objectList;
     std::string targetName;
     bool TypeTarget = false;
-    
+
+public:
     CObjectList();
     void CreteObject(std::string name);
     void updateList(std::string toggledButton = "");
     void render();
+
+private:
+    void scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler);
 signals:
     void objectChoosed(CObjectsButton* pointer, bool type);
     void remove();
+
 public slots:
     void newObject(CNewObjectDialog* dialog);
-private:
-    std::vector<CObjectsButton*> list;
 };
 
 

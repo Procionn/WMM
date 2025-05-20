@@ -26,10 +26,11 @@ CDND::CDND(QWidget* parent, std::string name) : QLabel(parent) {
     this->setText(QString::fromStdString(name));
     setFrameShape(QFrame::Panel);
     setFrameShadow(QFrame::Raised);
-    setMinimumHeight(50);
-    setMaximumHeight(70);
+    setMinimumHeight(70);
+    setMaximumHeight(100);
     setAlignment(Qt::AlignCenter);
     setAcceptDrops(true);
+    setStyleSheet("background-color: #444b50; border-radius: 10px;");
 }
 
 CDND::CDND(QVBoxLayout* parent, std::string name) {
@@ -37,10 +38,11 @@ CDND::CDND(QVBoxLayout* parent, std::string name) {
     this->setText(QString::fromStdString(name));
     setFrameShape(QFrame::Panel);
     setFrameShadow(QFrame::Raised);
-    setMinimumHeight(50);
-    setMaximumHeight(70);
+    setMinimumHeight(70);
+    setMaximumHeight(100);
     setAlignment(Qt::AlignCenter);
     setAcceptDrops(true);
+    setStyleSheet("background-color: #444b50; border-radius: 10px;");
 }
 
 
@@ -160,7 +162,7 @@ void ArchiveExtractor::extractAll(const std::string& outputDir) {
 }
 
 void ArchiveExtractor::extractDirectory(const std::string& path, struct archive_entry* entry) {
-    std::cout << "Создание директории: " << path << "\n";
+    std::cout << "Create directories: " << path << "\n";
     
     std::filesystem::create_directories(path);
 }

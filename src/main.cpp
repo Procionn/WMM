@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[])
 {
+    try {
     CConfigs config;
     config.config_test();
     Lang lang;
@@ -19,4 +20,8 @@ int main(int argc, char *argv[])
     w.show();
 
     return app.exec();
+    } catch(const char* error) {
+        std::cerr << error << std::endl;
+    }
+    return 0;
 }

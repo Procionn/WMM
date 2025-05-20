@@ -17,17 +17,19 @@ CInpad::CInpad(bool& type) {
 
     presets = new QAction(QString::fromStdString(Lang::LANG_BUTTON_PRESETS));
     menu->addAction(presets);
-    connect(presets, &QAction::triggered, this, [=]{menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_PRESETS));
-                                                    targetType = true;
-                                                    distributor();
-                                                   });
+    connect(presets, &QAction::triggered, this, [=]{
+        menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_PRESETS));
+        targetType = true;
+        distributor();
+    });
 
     QAction* mods = new QAction(QString::fromStdString(Lang::LANG_BUTTON_MODS));
     menu->addAction(mods);
-    connect(mods, &QAction::triggered, this, [=]{menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_MODS));
-                                                 targetType = false;
-                                                 distributor();
-                                                });
+    connect(mods, &QAction::triggered, this, [=]{
+        menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_MODS));
+        targetType = false;
+        distributor();
+    });
 
     newObjectList = new CInpadList;
     vertBox->addWidget(newObjectList);
@@ -63,7 +65,7 @@ void CInpad::render () {
     }
 }
 
-bool CInpad::nameTest (Cbox existsElements[], int indicator, std::string str) {
+bool CInpad::nameTest (std::vector<Cbox>& existsElements, int indicator, std::string str) {
     for (int i = 0; i != indicator; ++i)
         if (str == existsElements[i].path)
             return false;
@@ -79,29 +81,26 @@ void CInpad::reader () {
     else                 targetFiledDirectory = stc::cwmm::ram_collection((*target)->name);
 
     wmml file(targetFiledDirectory);
-    std::vector<std::string> v(GRID_WIDTH);
-    Cbox existsElements[file.sizeRequest()];
-    file.reset();
+    std::vector<wmml::variant> v(file.width());
+    std::vector<Cbox> existsElements(file.height());
     int arraySize = 0;
     while (file.read(v)) {
-        existsElements[arraySize].index = std::stoi(v[0]);
-        if      (v[3] == "mod")    existsElements[arraySize].path = stc::cwmm::ram_mods(v[1]);
-        else if (v[3] == "preset") existsElements[arraySize].path = stc::cwmm::ram_preset(v[1]);
-        else {
-            std::cerr << "file is corrupted" << std::endl;
-            abort();
-        }
+        if (std::get<bool>(v[2]))
+             existsElements[arraySize].path = stc::cwmm::ram_mods(std::get<std::string>(v[0]));
+        else existsElements[arraySize].path = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
         arraySize++;
     }
-    fsScaner(stringDir1, true, arraySize, existsElements);
-    fsScaner(stringDir2, false, arraySize, existsElements);
+    bool count_type = false;
+    fsScaner(stringDir1, true, arraySize, existsElements, count_type);
+    fsScaner(stringDir2, false, arraySize, existsElements, count_type);
     vector = true;
 }
 
 
 void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
-                      const int& arraySize, Cbox existsElements[]) {
+                      const int& arraySize, std::vector<Cbox>& existsElements, bool& count_type) {
     if (std::filesystem::exists(directory)) {
+
         for (auto const& objects : std::filesystem::directory_iterator{directory}) {
             std::string newButton = objects.path().string();
             stc::string::replace(newButton, '\\', '/');
@@ -111,10 +110,10 @@ void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
                 CInpadButton* button;
                 if (type) {
                     newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-                    button = new CInpadButton(newButton, true);
+                    button = new CInpadButton(newButton, true, count_type);
                 }
                 else
-                    button = new CInpadButton(newButton, false);
+                    button = new CInpadButton(newButton, false, count_type);
                 newObjectList->add(button);
                 button->setMinimumHeight(35);
                 vlist.emplace_back(button);
@@ -125,45 +124,29 @@ void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
 }
 
 
-void CInpad::application(std::string targetName, bool targetType) {
+void CInpad::application(std::string& targetName, bool targetType) {
     std::string name;
     if (targetType) name = stc::cwmm::ram_preset(targetName);
     else            name = stc::cwmm::ram_collection(targetName);
-    std::vector<std::string> v(GRID_WIDTH);
     wmml file(name);
-    while (file.read(v));
-    int i;
-    if (v[0] != "") {
-        i = std::stoi(v[0]);
-        ++i;
-    }
-    else i = 0;
+    std::vector<wmml::variant> v(file.width());
     for (CInpadButton* target : vlist) {
         if (target->is_target()) {
             if  (target->type == true) {
-                v[0] = std::to_string(i);
-                v[1] = target->get_name();
-                v[2] = "None";
-                v[3] = "preset";
-                v[4] = "None";
-                v[5] = "1";
-                file.add(v);
+                v = {target->get_name(), "", false, 0, true};
+                file.write(v);
             }
-            else if (target->type == false) {
+            else {
                 std::ifstream openedFile(stc::cwmm::ram_mods_info(target->get_name()));
                 std::string str;
                 for (int n = 0; n != 2; ++n)
                     std::getline(openedFile, str);
-                v[2] = str;
+                std::string version = str;
                 std::getline(openedFile, str);
-                v[4] = str;
-                v[0] = std::to_string(i);
-                v[1] = target->get_name();
-                v[3] = "mod";
-                v[5] = "1";
-                file.add(v);
+                unsigned long id = std::stoi(str);
+                v = {target->get_name(), version, true, id, true};
+                file.write(v);
             }
-            ++i;
         }
     }
     reset();

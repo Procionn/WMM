@@ -12,9 +12,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 if (WIN32)
-    set(LIBARCHIVE_DIR "${CMAKE_SOURCE_DIR}/lib/libarchive")
+    set(LIB "${CMAKE_SOURCE_DIR}/lib")
+
+    set(LIBARCHIVE_DIR "${LIB}/libarchive")
     include_directories("${LIBARCHIVE_DIR}/include")
     link_directories("${LIBARCHIVE_DIR}/lib")
+
+    set(WMML_DIR "${LIB}/wmml")
+    include_directories("${WMML_DIR}/include")
+    link_directories("${WMML_DIR}/lib")
 elseif(UNIX)
     set(CMAKE_PREFIX_PATH
         "/usr/lib64/cmake/Qt6"
@@ -35,15 +41,18 @@ set(PROJECT_SOURCES
     widgetpattern.h                     widgetpattern.cpp
     dnd.h                               dnd.cpp
     patterns.h                          patterns.cpp
-    wmml.h                              wmml.cpp
     methods.cpp                         methods.h
+
     settings/settings.h                 settings/settings.cpp
     settings/setlang.h                  settings/setlang.cpp
     settings/setsupport.h               settings/setsupport.cpp
     settings/setsource.h                settings/setsource.cpp
     settings/setextensions.h            settings/setextensions.cpp
+
     window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
     window/modlist/cobject.h            window/modlist/cobject.cpp
+    window/CMenuBar.h                   window/CMenuBar.cpp
+
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
     patterns/CToggledButton.h           patterns/CToggledButton.cpp
     patterns/CSmartList.h
@@ -52,24 +61,28 @@ set(PROJECT_SOURCES
     patterns/CLinkTumbler.h             patterns/CLinkTumbler.cpp
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
+    patterns/CScrollWindow.h
+
     dialog_window/CNewObjectDialog.h    dialog_window/CNewObjectDialog.cpp
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
-    patterns/CScrollWindow.h
+    dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
 )
 
 
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
 )
 
 
-target_link_libraries(Wirus PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(Wirus
+    PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    wmml
+    archive
+)
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE archive)
-
     set_target_properties(Wirus PROPERTIES
         ${BUNDLE_ID_OPTION}
         WIN32_EXECUTABLE TRUE
@@ -82,8 +95,6 @@ if(WIN32)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 elseif(UNIX)
-    target_link_libraries(Wirus PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
     target_include_directories(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_LIBRARIES})
     target_compile_definitions(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_CFLAGS_OTHER})

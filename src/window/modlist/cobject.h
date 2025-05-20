@@ -19,14 +19,19 @@ class CObject : public CSmartObject
 {
     Q_OBJECT
 public:
-    int index;
-    std::string id;
     std::string name;
-    std::string type;
     std::string version;
+    bool type;
+    unsigned long int id;
+    unsigned long index;
 protected:
-    std::string untoggledColor = " background-color: #1e1e1e;";
-    std::string toggledColor = " background-color: #444b52;";
+    std::string untoggledColor1 = " background-color: #2e2e2e;";
+    std::string untoggledColor2 = " background-color: #404040;";
+    std::string toggledColor1   = " background-color: #3f464d;";
+    std::string toggledColor2   = " background-color: #535b63;";
+    // std::string border          = " border-radius: 10px;";
+    std::string border          = "";
+    bool count_type;
 public:
     QHBoxLayout* Box;
     QLabel* Lname;
@@ -36,7 +41,7 @@ public:
     CSplitter* spl2;
     CSwitchButton* switcher;
 public:
-    CObject(const std::vector<std::string>& v);
+    CObject(const std::vector<wmml::variant>& v, bool& counter, const unsigned long& index);
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);

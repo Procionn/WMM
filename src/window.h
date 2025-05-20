@@ -3,6 +3,7 @@
 
 #include "dialog_window/cinpad/CInpad.h"
 #include "widgetpattern.h"
+#include "window/CMenuBar.h"
 
 #include <QMainWindow>
 #include <QDialog>
@@ -28,6 +29,8 @@ public slots:
     void settings();
     void updatePointer(CObjectsButton* pointer);
     void inpadShow();
+private slots:
+    void inpad_reset();
 };
 
 #endif // WINDOW_H

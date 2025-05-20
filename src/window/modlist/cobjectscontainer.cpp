@@ -8,7 +8,8 @@ CObjectsContainer::CObjectsContainer() {
     setWidgetResizable(true);
     setWidget(scrolledWidget);
     scrolledWidget->setLayout(list);
-
+    list->setSpacing(0);
+    // setStyleSheet("background-color: #444b50; border-radius: 10px;");
 }
 
 void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
