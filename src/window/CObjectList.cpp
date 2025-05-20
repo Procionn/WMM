@@ -1,0 +1,114 @@
+#include "mainWidgets.h"
+
+#include "../patterns/ERRORdialog.h"
+#include "../lang.h"
+#include <QTimer>
+
+CObjectList::CObjectList () {
+    setMaximumWidth(1000);
+    setMinimumWidth(230);
+    QVBoxLayout* privateObjectList = new QVBoxLayout;
+    setLayout(privateObjectList);
+    QHBoxLayout* objectButtonBox = new QHBoxLayout();
+    privateObjectList->addLayout(objectButtonBox);
+    CLinkTumbler* Collection = new CLinkTumbler(Lang::LANG_BUTTON_COLLECTIONS);
+    CLinkTumbler* Preset     = new CLinkTumbler(Lang::LANG_BUTTON_PRESETS, Collection);
+    objectButtonBox->addWidget(Collection);
+    objectButtonBox->addWidget(Preset);
+    Collection->isTarget(true);
+    Collection->setMinimumHeight(35);
+    Preset->setMinimumHeight(35);
+
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    privateObjectList->addWidget(line);
+
+    objectList = new QVBoxLayout();
+    addScrollable(privateObjectList, objectList);
+    privateObjectList->setAlignment(Qt::AlignTop);
+    objectList->setAlignment(Qt::AlignTop);
+
+    connect(Collection, &QPushButton::clicked, this, [=]{
+        TypeTarget = false;
+        render();
+    });
+
+    connect(Preset,     &QPushButton::clicked, this, [=]{
+        TypeTarget = true;
+        render();
+    });
+    updateList();
+    render();
+}
+
+void CObjectList::newObject (CNewObjectDialog* dialog) {
+    QString tab = dialog->nameTab->text();
+    CreteObject(tab.toStdString());
+    dialog->reject();
+}
+
+
+void CObjectList::CreteObject (std::string name) {
+    std::filesystem::path path;
+    if (TypeTarget) path = stc::cwmm::ram_preset(name);
+    else            path = stc::cwmm::ram_collection(name);
+    if (!std::filesystem::exists(path)) {
+        stc::wmm::new_object(path);
+        updateList();
+        render();
+    }
+    else ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
+}
+
+
+
+void CObjectList::scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler) {
+    if (std::filesystem::exists(directory)) {
+        for (auto const& object : std::filesystem::directory_iterator(directory)) {
+            std::string newButton = stc::string::get_name(object.path().string());
+            CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
+            button->setMinimumHeight(35);
+            button->SetLeftAlignment(true);
+            button->type = type;
+            objectList->addWidget(button);
+            connect(button, &QPushButton::clicked, this, [=]{
+                emit objectChoosed(button, TypeTarget);
+                targetName = newButton;
+            });
+            connect(button, &CObjectsButton::remove, this, [=]{
+                updateList();
+                render();
+                emit remove();
+            });
+            button->hide();
+            list.emplace_back(button);
+            lastTumbler = button;
+        }
+    }
+}
+
+
+void CObjectList::updateList () {
+    CObjectsButton* lastTumbler = nullptr;
+    for (const auto& entry : list)
+        delete entry;
+    list.clear();
+
+    scan_directory(stc::cwmm::ram_preset(),     true, lastTumbler);
+    scan_directory(stc::cwmm::ram_collection(), false, lastTumbler);
+}
+
+void CObjectList::render() {
+    if (TypeTarget) {
+        for (CObjectsButton* target : list)
+            if  (target->type == true) target->show();
+            else target->hide();
+    }
+    else {
+        for (CObjectsButton* target : list)
+            if  (target->type == false) target->show();
+            else target->hide();
+    }
+}
+
