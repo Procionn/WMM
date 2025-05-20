@@ -1,7 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "../patterns.h"
+#include "../patterns/CLinkTumbler.h"
 #include "setlang.h"
 #include "setsource.h"
 #include "setsupport.h"

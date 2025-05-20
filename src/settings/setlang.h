@@ -3,7 +3,7 @@
 
 #include "../patterns/CScrollWindow.h"
 #include "../patterns/CFastDialog.h"
-#include "../patterns.h"
+#include "../patterns/CLinkTumbler.h"
 
 #include <QWidget>
 #include <QPushButton>

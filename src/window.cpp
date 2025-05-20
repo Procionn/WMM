@@ -1,6 +1,5 @@
 #include "window.h"
 #include "lang.h"
-#include "widgetpattern.h"
 #include "CONSTANTS.h"
 #include "settings/settings.h"
 
@@ -17,13 +16,12 @@
 
 Window::Window () {
     CMenuBar* menu = new CMenuBar(this);
-    setMenuBar(menu);
-    
     QSplitter* BaseSplitter = new QSplitter();
     ObjectList = new CObjectList;
     ContentWidget = new CContentList();
     inpad = new CInpad(ObjectList->TypeTarget);
 
+    setMenuBar(menu);
     setCentralWidget(BaseSplitter);
     BaseSplitter->addWidget(ObjectList);
     BaseSplitter->addWidget(ContentWidget);
