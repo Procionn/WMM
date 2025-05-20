@@ -3,6 +3,7 @@
 
 #include "dialog_window/cinpad/CInpad.h"
 #include "widgetpattern.h"
+#include "window/CMenuBar.h"
 
 #include <QMainWindow>
 #include <QDialog>

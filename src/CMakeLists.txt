@@ -51,6 +51,7 @@ set(PROJECT_SOURCES
 
     window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
     window/modlist/cobject.h            window/modlist/cobject.cpp
+    window/CMenuBar.h                   window/CMenuBar.cpp
 
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
     patterns/CToggledButton.h           patterns/CToggledButton.cpp
