@@ -5,7 +5,7 @@
 #include "../../CONSTANTS.h"
 #include "../../methods.h"
 #include "../../patterns/CScrollWindow.h"
-#include "../../patterns.h"
+#include "../../window/CObjectsButton.h"
 #include "CInpadButton.h"
 #include "CInpadList.h"
 

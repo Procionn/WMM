@@ -38,9 +38,9 @@ set(PROJECT_SOURCES
     core.h                              core.cpp
     lang.h                              lang.cpp
 
-    widgetpattern.h                     widgetpattern.cpp
+
     dnd.h                               dnd.cpp
-    patterns.h                          patterns.cpp
+    window/CObjectsButton.h             window/CObjectsButton.cpp
     methods.cpp                         methods.h
 
     settings/settings.h                 settings/settings.cpp
@@ -52,6 +52,8 @@ set(PROJECT_SOURCES
     window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
     window/modlist/cobject.h            window/modlist/cobject.cpp
     window/CMenuBar.h                   window/CMenuBar.cpp
+    window/mainWidgets.h                window/CObjectList.cpp
+                                        window/CContentList.cpp
 
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
     patterns/CToggledButton.h           patterns/CToggledButton.cpp

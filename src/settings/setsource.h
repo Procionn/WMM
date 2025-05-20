@@ -3,7 +3,7 @@
 
 #include "../patterns/CScrollWindow.h"
 #include "../patterns/ERRORdialog.h"
-#include "../patterns.h"
+#include "../patterns/CLinkTumbler.h"
 #include "../CONSTANTS.h"
 #include "../lang.h"
 

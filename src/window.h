@@ -2,7 +2,7 @@
 #define WINDOW_H
 
 #include "dialog_window/cinpad/CInpad.h"
-#include "widgetpattern.h"
+#include "window/mainWidgets.h"
 #include "window/CMenuBar.h"
 
 #include <QMainWindow>

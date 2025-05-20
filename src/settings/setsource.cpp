@@ -11,16 +11,16 @@ setsource::setsource() {
     QWidget* firstwidget = new QWidget;
     QWidget* lastwidget = new QWidget;
     addScrollable(this, list);
-    QLabel* dir = new QLabel(QString::fromStdString(Lang::LANG_LABEL_DIRECTORY_CHOOSE));
-    QLabel* game = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CHOOSE));
-    QLabel* backup = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_BACKUP));
-    QLabel* clear = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CLEAR));
-    QLabel* recovery = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_RECOVERY));
-    QPushButton* dirBTN = new QPushButton(QString::fromStdString(""));
-    QPushButton* gameBTN = new QPushButton(QString::fromStdString(CConfigs::CONFIG_GAME));
-    QPushButton* backupBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_BACKUP));
-    QPushButton* clearBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_CLEAR));
-    QPushButton* recoveryBTN = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_RECOVERY));
+    QLabel* dir                 = new QLabel(QString::fromStdString(Lang::LANG_LABEL_DIRECTORY_CHOOSE));
+    QLabel* game                = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CHOOSE));
+    QLabel* backup              = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_BACKUP));
+    QLabel* clear               = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_CLEAR));
+    QLabel* recovery            = new QLabel(QString::fromStdString(Lang::LANG_LABEL_GAME_RECOVERY));
+    QPushButton* dirBTN         = new QPushButton(QString::fromStdString(""));
+    QPushButton* gameBTN        = new QPushButton(QString::fromStdString(CConfigs::CONFIG_GAME));
+    QPushButton* backupBTN      = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_BACKUP));
+    QPushButton* clearBTN       = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_CLEAR));
+    QPushButton* recoveryBTN    = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_GAME_RECOVERY));
 
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Raised);
@@ -62,12 +62,14 @@ setsource::setsource() {
     connect(dirBTN, &QPushButton::clicked, [=]{chooseExe(dirBTN);});
     connect(backupBTN, &QPushButton::clicked, [=]{createBackup();});
     connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
-    connect(clearBTN, &QPushButton::clicked, [=]{CGameConfig config;
-                                                 config.symlink_deliting();
-                                                });
-    connect(recoveryBTN, &QPushButton::clicked, [=]{CGameConfig config;
-                                                    config.game_recovery();
-                                                   });
+    connect(clearBTN, &QPushButton::clicked, [=]{
+        CGameConfig config;
+        config.symlink_deliting();
+    });
+    connect(recoveryBTN, &QPushButton::clicked, [=]{
+        CGameConfig config;
+        config.game_recovery();
+    });
 }
 
 
@@ -88,10 +90,11 @@ void setsource::chooseGame (QPushButton* parent) {
         lastBTN = button;
         content->addWidget(button);
         connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
-        connect(dialog->apply, &QPushButton::clicked, [=]{target = tmptarget;
-                                                          parent->setText(QString::fromStdString(button->name));
-                                                          dialog->reject();
-                                                         });
+        connect(dialog->apply, &QPushButton::clicked, [=]{
+            target = tmptarget;
+            parent->setText(QString::fromStdString(button->name));
+            dialog->reject();
+        });
     }
 }
 
