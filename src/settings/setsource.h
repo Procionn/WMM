@@ -5,7 +5,7 @@
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/CLinkTumbler.h"
 #include "../CONSTANTS.h"
-#include "../lang.h"
+#include "../core.h"
 
 #include <QWidget>
 

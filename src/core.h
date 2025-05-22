@@ -5,41 +5,53 @@
 #include <string>
 #include <fstream>
 #include <filesystem>
-#include <iostream>
 #include <cassert>
-#include <QCoreApplication>
+#include <map>
 #include <wmml.h>
+
 
 class CBaseConfig
 {
-public:
-    bool configRead (std::istream& input, std::string& firstReturned, std::string& lastReturned);
-};
-
-
-
-class CConfigs : public CBaseConfig
-{
-public:
-    static std::string CONFIG_LANGUAGES;
-    static std::string CONFIG_ARCHIVE_ITERATION;
-    static std::string CONFIG_GAME;
-    static std::string CONFIG_GAME_VERSION;
-    static std::string CONFIG_GAME_PATH;
-    static std::string CONFIG_EXECUTABLE_FILE;
-    
-    void config_reader ();
-    void config_test ();
-    void config_save();
+protected:
+    bool configRead(std::istream& input, std::string& firstReturned, std::string& lastReturned);
 };
 
 
 
 
 
-class CGameConfig : public CBaseConfig
+class Lang : public virtual CBaseConfig
 {
-    std::string config_string[4] {
+public:
+    inline static std::map<std::string, std::string> lang;
+    void update_lang();
+protected:
+    Lang();
+};
+
+
+
+
+
+class CConfigs : public virtual CBaseConfig
+{
+protected:
+    CConfigs();
+public:
+    inline static std::string CONFIG_LANGUAGES;
+    inline static std::string CONFIG_GAME;
+
+    void config_reader();
+    void overwriting_config_data();
+};
+
+
+
+
+
+class CGameConfig : public virtual CBaseConfig
+{
+    static constexpr const char* config_string[4]{
         "ModCoreDirectoryStage",
         "OnlyModDirectory",
         "MixedGameDirectory",
@@ -48,47 +60,55 @@ class CGameConfig : public CBaseConfig
     std::vector<std::string> OMD; // Only Mods Directory
     std::vector<std::string> MGD; // Mixed Game Directory
     std::string core_dir_name;
-    int GAME_CORE_DIR_STAGE;
+    unsigned int GAME_CORE_DIR_STAGE;
+
 public:
-    std::string config_game_path;
-    std::string config_executable_file;
-    std::string config_url;
+    inline static std::string CONFIG_GAME_PATH;
+    inline static std::string CONFIG_EXECUTABLE_FILE;
+    inline static std::string CONFIG_URL;
     
-    
-    CGameConfig ();
-    void game_path(std::string path);
+    void update_data_from_file();
+    void save_game_path(const std::string& path);
     void game_dir_backup();
-    void symlink_deliting();
-    void dir_comparison(std::filesystem::path& file);
-    void symlink_creating(std::string& targetCollection);
     void game_recovery();
     void restorer();
+    void symlink_deliting();
+    void symlink_creating(const std::string& targetCollection);
+protected:
+    CGameConfig ();
+    void dir_comparison(const std::filesystem::path& file);
 private:
-    int size = 3;
+    const int wmml_size = 3;
     void write(wmml& input, std::string str);
 };
 
 
 
 
-namespace configurator {
+
+class Core final : public CConfigs, public Lang, public CGameConfig
+{
+    Core() = default;
+    ~Core() = default;
+
+protected:
     struct wmmb
     {
         unsigned long int id;
         std::string version;
         std::string name;
         bool status = true;
-        
+
         wmmb(std::vector<wmml::variant>& v);
+        bool operator==(wmmb& last);
     };
-    bool operator==(wmmb& first, wmmb& last);
-    
-    std::vector<configurator::wmmb*> parser(std::filesystem::path& file, int& publicCounter);
-    void collector(std::filesystem::path name, bool type);
-    void compiller(std::filesystem::path& file, std::filesystem::path& directory);
-}
+    std::vector<Core::wmmb*> parser(std::filesystem::path& file, int& publicCounter);
+    void compiller(const std::filesystem::path& file, const std::filesystem::path& directory);
 
-void replace (std::string& input, char replaceable, char target);
+public:
+    static Core& get();
 
+    void collector(const std::filesystem::path& name, bool type);
+};
 
 #endif // CORE_H

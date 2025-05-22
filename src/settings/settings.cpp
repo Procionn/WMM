@@ -1,7 +1,7 @@
 #include "settings.h"
 #include "../CONSTANTS.h"
 #include "../patterns/CScrollWindow.h"
-#include "../lang.h"
+#include "../core.h"
 
 #include <QDialog>
 #include <QVBoxLayout>
@@ -16,23 +16,23 @@ CSettings::CSettings () {
     resize(1000, 600);
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
     QHBoxLayout* dialogButtonBox = new QHBoxLayout();
-    QPushButton* accept = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_ACCEPT));
-    QPushButton* cansel = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_CANSEL));
+    QPushButton* accept = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_ACCEPT"]));
+    QPushButton* cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]));
     QWidget* separator = new QWidget;
     QSplitter* splitter = new QSplitter;
     QFrame* line = new QFrame();
     sobjects = new SObjects;
-    slist = new SList;
+    settings_modules_list = new SList;
     
-    slist->resize(500, 10);
+    settings_modules_list->resize(500, 10);
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     connect(cansel, &QPushButton::clicked, this, [=]{this->reject();});
     connect(accept, &QPushButton::clicked, this, &CSettings::save);
-    connect(sobjects->sorce,   &CLinkTumbler::toggled, slist, &SList::sorce);
-    connect(sobjects->lang,    &CLinkTumbler::toggled, slist, &SList::lang);
-    connect(sobjects->support, &CLinkTumbler::toggled, slist, &SList::support);
+    connect(sobjects->sorce,   &CLinkTumbler::toggled, settings_modules_list, &SList::sorce);
+    connect(sobjects->lang,    &CLinkTumbler::toggled, settings_modules_list, &SList::lang);
+    connect(sobjects->support, &CLinkTumbler::toggled, settings_modules_list, &SList::support);
     sobjects->sorce->isTarget(true);
     
     dialogLayout->addLayout(dialogButtonBox);
@@ -42,25 +42,22 @@ CSettings::CSettings () {
     dialogButtonBox->addWidget(cansel);
     dialogLayout->addWidget(splitter);
     splitter->addWidget(sobjects);
-    splitter->addWidget(slist);
+    splitter->addWidget(settings_modules_list);
     show();
 }
 
 void CSettings::save () {
-    CGameConfig config;
-    if (!slist->ss->buffer.isEmpty())
-        config.game_path(slist->ss->buffer.toStdString());
-    CConfigs core;
-    if (slist->ss->target != nullptr) {
-        CConfigs::CONFIG_GAME = slist->ss->target->name;
-        core.config_save();
+    if (!settings_modules_list->settings_source->buffer.isEmpty())
+        Core::get().save_game_path(settings_modules_list->settings_source->buffer.toStdString());
+    if (settings_modules_list->settings_source->target) {
+        Core::CONFIG_GAME = settings_modules_list->settings_source->target->name;
+        Core::get().overwriting_config_data();
     }
-    if (slist->sl->target != nullptr) {
-        CConfigs::CONFIG_LANGUAGES = LANG + slist->sl->target->name + EXPANSION3;
-        core.config_save();
-        Lang newlang;
-        newlang.set_lang();
-        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_NEW_LANG);
+    if (settings_modules_list->settings_lang->target) {
+        CConfigs::CONFIG_LANGUAGES = LANG + settings_modules_list->settings_lang->target->name + EXPANSION3;
+        Core::get().overwriting_config_data();
+        Core::get().update_lang();
+        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_NEW_LANG"]);
     }
 }
 
@@ -71,10 +68,10 @@ void CSettings::save () {
 SObjects::SObjects () {
     list = new QVBoxLayout;
     addScrollable(this, list);
-    sorce = new CLinkTumbler(Lang::LANG_BUTTON_SORCE);
-    lang = new CLinkTumbler(Lang::LANG_BUTTON_LANG, sorce);
-    support = new CLinkTumbler(Lang::LANG_BUTTON_SUPPORT, lang);
-    extensions = new CLinkTumbler(Lang::LANG_BUTTON_EXTENSIONS, support);
+    sorce = new CLinkTumbler(Core::lang["LANG_BUTTON_SORCE"]);
+    lang = new CLinkTumbler(Core::lang["LANG_BUTTON_LANG"], sorce);
+    support = new CLinkTumbler(Core::lang["LANG_BUTTON_settings_supportPORT"], lang);
+    extensions = new CLinkTumbler(Core::lang["LANG_BUTTON_EXTENSIONS"], support);
     
     list->setAlignment(Qt::AlignTop);
     sorce->SetLeftAlignment(true);
@@ -82,8 +79,7 @@ SObjects::SObjects () {
     support->SetLeftAlignment(true);
     extensions->SetLeftAlignment(true);
     
-    // lang->hide();
-    // support->hide();
+    support->hide();
     extensions->hide();
     
     sorce->setMinimumHeight(35);
@@ -103,40 +99,40 @@ SObjects::SObjects () {
 
 SList::SList () {
     QVBoxLayout* list = new QVBoxLayout(this);
-    ss = new setsource;
-    sl = new setlang;
-    sup = new setsupport;
-    se = new setextensions;
-    list->addWidget(ss);
-    list->addWidget(sl);
-    list->addWidget(sup);
-    list->addWidget(se);
+    settings_source = new setsource;
+    settings_lang = new setlang;
+    settings_support = new setsupport;
+    settings_extension = new setextensions;
+    list->addWidget(settings_source);
+    list->addWidget(settings_lang);
+    list->addWidget(settings_support);
+    list->addWidget(settings_extension);
 }
 
 void SList::sorce () {
-    ss->show();
-    sl->hide();
-    sup->hide();
-    se->hide();
+    settings_source->show();
+    settings_lang->hide();
+    settings_support->hide();
+    settings_extension->hide();
 }
 
 void SList::lang () {
-    ss->hide();
-    sl->show();
-    sup->hide();
-    se->hide();
+    settings_source->hide();
+    settings_lang->show();
+    settings_support->hide();
+    settings_extension->hide();
 }
 
 void SList::support () {
-    ss->hide();
-    sl->hide();
-    sup->show();
-    se->hide();
+    settings_source->hide();
+    settings_lang->hide();
+    settings_support->show();
+    settings_extension->hide();
 }
 
 void SList::extensions () {
-    ss->hide();
-    sl->hide();
-    sup->hide();
-    se->show();
+    settings_source->hide();
+    settings_lang->hide();
+    settings_support->hide();
+    settings_extension->show();
 }

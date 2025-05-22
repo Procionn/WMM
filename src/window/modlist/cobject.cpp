@@ -51,10 +51,10 @@ CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const unsig
 
 void CObject::context (const QPoint &pos) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObject::DELETE);
     if (type) {
-        QAction *action2 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_INFO));
+        QAction *action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
         connect(action2, &QAction::triggered, this, &CObject::INFO);
     }
     contextMenu->exec(this->mapToGlobal(pos));

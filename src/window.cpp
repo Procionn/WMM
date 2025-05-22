@@ -1,5 +1,5 @@
 #include "window.h"
-#include "lang.h"
+#include "core.h"
 #include "CONSTANTS.h"
 #include "settings/settings.h"
 
@@ -45,13 +45,13 @@ Window::Window () {
 }
 
 void Window::NewObjectDialog() {
-    if (CConfigs::CONFIG_GAME != "None") {
+    if (Core::CONFIG_GAME != "None") {
         newObjectDialog = new CNewObjectDialog();
         newObjectDialog->show();
         connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList, [=]{ObjectList->newObject(newObjectDialog);});
     }
     else
-        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R37);
+        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
 }
 
 void Window::settings() {
@@ -65,7 +65,7 @@ void Window::updatePointer(CObjectsButton* pointer) {
 void Window::inpadShow () {
     if (target != nullptr)
         inpad->show();
-    else ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R35);
+    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R35"]);
 }
 
 

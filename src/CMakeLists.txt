@@ -35,9 +35,11 @@ set(PROJECT_SOURCES
     window.h window.cpp
 
     CONSTANTS.h
-    core.h                              core.cpp
-    lang.h                              lang.cpp
-
+    core.h                              core/core.cpp
+                                        core/lang.cpp
+                                        core/config.cpp
+                                        core/gameConfig.cpp
+                                        core/configurator.cpp
 
     dnd.h                               dnd.cpp
     window/CObjectsButton.h             window/CObjectsButton.cpp

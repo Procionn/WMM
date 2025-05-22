@@ -1,7 +1,7 @@
 #include "mainWidgets.h"
 
 #include "../patterns/ERRORdialog.h"
-#include "../lang.h"
+#include "../core.h"
 #include <QTimer>
 
 CObjectList::CObjectList () {
@@ -11,8 +11,8 @@ CObjectList::CObjectList () {
     setLayout(privateObjectList);
     QHBoxLayout* objectButtonBox = new QHBoxLayout();
     privateObjectList->addLayout(objectButtonBox);
-    CLinkTumbler* Collection = new CLinkTumbler(Lang::LANG_BUTTON_COLLECTIONS);
-    CLinkTumbler* Preset     = new CLinkTumbler(Lang::LANG_BUTTON_PRESETS, Collection);
+    CLinkTumbler* Collection = new CLinkTumbler(Core::lang["LANG_BUTTON_COLLECTIONS"]);
+    CLinkTumbler* Preset     = new CLinkTumbler(Core::lang["LANG_BUTTON_PRESETS"], Collection);
     objectButtonBox->addWidget(Collection);
     objectButtonBox->addWidget(Preset);
     Collection->isTarget(true);
@@ -58,7 +58,7 @@ void CObjectList::CreteObject (std::string name) {
         updateList();
         render();
     }
-    else ERRORdialog* errorR34 = new ERRORdialog(Lang::LANG_LABEL_R34);
+    else ERRORdialog* errorR34 = new ERRORdialog(Core::lang["LANG_LABEL_R34"]);
 }
 
 

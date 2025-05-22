@@ -14,7 +14,7 @@ CObjectsContainer::CObjectsContainer() {
 
 void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
     contextMenu->exec(this->mapToGlobal(pos));
 }

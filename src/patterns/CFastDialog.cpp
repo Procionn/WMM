@@ -6,8 +6,8 @@ CFastDialog::CFastDialog () {
     // setModal(Qt::WindowModal);
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
     QHBoxLayout* DialogButtonBox = new QHBoxLayout();
-    apply = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_APPLY), this);
-    QPushButton* cansel = new QPushButton(QString::fromStdString(Lang::LANG_BUTTON_CANSEL), this);
+    apply = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_APPLY"]), this);
+    QPushButton* cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]), this);
     list = new QWidget();
     list->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     dialogLayout->addWidget(list);
@@ -16,7 +16,8 @@ CFastDialog::CFastDialog () {
     DialogButtonBox->addWidget(cansel);
     apply->setDefault(true);
     connect(apply,  &QPushButton::clicked, [=]{emit applyClicked();});
-    connect(cansel, &QPushButton::clicked, [=]{reject();
-                                               emit canselClicked();
-                                              });
+    connect(cansel, &QPushButton::clicked, [=]{
+        reject();
+        emit canselClicked();
+    });
 }

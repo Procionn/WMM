@@ -1,6 +1,6 @@
 #include "CObjectsButton.h"
 
-#include "../lang.h"
+#include "../core.h"
 #include "../methods.h"
 
 CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget* parent) : CLinkTumbler(name){
@@ -23,7 +23,7 @@ CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget
 
 void CObjectsButton::context (const QPoint &pos) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Lang::LANG_BUTTON_DELETE));
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObjectsButton::DELETE);
     contextMenu->exec(this->mapToGlobal(pos));
 }

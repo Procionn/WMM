@@ -35,10 +35,10 @@ class SList : public QWidget
 public:  
     SList();
 
-    setsource* ss;
-    setlang* sl;
-    setsupport* sup;
-    setextensions* se;
+    setsource* settings_source;
+    setlang* settings_lang;
+    setsupport* settings_support;
+    setextensions* settings_extension;
 
 public slots:
     void sorce();
@@ -56,7 +56,7 @@ class CSettings : public QDialog
     Q_OBJECT
 public:
     SObjects* sobjects;
-    SList* slist;
+    SList* settings_modules_list;
     
     CSettings();
 private slots:

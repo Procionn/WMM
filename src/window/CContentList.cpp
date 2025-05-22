@@ -16,10 +16,10 @@ CContentList::CContentList () {
 
     spl1 = new QSplitter;
     spl2 = new QSplitter;
-    QLabel* lblName     = new QLabel(QString::fromStdString(Lang::LANG_LABEL_NAME));
-    QLabel* lblVersion  = new QLabel(QString::fromStdString(Lang::LANG_LABEL_VERSION));
-    QLabel* lblType     = new QLabel(QString::fromStdString(Lang::LANG_LABEL_TYPE));
-    QLabel* lblSwitcher = new QLabel(QString::fromStdString(Lang::LANG_LABEL_SWITCHER));
+    QLabel* lblName     = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_NAME"]));
+    QLabel* lblVersion  = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_VERSION"]));
+    QLabel* lblType     = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_TYPE"]));
+    QLabel* lblSwitcher = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_SWITCHER"]));
 
     splitterBox->addWidget(spl1);
     splitterBox->addWidget(spl2);
@@ -32,7 +32,7 @@ CContentList::CContentList () {
 
     contentList = new CObjectsContainer;
     BaseContainer->addWidget(contentList);
-    dnd = new CDND(BaseContainer, Lang::LANG_LABEL_DND);
+    dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
 }
 
 

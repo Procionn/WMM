@@ -1,7 +1,7 @@
 #ifndef CFASTDIALOG_H
 #define CFASTDIALOG_H
 
-#include "../lang.h"
+#include "../core.h"
 #include <QDialog>
 #include <QPushButton>
 #include <QVBoxLayout>

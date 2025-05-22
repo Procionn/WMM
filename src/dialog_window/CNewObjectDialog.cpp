@@ -5,7 +5,7 @@ CNewObjectDialog::CNewObjectDialog () {
     list->setLayout(glist);
     glist->setAlignment(Qt::AlignTop);
     glist->setContentsMargins(15, 15, 0, 0);
-    glist->addWidget(new QLabel(QString::fromStdString(Lang::LANG_LABEL_NAME)));
+    glist->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_NAME"])));
     nameTab = new QLineEdit;
     glist->addWidget(nameTab);
 }

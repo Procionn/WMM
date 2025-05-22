@@ -1,7 +1,7 @@
 #ifndef COBJECT_H
 #define COBJECT_H
 
-#include "../../lang.h"
+#include "../../core.h"
 #include "../../methods.h"
 #include "../../patterns/CSwitchButton.h"
 #include "../../patterns/CSmartObject.h"

@@ -12,7 +12,7 @@ class setlang : public QWidget
 {
     Q_OBJECT
 public:
-    CLinkTumbler* target;
+    CLinkTumbler* target = nullptr;
 public:
     setlang();
 private slots:

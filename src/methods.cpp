@@ -68,8 +68,7 @@ std::string stc::cwmm::ram_mods_info(const std::string& name) {
 
 
 std::string stc::cwmm::modsURL (const std::string& id) {
-    CGameConfig game;
-    std::string tmp = game.config_url;
+    std::string tmp = Core::CONFIG_URL;
     size_t mark1 = tmp.find_last_of('[');
     size_t mark2 = tmp.find_last_of(']');
 #ifndef NDEBUG

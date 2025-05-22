@@ -1,17 +1,13 @@
 #include "core.h"
-#include "lang.h"
 #include "window.h"
 
 #include <QApplication>
 
+
 int main(int argc, char *argv[])
 {
     try {
-        CConfigs config;
-        config.config_test();
-        Lang lang;
-        lang.set_lang();
-
+        static Core& globalCore = Core::get();
         QApplication app(argc, argv);
         app.setApplicationName("Wirus Mod Manager");
         QApplication::setStyle("Fusion");

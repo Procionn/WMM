@@ -7,7 +7,7 @@ CInpad::CInpad(bool& type) {
     QVBoxLayout* vertBox = new QVBoxLayout(list);
     QHBoxLayout* horBox = new QHBoxLayout;
     vertBox->addLayout(horBox);
-    QLabel* label = new QLabel(QString::fromStdString(Lang::LANG_LABEL_ADD));
+    QLabel* label = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ADD"]));
     QMenuBar* menuBar = new QMenuBar;
     horBox->addWidget(label);
     horBox->addWidget(menuBar);
@@ -15,18 +15,18 @@ CInpad::CInpad(bool& type) {
     menu = new QMenu("v");
     menuBar->addMenu(menu);
 
-    presets = new QAction(QString::fromStdString(Lang::LANG_BUTTON_PRESETS));
+    presets = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_PRESETS"]));
     menu->addAction(presets);
     connect(presets, &QAction::triggered, this, [=]{
-        menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_PRESETS));
+        menu->setTitle(QString::fromStdString(Core::lang["LANG_BUTTON_PRESETS"]));
         targetType = true;
         distributor();
     });
 
-    QAction* mods = new QAction(QString::fromStdString(Lang::LANG_BUTTON_MODS));
+    QAction* mods = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_MODS"]));
     menu->addAction(mods);
     connect(mods, &QAction::triggered, this, [=]{
-        menu->setTitle(QString::fromStdString(Lang::LANG_BUTTON_MODS));
+        menu->setTitle(QString::fromStdString(Core::lang["LANG_BUTTON_MODS"]));
         targetType = false;
         distributor();
     });

@@ -2,7 +2,6 @@
 #include "CONSTANTS.h"
 #include "core.h"
 #include "patterns/ERRORdialog.h"
-#include "lang.h"
 
 #include <QLabel>
 #include <iostream>
@@ -54,7 +53,7 @@ void CDND::dragEnterEvent(QDragEnterEvent* e) {
 
 void CDND::dropEvent(QDropEvent* e) {
     if (CConfigs::CONFIG_GAME == "None")
-        ERRORdialog* dialog = new ERRORdialog(Lang::LANG_LABEL_R37);
+        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
     else {
         foreach (const QUrl &url, e->mimeData()->urls()) {
             QString fileName = url.toLocalFile();

@@ -1,7 +1,7 @@
 #include "setlang.h"
-#include "../lang.h"
 #include "../core.h"
 #include "../CONSTANTS.h"
+#include "../methods.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -9,13 +9,13 @@
 #include <filesystem>
 
 setlang::setlang () {
-    std::string strlang = CConfigs::CONFIG_LANGUAGES.substr(CConfigs::CONFIG_LANGUAGES.find_last_of('/') + 1);
+    // std::string strlang = Core::CONFIG_LANGUAGES.substr(Core::CONFIG_LANGUAGES.find_last_of('/') + 1);
 
     QVBoxLayout* list = new QVBoxLayout;
     QHBoxLayout* hbox = new QHBoxLayout;
-    QLabel* lang = new QLabel(QString::fromStdString(Lang::LANG_LABEL_CHOOSE_LANG));
-    QLabel* community = new QLabel(QString::fromStdString(Lang::LANG_LABEL_CUSTOM_LANG).replace("\\n", "\n"));
-    QPushButton* button = new QPushButton(QString::fromStdString(strlang.substr(0, strlang.size() - INI_MAIN_PART)));
+    QLabel* lang = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_LANG"]));
+    QLabel* community = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CUSTOM_LANG"]).replace("\\n", "\n"));
+    QPushButton* button = new QPushButton(QString::fromStdString(stc::string::get_name(Core::CONFIG_LANGUAGES)));
     addScrollable(this, list);
 
     list->setAlignment(Qt::AlignTop);
