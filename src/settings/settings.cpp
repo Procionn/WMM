@@ -43,21 +43,24 @@ CSettings::CSettings () {
     dialogLayout->addWidget(splitter);
     splitter->addWidget(sobjects);
     splitter->addWidget(settings_modules_list);
-    show();
 }
 
 void CSettings::save () {
-    if (!settings_modules_list->settings_source->buffer.isEmpty())
+    if (!settings_modules_list->settings_source->buffer.isEmpty()) {
         Core::get().save_game_path(settings_modules_list->settings_source->buffer.toStdString());
+        settings_modules_list->settings_source->buffer.clear();
+    }
     if (settings_modules_list->settings_source->target) {
         Core::CONFIG_GAME = settings_modules_list->settings_source->target->name;
         Core::get().overwriting_config_data();
+        settings_modules_list->settings_source->target = nullptr;
     }
     if (settings_modules_list->settings_lang->target) {
         CConfigs::CONFIG_LANGUAGES = LANG + settings_modules_list->settings_lang->target->name + EXPANSION3;
         Core::get().overwriting_config_data();
         Core::get().update_lang();
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_NEW_LANG"]);
+        settings_modules_list->settings_lang->target = nullptr;
     }
 }
 

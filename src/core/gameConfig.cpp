@@ -63,7 +63,6 @@ void CGameConfig::save_game_path (const std::string& path) {
     // create a save of game in save.wmml file
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
-        std::cout << file.height() << " " << file.width() << std::endl;
         std::vector<wmml::variant> v(wmml_size);
         for (int counter = 0; file.read(v); ++counter) {
             if (std::get<std::string>(v[0]) == Core::CONFIG_GAME) {

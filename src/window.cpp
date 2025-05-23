@@ -55,7 +55,10 @@ void Window::NewObjectDialog() {
 }
 
 void Window::settings() {
-    CSettings* set = new CSettings;
+    static CSettings* settings;
+    if (!settings)
+         settings = new CSettings;
+    settings->show();
 }
 
 void Window::updatePointer(CObjectsButton* pointer) {
