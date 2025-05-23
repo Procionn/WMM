@@ -14,10 +14,10 @@ CMenuBar::CMenuBar(Window* parent) {
 
     addAction(settings);
     addAction(object);
+    addAction(content);
     addAction(assembling);
     addAction(reassembly);
     addAction(linking);
-    addAction(content);
 
     connect(content,    &QAction::triggered, [=]{emit content_click();});
     connect(settings,   &QAction::triggered, [=]{emit settings_click();});
