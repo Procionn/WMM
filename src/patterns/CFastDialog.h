@@ -12,6 +12,7 @@ class CFastDialog : public QDialog
     Q_OBJECT
 protected:
     QHBoxLayout* DialogButtonBox;
+    bool autodeleting = true;
 
 public:
     QWidget* list;

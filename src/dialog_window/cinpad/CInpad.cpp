@@ -4,6 +4,7 @@ CInpad::CInpad(bool& type) {
     callType = &type;
     setMinimumHeight(400);
     setMinimumWidth(600);
+    autodeleting = false;
     QVBoxLayout* vertBox = new QVBoxLayout(list);
     QHBoxLayout* horBox = new QHBoxLayout;
     vertBox->addLayout(horBox);

@@ -99,11 +99,19 @@ protected:
         std::string name;
         bool status = true;
 
-        wmmb(std::vector<wmml::variant>& v);
-        bool operator==(wmmb& last);
+        wmmb(std::vector<wmml::variant>& v)  noexcept;
+        bool operator==(const wmmb& last) const noexcept;
     };
-    std::vector<Core::wmmb*> parser(const std::filesystem::path& file, int& publicCounter);
-    void compiller(const std::filesystem::path& file, const std::filesystem::path& directory);
+    std::vector<Core::wmmb> parser(const std::filesystem::path& file);
+    void compiller      (const std::vector<wmmb>& list,
+                         const std::filesystem::path& directory);
+    void optimizations  (std::vector<wmmb>& mainList,
+                         std::vector<wmmb>& oldstruct);
+    void clearing       (const std::vector<wmmb>& oldstruct,
+                         const std::filesystem::path& directory);
+    void collection_info(const std::vector<wmmb>& newstruct,
+                         const std::filesystem::path& path,
+                         const std::string& name);
 
 public:
     static Core& get();

@@ -17,8 +17,9 @@ CFastDialog::CFastDialog () {
     apply->setDefault(true);
     connect(apply,  &QPushButton::clicked, [=]{emit applyClicked();});
     connect(cansel, &QPushButton::clicked, [=]{
-        reject();
-        emit canselClicked();
-        delete this;
+            reject();
+            emit canselClicked();
+        if (autodeleting)
+            delete this;
     });
 }
