@@ -1,8 +1,12 @@
 #include "../core.h"
 
-#ifndef NDEBUG
-#include <iostream>
-#include <iomanip>
+// #ifndef NDEBUG
+    #include <iostream>
+    #include <iomanip>
+// #endif
+#ifdef _WIN32
+    #include <windows.h>
+    #include <sys/stat.h>
 #endif
 #include <QCoreApplication>
 

@@ -10,6 +10,9 @@
 class CFastDialog : public QDialog
 {
     Q_OBJECT
+protected:
+    QHBoxLayout* DialogButtonBox;
+
 public:
     QWidget* list;
     QPushButton* apply;

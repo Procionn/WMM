@@ -34,7 +34,7 @@ private:
     void scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler);
 signals:
     void objectChoosed(CObjectsButton* pointer, bool type);
-    void remove();
+    void remove(CObjectsButton* pointer);
 
 public slots:
     void newObject(CNewObjectDialog* dialog);

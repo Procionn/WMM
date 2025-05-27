@@ -102,13 +102,23 @@ protected:
         wmmb(std::vector<wmml::variant>& v);
         bool operator==(wmmb& last);
     };
-    std::vector<Core::wmmb*> parser(std::filesystem::path& file, int& publicCounter);
+    std::vector<Core::wmmb*> parser(const std::filesystem::path& file, int& publicCounter);
     void compiller(const std::filesystem::path& file, const std::filesystem::path& directory);
 
 public:
     static Core& get();
 
     void collector(const std::filesystem::path& name, bool type);
+};
+
+
+
+
+
+struct reset final
+{
+    reset() = default;
+    ~reset() = default;
 };
 
 #endif // CORE_H

@@ -16,6 +16,7 @@ CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget
         }
     }
     setMinimumHeight(35);
+    SetLeftAlignment(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested, this, &CObjectsButton::context);
 }

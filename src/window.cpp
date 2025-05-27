@@ -36,6 +36,7 @@ Window::Window () {
     connect(menu,               &CMenuBar::object_click,     this,          &Window::NewObjectDialog);
     connect(ObjectList,         &CObjectList::objectChoosed, ContentWidget, &CContentList::updateList);
     connect(ObjectList,         &CObjectList::remove,        ContentWidget, &CContentList::clear);
+    connect(ObjectList,         &CObjectList::remove,        this,          &Window::grounding);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::updatePointer);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::inpad_reset);
     connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
@@ -63,6 +64,11 @@ void Window::settings() {
 
 void Window::updatePointer(CObjectsButton* pointer) {
     target = pointer;
+}
+
+void Window::grounding (CObjectsButton* pointer) {
+    if (pointer->name == target->name)
+        target = nullptr;
 }
 
 void Window::inpadShow () {

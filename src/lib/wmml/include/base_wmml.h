@@ -103,6 +103,9 @@ protected:
     static constexpr int  divisor = 4096;
     static constexpr int  dataSize = sizeof(char)/*version*/ + sizeof(unsigned short)/*width_*/ + sizeof(unsigned) /*height_*/ + sizeof(unsigned) /*archivedCount*/;
 
+    base_wmml() = default;
+    virtual ~base_wmml();
+
 public:
 
     unsigned         height();

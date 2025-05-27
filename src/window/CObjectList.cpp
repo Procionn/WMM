@@ -68,8 +68,6 @@ void CObjectList::scan_directory (const std::filesystem::path& directory, const 
         for (auto const& object : std::filesystem::directory_iterator(directory)) {
             std::string newButton = stc::string::get_name(object.path().string());
             CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
-            button->setMinimumHeight(35);
-            button->SetLeftAlignment(true);
             button->type = type;
             objectList->addWidget(button);
             connect(button, &QPushButton::clicked, this, [=]{
@@ -79,7 +77,7 @@ void CObjectList::scan_directory (const std::filesystem::path& directory, const 
             connect(button, &CObjectsButton::remove, this, [=]{
                 updateList();
                 render();
-                emit remove();
+                emit remove(button);
             });
             button->hide();
             list.emplace_back(button);

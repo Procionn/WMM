@@ -4,7 +4,7 @@
 
 const int INI_MAIN_PART         = 4;
 const int MAIN_PART             = 5;
-const int GRID_WIDTH            = 6;
+const int GRID_WIDTH            = 5;
 static const char* CONFIG       = "config.ini";
 static std::string TBC1         = "=> ";
 static std::string TBC2         = " <=";

@@ -31,6 +31,7 @@ public slots:
     void inpadShow();
 private slots:
     void inpad_reset();
+    void grounding(CObjectsButton* pointer);
 };
 
 #endif // WINDOW_H

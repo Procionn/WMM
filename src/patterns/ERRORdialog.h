@@ -8,7 +8,20 @@ class ERRORdialog : public CFastDialog
 {
     Q_OBJECT
 public:
-    ERRORdialog(std::string label);
+    ERRORdialog(const std::string& label);
+};
+
+
+
+
+
+class FatalError : public CFastDialog
+{
+    Q_OBJECT
+    bool fatality;
+public:
+    FatalError(const std::string& error, bool fatality = false);
+    ~FatalError();
 };
 
 #endif // ERRORDIALOG_H

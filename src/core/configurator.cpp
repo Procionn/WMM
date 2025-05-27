@@ -45,7 +45,7 @@ void Core::compiller (const std::filesystem::path& file, const std::filesystem::
     }
 }
 
-std::vector<Core::wmmb*> Core::parser (std::filesystem::path& file, int& publicCounter) {
+std::vector<Core::wmmb*> Core::parser (const std::filesystem::path& file, int& publicCounter) {
     const int constSize = 256;
     int targetSize = constSize;
     publicCounter = 0;
@@ -81,12 +81,10 @@ std::vector<Core::wmmb*> Core::parser (std::filesystem::path& file, int& publicC
 
 void Core::collector(const std::filesystem::path& name, bool type) {
     // collected all mods file in directory
-    fs::path directory = (COLLECTIONS + CConfigs::CONFIG_GAME) / name;
+    fs::path directory = (COLLECTIONS + Core::CONFIG_GAME) / name;
     fs::path oldFile = directory / (CONST_FILE + EXPANSION);
-    if (type) {
-        std::cerr << "Exporting presets is not supported" << std::endl;
-        abort();
-    }
+    if (type)
+        throw "Exporting presets is not supported";
     fs::path file = stc::cwmm::ram_collection(name.string());
 
     if (fs::exists(directory)) {
@@ -107,19 +105,19 @@ void Core::collector(const std::filesystem::path& name, bool type) {
 
         for (int counter = 0; counter != OFS; ++counter) {
             if (oldstruct[counter]) {
-                std::string path = ARCHIVE + CConfigs::CONFIG_GAME + "/" + std::to_string(oldstruct[counter]->id) +
+                std::string path = ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(oldstruct[counter]->id) +
                                    "/" + oldstruct[counter]->version + EXPANSION2;
                 std::string str;
                 std::ifstream readedFile(path);
                 while (std::getline(readedFile, str)) {
-                    fs::path deletedFile = (COLLECTIONS + CConfigs::CONFIG_GAME) / name / str;
+                    fs::path deletedFile = (COLLECTIONS + Core::CONFIG_GAME) / name / str;
                     fs::remove(deletedFile);
                 }
             }
         }
         for (int counter = 0; counter != NFS; ++counter) {
             if (newstruct[counter]) {
-                std::string path = MODS + CConfigs::CONFIG_GAME + "/" + newstruct[counter]->name;
+                std::string path = MODS + Core::CONFIG_GAME + "/" + newstruct[counter]->name;
                 for (const auto& entry : fs::recursive_directory_iterator(path)) {
                     if (fs::is_regular_file(entry.path())) {
                         fs::path relative_path = fs::relative(entry.path(), path);
@@ -132,10 +130,8 @@ void Core::collector(const std::filesystem::path& name, bool type) {
                 }
             }
         }
-        fs::path f1 = file;
-        fs::path f2 = oldFile;
-        fs::remove(f2);
-        fs::copy_file(f1, f2);
+        fs::remove(oldFile);
+        fs::copy_file(file, oldFile);
         std::vector<wmml::variant> v{"this", name.string(), false, 0, true};
         wmml tmp(oldFile);
         tmp.write(v);
@@ -143,9 +139,7 @@ void Core::collector(const std::filesystem::path& name, bool type) {
     else {
         fs::create_directories(directory);
         compiller(file, directory);
-        fs::path f1 = file;
-        fs::path f2 = oldFile;
-        fs::copy_file(f1, f2);
+        fs::copy_file(file, oldFile);
         std::vector<wmml::variant> v{"this", name.string(), false, 0, true};
         wmml tmp(oldFile);
         tmp.write(v);

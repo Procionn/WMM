@@ -41,6 +41,12 @@ public:
     void             remove_object(int object_index);
     // Deletes the specified field from the object. Keeps count from zero.
 
+    void             reset();
+    // sets the object's state to its original state.
+
+    void             flush();
+    // saves cached object data to a file
+
     // unsigned         height(); // Inherited from wmml_base
     // Returns the number of objects in the file.
 

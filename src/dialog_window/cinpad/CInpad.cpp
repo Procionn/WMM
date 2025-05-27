@@ -75,7 +75,6 @@ bool CInpad::nameTest (std::vector<Cbox>& existsElements, int indicator, std::st
 void CInpad::reader () {
     std::string stringDir1 = stc::cwmm::ram_preset();
     std::string stringDir2 = stc::cwmm::ram_mods();
-    int counter = 0;
     std::string targetFiledDirectory;
     if ((*target)->type) targetFiledDirectory = stc::cwmm::ram_preset((*target)->name);
     else                 targetFiledDirectory = stc::cwmm::ram_collection((*target)->name);
@@ -133,7 +132,7 @@ void CInpad::application(std::string& targetName, bool targetType) {
     for (CInpadButton* target : vlist) {
         if (target->is_target()) {
             if  (target->type == true) {
-                v = {target->get_name(), "", false, 0, true};
+                v = {target->get_name(), "", false, (unsigned long)(0), true};
                 file.write(v);
             }
             else {
@@ -144,7 +143,7 @@ void CInpad::application(std::string& targetName, bool targetType) {
                 std::string version = str;
                 std::getline(openedFile, str);
                 unsigned long id = std::stoi(str);
-                v = {target->get_name(), version, true, id, true};
+                v = {target->get_name(), version, true, (unsigned long)(id), true};
                 file.write(v);
             }
         }
