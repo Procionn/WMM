@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <iostream>
 #include <cstdlib>
+#include <QDesktopServices>
+#include <QUrl>
 #ifdef _WIN32
     #include <windows.h>
 #endif
@@ -113,15 +115,7 @@ void stc::fs::remove_all (const std::filesystem::path& path) {
 
 
 void stc::net::openURL (const std::string& url) {
-#ifdef _WIN32
-    std::string command = "start " + url;
-#elif __linux__
-    std::string command = "xdg-open " + url;
-#else
-    std::cerr << "System not found!" << std::endl;
-    return;
-#endif
-    std::system(command.c_str());
+    QDesktopServices::openUrl(QUrl(url.c_str()));
 }
 
 
