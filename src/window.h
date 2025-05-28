@@ -10,9 +10,6 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
-QT_BEGIN_NAMESPACE
-QT_END_NAMESPACE
-
 
 class Window : public QMainWindow
 {

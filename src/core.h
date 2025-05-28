@@ -129,4 +129,11 @@ struct reset final
     ~reset() = default;
 };
 
+
+struct exit_signal final
+{
+    exit_signal() = default;
+    ~exit_signal() = default;
+};
+
 #endif // CORE_H

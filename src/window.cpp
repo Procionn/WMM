@@ -12,7 +12,6 @@
 // #include <QDockWidget>
 #include <QPushButton>
 #include <QSplitter>
-#include <QMenuBar>
 
 Window::Window () {
     CMenuBar* menu = new CMenuBar(this);
@@ -43,7 +42,6 @@ Window::Window () {
     connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
     connect(inpad,              &CInpad::applyClicked,       inpad,         [=]{inpad->application(ObjectList->targetName, ObjectList->TypeTarget);});
     connect(inpad,              &CInpad::applyClicked,       ContentWidget, [=]{ContentWidget->updateList(target, ContentWidget->targetType);});
-    connect(this,               &QObject::destroyed,                        [&]{std::cout << "print" << std::endl; delete this;});
 }
 
 void Window::NewObjectDialog() {
@@ -84,11 +82,10 @@ void Window::inpad_reset () {
 
 
 void Window::closeEvent (QCloseEvent *event) {
-    delete this;
+    throw new exit_signal;
 }
 
 
 Window::~Window () {
     delete settingsWindow;
-    exit(10);
 }

@@ -31,8 +31,18 @@ int main(int argc, char *argv[])
             delete action;
             std::cerr << "Rebooting" << std::endl;
             continue;
+        } catch (exit_signal* action) {
+            delete action;
+            std::cerr << "Exit..." << std::endl;
+            return 10;
         }
-
+/*
+ * I know that exceptions are an extremely expensive language feature.
+ * However, both reboots and program terminations are not called as often,
+ * besides, during their execution, the speed of work is no longer very important.
+ * In return, it allows me not to write a separate class inherited from QObject,
+ * for the sake of reboots and forced shutdowns alone.
+*/
     }
     return app.exec();
 }
