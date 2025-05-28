@@ -28,8 +28,6 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file) {
     std::vector<wmml::variant> v(GRID_WIDTH);
     wmml targetfile(file);
     while (targetfile.read(v)) {
-        if (std::get<std::string>(v[0]) == "this")
-            continue;
         if (!std::get<bool>(v[2]))
             list.emplace_back(v);
         else {
@@ -100,9 +98,6 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
         v = {ptr.name, ptr.version, true, ptr.id, true};
         file.write(v);
     }
-
-    v = {"this", name, false, 0, true};
-    file.write(v);
 }
 
 
