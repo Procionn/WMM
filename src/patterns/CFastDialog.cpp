@@ -1,4 +1,5 @@
 #include "CFastDialog.h"
+#include "../core.h"
 
 CFastDialog::CFastDialog () {
     setMinimumHeight(230);
@@ -17,8 +18,8 @@ CFastDialog::CFastDialog () {
     apply->setDefault(true);
     connect(apply,  &QPushButton::clicked, [=]{emit applyClicked();});
     connect(cansel, &QPushButton::clicked, [=]{
-            reject();
-            emit canselClicked();
+        reject();
+        emit canselClicked();
         if (autodeleting)
             delete this;
     });

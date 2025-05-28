@@ -49,19 +49,26 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         CObject* buttonWidget = new CObject(v, counter, index);
         contentList->add(buttonWidget);
 
-        // Crutch. It will need to be fixed
-        double sz11 = spl1->size().width();
-        double sz21 = spl1->size().height();
-        double sz31 = sz11 / (sz21 / 13);
-        double sz12 = spl2->size().width();
-        double sz22 = spl2->size().height();
-        double sz32 = sz12 / (sz22 / 10.5);
 
-        QTimer::singleShot(0, buttonWidget, [buttonWidget, sz31, sz32]() {
+        // Crutch. It will need to be fixed
+        auto splz = [](QSplitter* spl, double constant) -> double {
+            double sz1 = spl->size().width();
+            double sz2 = spl->size().height();
+            return sz1 / (sz2 / constant);
+        };
+
+        static double sz31 = splz(spl1, 13);
+        static double sz32 = splz(spl2, 10.5);
+
+        QTimer::singleShot(0, buttonWidget, [=]() {
             buttonWidget->spl1->moveSplitter(sz31, 1);
             buttonWidget->spl2->moveSplitter(sz32, 1);
         });
-        //
+
+
+        connect(spl1, &QSplitter::splitterMoved, [&](int pos){sz31 = pos;});
+        connect(spl2, &QSplitter::splitterMoved, [&](int pos){sz32 = pos;});
+        ////////////////////////////
 
         connect(spl1, &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
         connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
