@@ -59,7 +59,7 @@ void CSettings::save () {
         CConfigs::CONFIG_LANGUAGES = LANG + settings_modules_list->settings_lang->target->name + EXPANSION3;
         Core::get().overwriting_config_data();
         Core::get().update_lang();
-        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_NEW_LANG"]);
+        FatalError* dialog = new FatalError(Core::lang["LANG_LABEL_NEW_LANG"]);
         settings_modules_list->settings_lang->target = nullptr;
     }
 }

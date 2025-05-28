@@ -1,13 +1,13 @@
 #include "window.h"
 #include "core.h"
 #include "CONSTANTS.h"
-#include "settings/settings.h"
 
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <filesystem>
 #include <QString>
+#include <stdlib.h>
 
 // #include <QDockWidget>
 #include <QPushButton>
@@ -43,6 +43,7 @@ Window::Window () {
     connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
     connect(inpad,              &CInpad::applyClicked,       inpad,         [=]{inpad->application(ObjectList->targetName, ObjectList->TypeTarget);});
     connect(inpad,              &CInpad::applyClicked,       ContentWidget, [=]{ContentWidget->updateList(target, ContentWidget->targetType);});
+    connect(this,               &QObject::destroyed,                        [&]{std::cout << "print" << std::endl; delete this;});
 }
 
 void Window::NewObjectDialog() {
@@ -56,10 +57,9 @@ void Window::NewObjectDialog() {
 }
 
 void Window::settings() {
-    static CSettings* settings;
-    if (!settings)
-         settings = new CSettings;
-    settings->show();
+    if (!settingsWindow)
+         settingsWindow = new CSettings;
+    settingsWindow->show();
 }
 
 void Window::updatePointer(CObjectsButton* pointer) {
@@ -80,4 +80,15 @@ void Window::inpadShow () {
 
 void Window::inpad_reset () {
     inpad->reset();
+}
+
+
+void Window::closeEvent (QCloseEvent *event) {
+    delete this;
+}
+
+
+Window::~Window () {
+    delete settingsWindow;
+    exit(10);
 }

@@ -35,7 +35,8 @@ FatalError::FatalError (const std::string& error, bool fatality) {
     tempLay->addWidget(label);
 
     DialogButtonBox->addWidget(resetButton);
-    connect(resetButton, &QPushButton::clicked, [=]{
+    connect(resetButton, &QPushButton::clicked, [&]{
+        delete this;
         throw new reset;
     });
 }

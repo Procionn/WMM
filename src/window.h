@@ -4,6 +4,7 @@
 #include "dialog_window/cinpad/CInpad.h"
 #include "window/mainWidgets.h"
 #include "window/CMenuBar.h"
+#include "settings/settings.h"
 
 #include <QMainWindow>
 #include <QDialog>
@@ -16,6 +17,9 @@ QT_END_NAMESPACE
 class Window : public QMainWindow
 {
 Q_OBJECT
+    CSettings* settingsWindow = nullptr;
+
+    void closeEvent(QCloseEvent *event) override;
 public:
     CNewObjectDialog* newObjectDialog;
     CObjectList* ObjectList;
@@ -24,6 +28,7 @@ public:
     CInpad* inpad;
     
     Window();
+    ~Window();
 public slots:
     void NewObjectDialog();
     void settings();
