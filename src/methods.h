@@ -3,6 +3,9 @@
 
 #include <string>
 #include <filesystem>
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 namespace stc {
     namespace string {
@@ -20,6 +23,7 @@ namespace stc {
         std::string ram_mods();
         std::string ram_mods(const std::string& name);
         std::string ram_mods_info(const std::string& name);
+
     }
     namespace fs {   // file system
         void symlink(const std::filesystem::path& file, const std::filesystem::path& name);
@@ -30,6 +34,13 @@ namespace stc {
     }
     namespace wmm {
         void new_object(const std::filesystem::path& path);
+    }
+
+    template<typename T>
+    void cerr(const T& t) {
+#ifndef NDEBUG
+        std::cerr << t << std::endl;
+#endif
     }
 }
 

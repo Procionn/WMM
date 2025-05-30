@@ -19,21 +19,21 @@ int main(int argc, char *argv[])
                 return app.exec();
 
             } catch(const char* error) {
-                std::cerr << error << std::endl;
+                stc::cerr(error);
                 FatalError* error_dialog = new FatalError(error, true);
                 error_dialog->exec();
             } catch (const std::exception& e) {
-                std::cerr << "Error: " << e.what() << std::endl;
+                stc::cerr(std::string("Error: ") + e.what());
                 FatalError* error_dialog = new FatalError(e.what(), true);
                 error_dialog->exec();
             } catch (...) {throw;}
         } catch (reset* action) {
             delete action;
-            std::cerr << "Rebooting" << std::endl;
+            stc::cerr("Rebooting");
             continue;
         } catch (exit_signal* action) {
             delete action;
-            std::cerr << "Exit..." << std::endl;
+            stc::cerr("Exit...");
             return 10;
         }
 /*

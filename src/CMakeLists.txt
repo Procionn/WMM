@@ -30,6 +30,12 @@ elseif(UNIX)
     )
 endif()
 
+add_library(HPP-ARCHIVE STATIC
+    hpp-archive.h hpp-archive/hpp-archive.cpp
+
+)
+
+
 set(PROJECT_SOURCES
     main.cpp
     window.h window.cpp
