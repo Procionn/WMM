@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
         } catch (exit_signal* action) {
             delete action;
             stc::cerr("Exit...");
-            return 10;
+            return 0;
         }
 /*
  * I know that exceptions are an extremely expensive language feature.

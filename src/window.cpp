@@ -19,6 +19,7 @@ Window::Window () {
     ObjectList = new CObjectList;
     ContentWidget = new CContentList();
     inpad = new CInpad(ObjectList->TypeTarget);
+    settingsWindow = new CSettings;
 
     setMenuBar(menu);
     setCentralWidget(BaseSplitter);
@@ -36,6 +37,8 @@ Window::Window () {
     connect(ObjectList,         &CObjectList::objectChoosed, ContentWidget, &CContentList::updateList);
     connect(ObjectList,         &CObjectList::remove,        ContentWidget, &CContentList::clear);
     connect(ObjectList,         &CObjectList::remove,        this,          &Window::grounding);
+    connect(ObjectList,         &CObjectList::remove,        settingsWindow->settings_modules_list->settings_collections,
+                                                                            &collections::update_list);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::updatePointer);
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::inpad_reset);
     connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
@@ -48,15 +51,15 @@ void Window::NewObjectDialog() {
     if (Core::CONFIG_GAME != "None") {
         newObjectDialog = new CNewObjectDialog();
         newObjectDialog->show();
-        connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList, [=]{ObjectList->newObject(newObjectDialog);});
+        connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList,    [=]{ObjectList->newObject(newObjectDialog);});
+        connect(newObjectDialog, &CFastDialog::applyClicked, settingsWindow->settings_modules_list->settings_collections,
+                                                                            &collections::update_list);
     }
     else
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
 }
 
 void Window::settings() {
-    if (!settingsWindow)
-         settingsWindow = new CSettings;
     settingsWindow->show();
 }
 

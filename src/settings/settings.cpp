@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QFileDialog>
-#include <iostream>
 
 
 CSettings::CSettings () {
@@ -30,9 +29,10 @@ CSettings::CSettings () {
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     connect(cansel, &QPushButton::clicked, this, [=]{this->reject();});
     connect(accept, &QPushButton::clicked, this, &CSettings::save);
-    connect(sobjects->sorce,   &CLinkTumbler::toggled, settings_modules_list, &SList::sorce);
-    connect(sobjects->lang,    &CLinkTumbler::toggled, settings_modules_list, &SList::lang);
-    connect(sobjects->support, &CLinkTumbler::toggled, settings_modules_list, &SList::support);
+    connect(sobjects->sorce,        &CLinkTumbler::toggled, settings_modules_list, &SList::sorce);
+    connect(sobjects->lang,         &CLinkTumbler::toggled, settings_modules_list, &SList::lang);
+    connect(sobjects->support,      &CLinkTumbler::toggled, settings_modules_list, &SList::support);
+    connect(sobjects->collections,  &CLinkTumbler::toggled, settings_modules_list, &SList::collection);
     sobjects->sorce->isTarget(true);
     
     dialogLayout->addLayout(dialogButtonBox);
@@ -75,25 +75,29 @@ SObjects::SObjects () {
     lang = new CLinkTumbler(Core::lang["LANG_BUTTON_LANG"], sorce);
     support = new CLinkTumbler(Core::lang["LANG_BUTTON_settings_supportPORT"], lang);
     extensions = new CLinkTumbler(Core::lang["LANG_BUTTON_EXTENSIONS"], support);
+    collections = new CLinkTumbler(Core::lang["LANG_BUTTON_IMPORT/EXPORT"], extensions);
     
     list->setAlignment(Qt::AlignTop);
     sorce->SetLeftAlignment(true);
     lang->SetLeftAlignment(true);
     support->SetLeftAlignment(true);
     extensions->SetLeftAlignment(true);
-    
+    collections->SetLeftAlignment(true);
+    ///////////////////////////////////
     support->hide();
     extensions->hide();
-    
+    ///////////////////////////////////
     sorce->setMinimumHeight(35);
     lang->setMinimumHeight(35);
     support->setMinimumHeight(35);
     extensions->setMinimumHeight(35);
+    collections->setMinimumHeight(35);
     
     list->addWidget(sorce);
     list->addWidget(lang);
     list->addWidget(support);
     list->addWidget(extensions);
+    list->addWidget(collections);
 }
 
 
@@ -101,15 +105,17 @@ SObjects::SObjects () {
 
 
 SList::SList () {
-    QVBoxLayout* list = new QVBoxLayout(this);
-    settings_source = new setsource;
-    settings_lang = new setlang;
-    settings_support = new setsupport;
-    settings_extension = new setextensions;
+    QVBoxLayout* list   = new QVBoxLayout(this);
+    settings_source     = new setsource;
+    settings_lang       = new setlang;
+    settings_support    = new setsupport;
+    settings_extension  = new setextensions;
+    settings_collections= new collections;
     list->addWidget(settings_source);
     list->addWidget(settings_lang);
     list->addWidget(settings_support);
     list->addWidget(settings_extension);
+    list->addWidget(settings_collections);
 }
 
 void SList::sorce () {
@@ -117,6 +123,7 @@ void SList::sorce () {
     settings_lang->hide();
     settings_support->hide();
     settings_extension->hide();
+    settings_collections->hide();
 }
 
 void SList::lang () {
@@ -124,6 +131,7 @@ void SList::lang () {
     settings_lang->show();
     settings_support->hide();
     settings_extension->hide();
+    settings_collections->hide();
 }
 
 void SList::support () {
@@ -131,6 +139,7 @@ void SList::support () {
     settings_lang->hide();
     settings_support->show();
     settings_extension->hide();
+    settings_collections->hide();
 }
 
 void SList::extensions () {
@@ -138,4 +147,13 @@ void SList::extensions () {
     settings_lang->hide();
     settings_support->hide();
     settings_extension->show();
+    settings_collections->hide();
+}
+
+void SList::collection () {
+    settings_source->hide();
+    settings_lang->hide();
+    settings_support->hide();
+    settings_extension->hide();
+    settings_collections->show();
 }

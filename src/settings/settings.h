@@ -6,6 +6,7 @@
 #include "setsource.h"
 #include "setsupport.h"
 #include "setextensions.h"
+#include "collections.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -21,6 +22,7 @@ public:
     CLinkTumbler* lang;
     CLinkTumbler* support;
     CLinkTumbler* extensions;
+    CLinkTumbler* collections;
     
     SObjects();
 };
@@ -39,12 +41,14 @@ public:
     setlang* settings_lang;
     setsupport* settings_support;
     setextensions* settings_extension;
+    collections* settings_collections;
 
 public slots:
     void sorce();
     void lang();
     void support();
     void extensions();
+    void collection();
 };
 
 

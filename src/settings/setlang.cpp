@@ -9,8 +9,6 @@
 #include <filesystem>
 
 setlang::setlang () {
-    // std::string strlang = Core::CONFIG_LANGUAGES.substr(Core::CONFIG_LANGUAGES.find_last_of('/') + 1);
-
     QVBoxLayout* list = new QVBoxLayout;
     QHBoxLayout* hbox = new QHBoxLayout;
     QLabel* lang = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_LANG"]));

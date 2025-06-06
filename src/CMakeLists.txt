@@ -30,39 +30,29 @@ elseif(UNIX)
     )
 endif()
 
-add_library(HPP-ARCHIVE STATIC
-    hpp-archive.h hpp-archive/hpp-archive.cpp
+# add_library(HPP-ARCHIVE STATIC
+#     hpp-archive.h hpp-archive/hpp-archive.cpp
+# )
+add_library(CORE STATIC
+    core.h
 
-)
+    core/core.cpp
+    core/lang.cpp
+    core/config.cpp
+    core/gameConfig.cpp
+    core/configurator.cpp
 
-
-set(PROJECT_SOURCES
-    main.cpp
-    window.h window.cpp
-
-    CONSTANTS.h
-    core.h                              core/core.cpp
-                                        core/lang.cpp
-                                        core/config.cpp
-                                        core/gameConfig.cpp
-                                        core/configurator.cpp
-
-    dnd.h                               dnd.cpp
-    window/CObjectsButton.h             window/CObjectsButton.cpp
     methods.cpp                         methods.h
-
+)
+add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp
     settings/setlang.h                  settings/setlang.cpp
     settings/setsupport.h               settings/setsupport.cpp
     settings/setsource.h                settings/setsource.cpp
     settings/setextensions.h            settings/setextensions.cpp
-
-    window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
-    window/modlist/cobject.h            window/modlist/cobject.cpp
-    window/CMenuBar.h                   window/CMenuBar.cpp
-    window/mainWidgets.h                window/CObjectList.cpp
-                                        window/CContentList.cpp
-
+    settings/collections.h              settings/collections.cpp
+)
+add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
     patterns/CToggledButton.h           patterns/CToggledButton.cpp
     patterns/CSmartList.h
@@ -72,6 +62,26 @@ set(PROJECT_SOURCES
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
     patterns/CScrollWindow.h
+)
+target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+
+set(PROJECT_SOURCES
+    main.cpp
+    window.h window.cpp
+
+    CONSTANTS.h
+
+    dnd.h                               dnd.cpp
+    window/CObjectsButton.h             window/CObjectsButton.cpp
+
+    window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
+    window/modlist/cobject.h            window/modlist/cobject.cpp
+    window/CMenuBar.h                   window/CMenuBar.cpp
+    window/mainWidgets.h                window/CObjectList.cpp
+                                        window/CContentList.cpp
 
     dialog_window/CNewObjectDialog.h    dialog_window/CNewObjectDialog.cpp
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
@@ -83,6 +93,7 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+
 )
 
 
@@ -91,6 +102,11 @@ target_link_libraries(Wirus
     Qt${QT_VERSION_MAJOR}::Widgets
     wmml
     archive
+
+    # HPP-ARCHIVE
+    PATTERNS
+    CORE
+    SETTINGS
 )
 if(WIN32)
     set_target_properties(Wirus PROPERTIES

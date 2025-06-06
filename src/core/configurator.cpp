@@ -31,7 +31,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file) {
         if (!std::get<bool>(v[2]))
             list.emplace_back(v);
         else {
-            wmml file(stc::cwmm::ram_preset(std::get<std::string>(v[1])));
+            wmml file(stc::cwmm::ram_preset(std::get<std::string>(v[0])));
             while(file.read(v)) {
                 assert(std::get<bool>(v[2]));
                 list.emplace_back(v);
@@ -125,4 +125,29 @@ void Core::collector(const std::filesystem::path& name, bool type) {
         compiller(newstruct, directory);
     }
     collection_info(newstruct, oldFile, name.string());
+}
+
+
+Core::CollectionInfo::CollectionInfo (const std::filesystem::path& name) {
+    wmml file(stc::cwmm::ram_collection(name));
+    std::vector<std::string> buffer;
+    std::vector<wmml::variant> v(file.width());
+
+    while (file.read(v)) {
+        if (std::get<bool>(v[2]))
+            ++mods;
+        else {
+            buffer.emplace_back(std::get<std::string>(v[0]));
+            ++presets;
+        }
+    }
+
+    allMods = mods;
+    for (const auto& presetName : buffer) {
+        wmml file(stc::cwmm::ram_preset(presetName));
+        while(file.read(v)) {
+            assert(std::get<bool>(v[2]));
+            ++allMods;
+        }
+    }
 }

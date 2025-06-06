@@ -117,6 +117,12 @@ public:
     static Core& get();
 
     void collector(const std::filesystem::path& name, bool type);
+
+    struct CollectionInfo
+    {
+        unsigned long mods = 0, presets = 0, allMods = 0;
+        CollectionInfo(const std::filesystem::path& name);
+    };
 };
 
 
