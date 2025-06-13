@@ -1,7 +1,9 @@
 #include "../core.h"
 
+#include <hpp-archive.h>
 #include "../methods.h"
 #include "../CONSTANTS.h"
+#include "../patterns/ERRORdialog.h"
 
 namespace fs = std::filesystem;
 
@@ -21,19 +23,31 @@ bool Core::wmmb::operator== (const wmmb& last) const noexcept{
 }
 
 
-std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file) {
+std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::vector<std::string>* presets) {
     // Recursively processes the collection file, producing a monotonous vector of mods at the output
+    if (presets && !presets->empty())
+        presets->reserve(20);
+
     std::vector<Core::wmmb> list;
     list.reserve(300);
     std::vector<wmml::variant> v(GRID_WIDTH);
     wmml targetfile(file);
     while (targetfile.read(v)) {
-        if (!std::get<bool>(v[2]))
+        if (std::get<bool>(v[2])) {
+            if (!std::filesystem::exists(stc::cwmm::ram_mods(std::get<std::string>(v[0]))))
+                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod " + std::get<std::string>(v[0]));
             list.emplace_back(v);
+        }
         else {
+            if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))))
+                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset " + std::get<std::string>(v[0]));
+            if (presets)
+                presets->emplace_back(std::get<std::string>(v[0]));
             wmml file(stc::cwmm::ram_preset(std::get<std::string>(v[0])));
             while(file.read(v)) {
                 assert(std::get<bool>(v[2]));
+                if (!std::filesystem::exists(stc::cwmm::ram_mods(std::get<std::string>(v[0]))))
+                    throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod " + std::get<std::string>(v[0]));
                 list.emplace_back(v);
             }
         }
@@ -90,7 +104,7 @@ void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::
 }
 
 
-void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesystem::path& path, const std::string& name) {
+void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesystem::path& path) {
     wmml file(path);
     std::vector<wmml::variant> v(GRID_WIDTH);
 
@@ -103,28 +117,36 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
 
 void Core::collector(const std::filesystem::path& name, bool type) {
     // collected all mods file in directory
-    fs::path directory = (COLLECTIONS + Core::CONFIG_GAME) / name;
-    fs::path oldFile = directory / (CONST_FILE + EXPANSION);
-    if (type)
-        throw "Exporting presets is not supported";
-    fs::path file = stc::cwmm::ram_collection(name.string());
+    try {
+        fs::path directory = (COLLECTIONS + Core::CONFIG_GAME) / name;
+        fs::path oldFile = directory / (CONST_FILE + EXPANSION);
+        if (type)
+            throw "Exporting presets is not supported";
+        fs::path file = stc::cwmm::ram_collection(name.string());
 
-    std::vector<wmmb> newstruct = parser(file);
+        std::vector<wmmb> newstruct = parser(file);
 
-    if (fs::exists(directory)) {
-        std::vector<wmmb> oldstruct = parser(oldFile);
+        if (fs::exists(directory)) {
+            std::vector<wmmb> oldstruct = parser(oldFile);
 
-        optimizations(newstruct, oldstruct);
-        clearing(oldstruct, directory);
-        compiller(newstruct, directory);
+            optimizations(newstruct, oldstruct);
+            clearing(oldstruct, directory);
+            compiller(newstruct, directory);
 
-        fs::remove(oldFile);
+            fs::remove(oldFile);
+        }
+        else {
+            fs::create_directories(directory);
+            compiller(newstruct, directory);
+        }
+        collection_info(newstruct, oldFile);
     }
-    else {
-        fs::create_directories(directory);
-        compiller(newstruct, directory);
+    catch (const std::string& error) {
+        ERRORdialog* dialog = new ERRORdialog(error);
     }
-    collection_info(newstruct, oldFile, name.string());
+    catch (const std::exception& e) {
+        ERRORdialog* dialog = new ERRORdialog(std::string("Error: ") + e.what());
+    }
 }
 
 
@@ -149,5 +171,46 @@ Core::CollectionInfo::CollectionInfo (const std::filesystem::path& name) {
             assert(std::get<bool>(v[2]));
             ++allMods;
         }
+    }
+}
+
+
+void Core::exporter (const std::string& name, const bool monolith) {
+    std::string exportString = EXPORT + name;
+    try {
+        if (std::filesystem::exists(exportString))
+            std::filesystem::remove(exportString);
+        ArchiveWriter archive(exportString);
+        std::filesystem::path filename = stc::cwmm::ram_collection(name);
+        std::vector<std::string> presets;
+        std::vector<Core::wmmb> modlist = parser(filename, &presets);
+
+        for (const auto& entry : modlist) {
+            archive.write_in_archive(stc::cwmm::ram_mods(entry.name), stc::cwmm::ram_mods());
+            archive.write_in_archive((ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id) + "/" + entry.version + EXPANSION2),
+                                     (ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id)));
+        }
+
+        if (monolith) {
+            collection_info(modlist, name);
+            archive.write_in_archive(name, stc::cwmm::ram_collection());
+        }
+        else {
+            std::filesystem::copy(filename, name);
+            wmml file(name);
+            for (const auto& entry : presets)
+                file.set_wmml(new wmml_marker(stc::cwmm::ram_preset(entry)));
+            archive.write_in_archive(name, stc::cwmm::ram_collection());
+        }
+        std::filesystem::remove(name);
+    }
+    catch (const std::string& error) {
+        std::filesystem::remove(exportString);
+        std::filesystem::remove(name);
+
+        ERRORdialog* dialog = new ERRORdialog(error);
+    }
+    catch (const std::exception& e) {
+        ERRORdialog* dialog = new ERRORdialog(std::string("Error: ") + e.what());
     }
 }

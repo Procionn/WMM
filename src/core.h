@@ -25,6 +25,7 @@ class Lang : public virtual CBaseConfig
 public:
     inline static std::map<std::string, std::string> lang;
     void update_lang();
+
 protected:
     Lang();
 };
@@ -37,6 +38,7 @@ class CConfigs : public virtual CBaseConfig
 {
 protected:
     CConfigs();
+
 public:
     inline static std::string CONFIG_LANGUAGES;
     inline static std::string CONFIG_GAME;
@@ -74,9 +76,11 @@ public:
     void restorer();
     void symlink_deliting();
     void symlink_creating(const std::string& targetCollection);
+
 protected:
     CGameConfig ();
     void dir_comparison(const std::filesystem::path& file);
+
 private:
     const int wmml_size = 3;
     void write(wmml& input, std::string str);
@@ -102,7 +106,8 @@ protected:
         wmmb(std::vector<wmml::variant>& v)  noexcept;
         bool operator==(const wmmb& last) const noexcept;
     };
-    std::vector<Core::wmmb> parser(const std::filesystem::path& file);
+    std::vector<Core::wmmb> parser(const std::filesystem::path& file,
+                                   std::vector<std::string>* presets = nullptr);
     void compiller      (const std::vector<wmmb>& list,
                          const std::filesystem::path& directory);
     void optimizations  (std::vector<wmmb>& mainList,
@@ -110,11 +115,12 @@ protected:
     void clearing       (const std::vector<wmmb>& oldstruct,
                          const std::filesystem::path& directory);
     void collection_info(const std::vector<wmmb>& newstruct,
-                         const std::filesystem::path& path,
-                         const std::string& name);
+                         const std::filesystem::path& path);
 
 public:
     static Core& get();
+
+    void exporter(const std::string& name, const bool monolith);
 
     void collector(const std::filesystem::path& name, bool type);
 

@@ -30,9 +30,16 @@ elseif(UNIX)
     )
 endif()
 
-# add_library(HPP-ARCHIVE STATIC
-#     hpp-archive.h hpp-archive/hpp-archive.cpp
-# )
+include(FetchContent)
+
+FetchContent_Declare(
+  HPP_ARCHIVE
+  GIT_REPOSITORY https://github.com/Procionn/hpp-archive
+  GIT_TAG e60b7efacea236d3945c708e6a90eb3c663b8280
+)
+
+FetchContent_MakeAvailable(HPP_ARCHIVE)
+
 add_library(CORE STATIC
     core.h
 
@@ -64,6 +71,7 @@ add_library(PATTERNS STATIC
     patterns/CScrollWindow.h
 )
 target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
@@ -103,7 +111,7 @@ target_link_libraries(Wirus
     wmml
     archive
 
-    # HPP-ARCHIVE
+    HPP_ARCHIVE
     PATTERNS
     CORE
     SETTINGS

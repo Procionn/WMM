@@ -6,6 +6,7 @@
 #include "../patterns/CSwitchButton.h"
 #include "../core.h"
 #include "../methods.h"
+#include "../CONSTANTS.h"
 
 
 collections::collections () {
@@ -18,7 +19,7 @@ collections::collections () {
     QLabel* collections_label = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_COLLECTIONS"]));
     QPushButton* importButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_IMPORT"]));
     QPushButton* exportButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_EXPORT"]));
-    SettingsBox* settingsBox = new SettingsBox;
+    settingsBox = new SettingsBox;
 
     hbox->setAlignment(Qt::AlignCenter);
     line->setFrameShape(QFrame::VLine);
@@ -40,7 +41,7 @@ collections::collections () {
     right_list->addWidget(settingsBox);
     right_list->addWidget(exportButton);
     connect(importButton, &QPushButton::clicked, [&]{importing();});
-    connect(exportButton, &QPushButton::clicked, [&]{exporting(settingsBox);});
+    connect(exportButton, &QPushButton::clicked, [&]{exporting();});
 }
 
 
@@ -57,6 +58,7 @@ void collections::update_list () {
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
         CLinkTumbler* button = new CLinkTumbler(stc::string::get_name(entry.path().string()), last);
         connect(button, &CLinkTumbler::toggled, this, &collections::update_collection_info);
+        // connect(button, &CLinkTumbler::toggled, [&]{target = button;});
         button->SetLeftAlignment(true);
         button->setMinimumHeight(30);
         collections_list->addWidget(button);
@@ -94,6 +96,7 @@ void collections::update_collection_info (CToggledButton* target) {
         mods->setText(QString::number(info->mods));
         presets->setText(QString::number(info->presets));
         allMods->setText(QString::number(info->allMods));
+        this->target = target;
     }
     else {
         mods->setText(QString::number(0));
@@ -103,8 +106,13 @@ void collections::update_collection_info (CToggledButton* target) {
 }
 
 
-void collections::exporting (SettingsBox* parameters) {
-
+void collections::exporting () {
+    if (!std::filesystem::exists(EXPORT))
+         std::filesystem::create_directory(EXPORT);
+    if (!settingsBox->online)
+        Core::get().exporter(target->name, settingsBox->monolith);
+    else
+        stc::cerr("online export may be added later");
 }
 
 

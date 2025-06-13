@@ -21,9 +21,10 @@ class collections : public QWidget
 {
     Q_OBJECT
 protected:
-    CLinkTumbler* target = nullptr;
+    CToggledButton* target = nullptr;
     QVBoxLayout* collections_list;
     QVBoxLayout* right_list;
+    SettingsBox* settingsBox;
 
     void update_collection_info(CToggledButton* target);
 public:
@@ -33,7 +34,7 @@ public slots:
     void update_list();
 
 private slots:
-    void exporting(SettingsBox* parameters);
+    void exporting();
     void importing();
 };
 
