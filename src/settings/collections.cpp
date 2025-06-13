@@ -85,7 +85,7 @@ void collections::update_collection_info (CToggledButton* target) {
         main->setFrameShadow(QFrame::Raised);
         main->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-        list->addWidget(mods, 0, 1);
+        list->addWidget(mods,    0, 1);
         list->addWidget(presets, 1, 1);
         list->addWidget(allMods, 2, 1);
         right_list->addWidget(main);

@@ -105,7 +105,7 @@ void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::
 
 
 void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesystem::path& path) {
-    wmml file(path);
+    wmml file(path, GRID_WIDTH);
     std::vector<wmml::variant> v(GRID_WIDTH);
 
     for (const auto& ptr : newstruct) {
@@ -177,6 +177,7 @@ Core::CollectionInfo::CollectionInfo (const std::filesystem::path& name) {
 
 void Core::exporter (const std::string& name, const bool monolith) {
     std::string exportString = EXPORT + name;
+    std::string tempName = name + EXPANSION;
     try {
         if (std::filesystem::exists(exportString))
             std::filesystem::remove(exportString);
@@ -186,27 +187,28 @@ void Core::exporter (const std::string& name, const bool monolith) {
         std::vector<Core::wmmb> modlist = parser(filename, &presets);
 
         for (const auto& entry : modlist) {
-            archive.write_in_archive(stc::cwmm::ram_mods(entry.name), stc::cwmm::ram_mods());
+            archive.write_in_archive(stc::cwmm::ram_mods(entry.name), stc::cwmm::ram_mods(entry.name));
             archive.write_in_archive((ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id) + "/" + entry.version + EXPANSION2),
                                      (ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id)));
         }
 
         if (monolith) {
-            collection_info(modlist, name);
-            archive.write_in_archive(name, stc::cwmm::ram_collection());
+            collection_info(modlist, tempName);
+            archive.write_in_archive(tempName, stc::cwmm::ram_collection());
         }
         else {
-            std::filesystem::copy(filename, name);
-            wmml file(name);
+            std::filesystem::copy(filename, (tempName));
+            wmml file(tempName);
             for (const auto& entry : presets)
                 file.set_wmml(new wmml_marker(stc::cwmm::ram_preset(entry)));
-            archive.write_in_archive(name, stc::cwmm::ram_collection());
+            file.flush();
+            archive.write_in_archive(tempName, stc::cwmm::ram_collection());
         }
-        std::filesystem::remove(name);
+        std::filesystem::remove(tempName);
     }
     catch (const std::string& error) {
         std::filesystem::remove(exportString);
-        std::filesystem::remove(name);
+        std::filesystem::remove(tempName);
 
         ERRORdialog* dialog = new ERRORdialog(error);
     }

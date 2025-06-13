@@ -1,10 +1,12 @@
 #include "dnd.h"
+
 #include "CONSTANTS.h"
 #include "core.h"
 #include "patterns/ERRORdialog.h"
+#include "methods.h"
 
-#include <QLabel>
 #include <iostream>
+#include <hpp-archive.h>
 
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -13,24 +15,9 @@
 #include <QDir>
 #include <QFileInfo>
 #include <regex>
-
-#include <archive.h>
-#include <archive_entry.h>
-#include <fstream>
-#include <string>
-#include <filesystem>
 #include <stdexcept>
 
-CDND::CDND(QWidget* parent, std::string name) : QLabel(parent) {
-    this->setText(QString::fromStdString(name));
-    setFrameShape(QFrame::Panel);
-    setFrameShadow(QFrame::Raised);
-    setMinimumHeight(70);
-    setMaximumHeight(100);
-    setAlignment(Qt::AlignCenter);
-    setAcceptDrops(true);
-    setStyleSheet("background-color: #444b50; border-radius: 10px;");
-}
+
 
 CDND::CDND(QVBoxLayout* parent, std::string name) {
     parent->addWidget(this);
@@ -52,133 +39,70 @@ void CDND::dragEnterEvent(QDragEnterEvent* e) {
 }
 
 void CDND::dropEvent(QDropEvent* e) {
-    if (CConfigs::CONFIG_GAME == "None")
-        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
-    else {
-        foreach (const QUrl &url, e->mimeData()->urls()) {
-            QString fileName = url.toLocalFile();
-            std::cout << "Dropped file:" << fileName.toStdString() << std::endl;
-            try {
-                ArchiveExtractor extractor(fileName.toStdString());
-                std::string modsDir = MODS + CConfigs::CONFIG_GAME + "/" + extractor.regex(fileName.toStdString());
-                std::filesystem::path fsPath = modsDir;
-                 if (std::filesystem::exists(modsDir)) {
-                    std::filesystem::remove_all(fsPath);
-                }
-                extractor.modInfoSave();
-                extractor.extractAll(modsDir);
+    if (CConfigs::CONFIG_GAME != "None") {
+        try {
+            for (const QUrl &url : e->mimeData()->urls()) {
+                std::string fileName = url.toLocalFile().toStdString();
+                stc::cerr("Dropped file:" + fileName);
 
-                std::string dad = ARCHIVE + CConfigs::CONFIG_GAME + "/" + extractor.id; // deep archive directory
-                std::filesystem::create_directories(dad);
-                std::ofstream daf(dad + "/" + extractor.version + EXPANSION2);          // deep archive file
+                regex(fileName);
+                std::filesystem::path modsDir = stc::cwmm::ram_mods(name);
+                if (std::filesystem::exists(modsDir))
+                    stc::fs::remove_all(modsDir);
+                modInfoSave(modsDir);
+
+                ArchiveReader archive(fileName);
+                archive.set_export_directory(modsDir);
+                for (const auto* entry : archive)
+                    archive.write_on_disk();
+
+
+                std::filesystem::path path = ARCHIVE + Core::CONFIG_GAME + "/" + id;
+                std::filesystem::create_directories(path);
+                std::ofstream modStructFile(path / (version + EXPANSION2));
                 for (const auto& entry : std::filesystem::recursive_directory_iterator(modsDir)) {
                     if (std::filesystem::is_regular_file(entry.path())) {
-                        std::filesystem::path relative = std::filesystem::relative(entry.path(), fsPath);
-                        daf << relative.generic_string() << "\n";
+                        std::filesystem::path relative = std::filesystem::relative(entry.path(), modsDir);
+                        modStructFile << relative.generic_string() << "\n";
                     }
                 }
-                emit launch();
-                daf.close();
+                modStructFile.close();
 
-                std::cout << "The archive has been successfully extracted to the folder: " << modsDir << std::endl;
-            } catch (const std::exception& ex) {
-                std::cerr << "ERROR: " << ex.what() << std::endl;
+                stc::cerr("The archive has been successfully extracted to the folder: " + modsDir.string());
+                emit launch();
             }
         }
+        catch (const std::exception& e) {
+            ERRORdialog* dialog = new ERRORdialog(std::string("DND ERROR: ") + e.what());
+        }
     }
+    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
 }
 
 
 
-
-
-ArchiveExtractor::ArchiveExtractor(const std::string& filename) {
-    archive = archive_read_new();
-    if (!archive) throw std::runtime_error("Failed to create archive object");
-    
-    archive_read_support_format_all(archive);
-    archive_read_support_filter_all(archive);
-    
-    if (archive_read_open_filename(archive, filename.c_str(), 10240) != ARCHIVE_OK) {
-        std::string error = archive_error_string(archive);
-        archive_read_free(archive);
-        throw std::runtime_error("Archive opening error: " + error);
-    }
-}
-
-ArchiveExtractor::~ArchiveExtractor() {
-    if (archive) {
-        archive_read_free(archive);
-    }
-}
-
-std::string ArchiveExtractor::regex (std::string ArchiveName) {
+void CDND::regex (const std::string& ArchiveName) {
     size_t part = ArchiveName.find_last_of('/');
-    std::string nameArchive = ArchiveName.substr(part + 1); 
+    std::string nameArchive = ArchiveName.substr(part + 1);
     std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?\.(\w+)$)");
     std::smatch matches;
-    if (std::regex_match(nameArchive, matches, archiveRegex)) {
-        name               = matches[1];
-        id                 = matches[2];
-        version            = matches[3];
-        // uniqueNumber    = matches[4];
-        // extension       = matches[5];
-        return name;
-        
-    }
-    else std::cout << "ERROR:  REGULAR NAME ERROR" << std::endl;
-    std::abort();
-    return NULL;
+    if (!std::regex_match(nameArchive, matches, archiveRegex))
+        throw ("ERROR:  REGULAR NAME ERROR");
+    name               = matches[1];
+    id                 = matches[2];
+    version            = matches[3];
+    // uniqueNumber    = matches[4];
+    // extension       = matches[5];
 }
 
-void ArchiveExtractor::modInfoSave() {
-    std::string path = MODS + CConfigs::CONFIG_GAME + "/" + name + "/" + WML + name + EXPANSION2;
-    std::filesystem::path dir = path;
-    std::filesystem::create_directories(dir.parent_path());
-    
-    std::ofstream file(path.c_str());
+
+void CDND::modInfoSave(const std::filesystem::path& directory) {
+    std::filesystem::path path = directory / (WML + name + EXPANSION2);
+    std::filesystem::create_directories(path.parent_path());
+
+    std::ofstream file(path);
     file << name << "\n";
     file << version << "\n";
     file << id << "\n";
     file.close();
-}
-
-void ArchiveExtractor::extractAll(const std::string& outputDir) {
-    std::filesystem::create_directories(outputDir);
-    struct archive_entry* entry;
-    int r;
-    while ((r = archive_read_next_header(archive, &entry)) == ARCHIVE_OK) {
-        std::string entryPath = (std::filesystem::path(outputDir) / archive_entry_pathname(entry)).generic_string();
-        
-        if      (archive_entry_filetype(entry) == AE_IFDIR) extractDirectory(entryPath, entry);
-        else if (archive_entry_filetype(entry) == AE_IFREG) extractFile(entryPath, entry);
-        else    std::cerr << "Raw record type: " << entryPath << "\n";
-        
-        archive_read_data_skip(archive); // 
-    }
-    
-    if (r != ARCHIVE_EOF) throw std::runtime_error("Archive reading error: " + std::string(archive_error_string(archive)));
-}
-
-void ArchiveExtractor::extractDirectory(const std::string& path, struct archive_entry* entry) {
-    std::cout << "Create directories: " << path << "\n";
-    
-    std::filesystem::create_directories(path);
-}
-
-void ArchiveExtractor::extractFile(const std::string& path, struct archive_entry* entry) {
-    std::cout << "Extracting the file: " << path << "\n";
-    std::filesystem::path fsPath = path;
-    std::filesystem::create_directories(fsPath.parent_path());
-    std::ofstream outFile(path, std::ios::binary | std::ios::trunc);
-    if (!outFile) throw std::runtime_error("File creation error: " + path);
-    
-    const void* buffer;
-    size_t size;
-    la_int64_t offset;
-    
-    while (archive_read_data_block(archive, &buffer, &size, &offset) == ARCHIVE_OK) {
-        outFile.write(static_cast<const char*>(buffer), size);
-    }
-    outFile.close();
 }

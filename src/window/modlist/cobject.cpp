@@ -7,8 +7,8 @@ CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const unsig
     Lname = new QLabel(QString::fromStdString(std::get<std::string>(v[0])));
     Lversion = new QLabel(QString::fromStdString(std::get<std::string>(v[1])));
     if (std::get<bool>(v[2]))
-         Ltype = new QLabel("Collection");
-    else Ltype = new QLabel("Mod");
+         Ltype = new QLabel("Mod");
+    else Ltype = new QLabel("Collection");
     switcher = new CSwitchButton;
 
 
