@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Wirus VERSION 0.1 LANGUAGES CXX)
+project(Wirus VERSION 0.74 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -35,7 +35,7 @@ include(FetchContent)
 FetchContent_Declare(
   HPP_ARCHIVE
   GIT_REPOSITORY https://github.com/Procionn/hpp-archive
-  GIT_TAG 09d4eaa55a09f10bcfd3169a438283bb5ba9b500
+  GIT_TAG 0cc2a95d6413d2061c631f6ff822ca7e0b3d6ae0
 )
 
 FetchContent_MakeAvailable(HPP_ARCHIVE)
@@ -101,9 +101,11 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-
 )
 
+target_compile_definitions(SETTINGS PRIVATE
+  VERSION="${PROJECT_VERSION}"
+)
 
 target_link_libraries(Wirus
     PRIVATE

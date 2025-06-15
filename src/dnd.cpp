@@ -7,15 +7,9 @@
 
 #include <iostream>
 #include <hpp-archive.h>
-
 #include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QMimeData>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
 #include <regex>
-#include <stdexcept>
 
 
 

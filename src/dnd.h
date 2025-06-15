@@ -1,7 +1,6 @@
 #ifndef DND_H
 #define DND_H
 
-#include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <filesystem>

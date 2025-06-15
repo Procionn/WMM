@@ -151,7 +151,7 @@ void Core::collector(const std::filesystem::path& name, bool type) {
 
 
 Core::CollectionInfo::CollectionInfo (const std::filesystem::path& name) {
-    wmml file(stc::cwmm::ram_collection(name));
+    wmml file(stc::cwmm::ram_collection(name.string()));
     std::vector<std::string> buffer;
     std::vector<wmml::variant> v(file.width());
 

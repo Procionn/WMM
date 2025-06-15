@@ -2,6 +2,7 @@
 #define SETSUPPORT_H
 
 #include <QWidget>
+#include <QLabel>
 
 class setsupport : public QWidget
 {

@@ -73,7 +73,7 @@ SObjects::SObjects () {
     addScrollable(this, list);
     sorce = new CLinkTumbler(Core::lang["LANG_BUTTON_SORCE"]);
     lang = new CLinkTumbler(Core::lang["LANG_BUTTON_LANG"], sorce);
-    support = new CLinkTumbler(Core::lang["LANG_BUTTON_settings_supportPORT"], lang);
+    support = new CLinkTumbler(Core::lang["LANG_BUTTON_SUPPORT"], lang);
     extensions = new CLinkTumbler(Core::lang["LANG_BUTTON_EXTENSIONS"], support);
     collections = new CLinkTumbler(Core::lang["LANG_BUTTON_IMPORT/EXPORT"], extensions);
     
@@ -84,7 +84,7 @@ SObjects::SObjects () {
     extensions->SetLeftAlignment(true);
     collections->SetLeftAlignment(true);
     ///////////////////////////////////
-    support->hide();
+    // support->hide();
     extensions->hide();
     ///////////////////////////////////
     sorce->setMinimumHeight(35);
@@ -95,9 +95,9 @@ SObjects::SObjects () {
     
     list->addWidget(sorce);
     list->addWidget(lang);
-    list->addWidget(support);
     list->addWidget(extensions);
     list->addWidget(collections);
+    list->addWidget(support);
 }
 
 
