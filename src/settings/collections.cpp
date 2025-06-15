@@ -1,7 +1,25 @@
+/*
+ *  Copyright (C) 2025 Procion ByProcion@gmail.com
+ *
+ *  This file is part of Wirus Mod Manager.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the LICENSE file for more details.
+ *
+ */
 #include "collections.h"
 
 #include <QLabel>
 #include <QGridLayout>
+#include <QDesktopServices>
+#include <QFileDialog>
 #include "../patterns/CScrollWindow.h"
 #include "../patterns/CSwitchButton.h"
 #include "../core.h"
@@ -58,7 +76,6 @@ void collections::update_list () {
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
         CLinkTumbler* button = new CLinkTumbler(stc::string::get_name(entry.path().string()), last);
         connect(button, &CLinkTumbler::toggled, this, &collections::update_collection_info);
-        // connect(button, &CLinkTumbler::toggled, [&]{target = button;});
         button->SetLeftAlignment(true);
         button->setMinimumHeight(30);
         collections_list->addWidget(button);
@@ -113,6 +130,8 @@ void collections::exporting () {
         Core::get().exporter(target->name, settingsBox->monolith);
     else
         stc::cerr("online export may be added later");
+    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(EXPORT))))
+        throw ("Error when opening a directory");
 }
 
 
