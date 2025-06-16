@@ -31,7 +31,7 @@ FetchContent_MakeAvailable(HPP_ARCHIVE)
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG 3dd9cb7538a72b14f75f9b9e4bc8d2e3fcaaf6ae
+  GIT_TAG 28de695687ed5a4565a359176b7b6e129db5ad96
 )
 FetchContent_MakeAvailable(wmml)
 
@@ -67,6 +67,7 @@ add_library(PATTERNS STATIC
 )
 target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)
+target_link_libraries(CORE     PRIVATE wmml)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
