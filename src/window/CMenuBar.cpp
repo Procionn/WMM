@@ -61,6 +61,10 @@ void CMenuBar::linking_clicked () {
         if (parent->ObjectList->TypeTarget)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
         else {
+            if (!std::filesystem::exists(stc::cwmm::backup_path())) {
+                ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R38"]);
+                return;
+            }
             std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
             Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
         }

@@ -70,6 +70,8 @@ void CGameConfig::write(wmml& input, std::string str) {
     std::vector<wmml::variant> v(wmml_size);
     v[0] = Core::CONFIG_GAME;
     v[1] = str;
+    if (!GAME_CORE_DIR_STAGE)
+        stc::cerr("error, GAME_CORE_DIR_STAGE not valid!");
     for (int counter = GAME_CORE_DIR_STAGE; counter != 0; --counter) {
         size_t part = str.find_last_of('/');
         str = str.substr(0, part);

@@ -24,6 +24,8 @@ bool CBaseConfig::configRead (std::istream& input, std::string& firstReturned, s
         size_t part = readedLine.find_first_of('=');
         firstReturned = readedLine.substr(0, part);
         lastReturned = readedLine.substr(part + 1);
+        if (lastReturned.back() == '\r')
+            lastReturned.resize(lastReturned.size() - 1);
         return true;
     }
     else return false;

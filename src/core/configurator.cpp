@@ -232,3 +232,8 @@ void Core::exporter (const std::string& name, const bool monolith) {
         ERRORdialog* dialog = new ERRORdialog(std::string("Error: ") + e.what());
     }
 }
+
+
+void Core::importer(const std::string& path) {
+
+}

@@ -137,6 +137,7 @@ public:
     static Core& get();
 
     void exporter(const std::string& name, const bool monolith);
+    void importer(const std::string& path);
 
     void collector(const std::filesystem::path& name, bool type);
 
