@@ -1,15 +1,11 @@
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 if (WIN32)
-    set(LIB "${CMAKE_SOURCE_DIR}/lib")
+    set(LIB "${CMAKE_SOURCE_DIR}/src/lib")
 
-    # set(LIBARCHIVE_DIR "${LIB}/libarchive")
-    # include_directories("${LIBARCHIVE_DIR}/include")
-    # link_directories("${LIBARCHIVE_DIR}/lib")
-
-    set(WMML_DIR "${LIB}/wmml")
-    include_directories("${WMML_DIR}/include")
-    link_directories("${WMML_DIR}/lib")
+    set(LIBARCHIVE_DIR "${LIB}/libarchive")
+    include_directories("${LIBARCHIVE_DIR}/include")
+    link_directories("${LIBARCHIVE_DIR}/lib")
 elseif(UNIX)
     set(CMAKE_PREFIX_PATH
         "/usr/lib64/cmake/Qt6"
@@ -24,14 +20,14 @@ include(FetchContent)
 FetchContent_Declare(
   HPP_ARCHIVE
   GIT_REPOSITORY https://github.com/Procionn/hpp-archive
-  GIT_TAG 2e18449546e193b98abe0129560f224b09c3a445
+  GIT_TAG 0cc2a95d6413d2061c631f6ff822ca7e0b3d6ae0
 )
 FetchContent_MakeAvailable(HPP_ARCHIVE)
 
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG 28de695687ed5a4565a359176b7b6e129db5ad96
+  GIT_TAG 3dd9cb7538a72b14f75f9b9e4bc8d2e3fcaaf6ae
 )
 FetchContent_MakeAvailable(wmml)
 
@@ -67,9 +63,11 @@ add_library(PATTERNS STATIC
 )
 target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)
-target_link_libraries(CORE     PRIVATE wmml)
+target_link_libraries(CORE     PUBLIC  wmml)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(SETTINGS PRIVATE wmml)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(PATTERNS PRIVATE wmml)
 
 
 set(PROJECT_SOURCES
