@@ -65,8 +65,8 @@ void CMenuBar::linking_clicked () {
                 ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R38"]);
                 return;
             }
-            std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
-            Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
+            Core::get().symlink_deliting();
+            Core::get().symlink_creating(parent->target->name);
         }
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
@@ -77,8 +77,8 @@ void CMenuBar::linking_clicked () {
 void CMenuBar::reassembly_clicked () {
     if (parent->target != nullptr && !parent->ObjectList->TypeTarget) {
         if (Core::CONFIG_GAME_PATH != "") {
-            Core::get().symlink_deliting();
-            Core::get().symlink_creating(parent->target->name);
+            std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
+            Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
         }
     }
     else if (parent->ObjectList->TypeTarget)

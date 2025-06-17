@@ -129,7 +129,8 @@ void CGameConfig::symlink_deliting () {
 #ifndef NDEBUG
     std::cout << testFile << std::endl;
 #endif
-    if (fs::exists(testFile)) dir_comparison(testFile);
+    if (fs::exists(testFile))
+        dir_comparison(testFile);
     try {
 #ifdef _WIN32
         auto is_symlink = [](const std::filesystem::path& p) -> bool {
@@ -268,6 +269,7 @@ void CGameConfig::game_recovery () {
 
 
 void CGameConfig::restorer () {
+    // Restores game files in case they have been deleted.
     for (const auto& entry : fs::recursive_directory_iterator(stc::cwmm::backup_path())) {
         fs::path relative = fs::relative(entry.path(), stc::cwmm::backup_path());
         fs::path target = CONFIG_GAME_PATH / relative;
