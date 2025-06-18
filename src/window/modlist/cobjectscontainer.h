@@ -27,9 +27,15 @@ class CObjectsContainer final : public CSmartList<CObject>
     Q_OBJECT
 public:
     CObjectsContainer();
+public slots:
+    void delete_target(CObject*);
+
 private slots:
-    void deletionSignals ();
+    void deletionSignals();
     void RMB(const QPoint& pos, CObject* target) override;
+
+signals:
+    void removed(CObject*);
 };
 
 #endif // COBJECTSCONTAINER_H

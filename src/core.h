@@ -131,7 +131,8 @@ protected:
     void clearing       (const std::vector<wmmb>& oldstruct,
                          const std::filesystem::path& directory);
     void collection_info(const std::vector<wmmb>& newstruct,
-                         const std::filesystem::path& path);
+                         const std::filesystem::path& path,
+                         const std::string& name);
 
 public:
     static Core& get();

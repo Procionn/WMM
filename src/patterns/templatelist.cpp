@@ -28,11 +28,13 @@ TemplateList::TemplateList(QWidget* parent) : QScrollArea(parent){
 
 void TemplateList::connecting (CSmartObject* linkable) {
     connect(linkable, &CSmartObject::clicked,    [=]
-            (QMouseEvent* event, CSmartObject* target)
-            {controller(event, target);});
+        (QMouseEvent* event, CSmartObject* target) {
+        controller(event, target);
+    });
     connect(linkable, &CSmartObject::rightClick, [=]
-            (const QPoint& pos, CSmartObject* target)
-            {rightClickController(pos, target);});
+        (const QPoint& pos, CSmartObject* target) {
+        rightClickController(pos, target);
+    });
 }
 
 void TemplateList::controller (QMouseEvent* event, CSmartObject* target) {

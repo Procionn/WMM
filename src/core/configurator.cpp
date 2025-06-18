@@ -41,7 +41,7 @@ bool Core::wmmb::operator== (const wmmb& last) const noexcept{
 
 std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::vector<std::string>* presets) {
     // Recursively processes the collection file, producing a monotonous vector of mods at the output
-    if (presets && !presets->empty())
+    if (presets && presets->empty())
         presets->reserve(20);
 
     std::vector<Core::wmmb> list;
@@ -49,6 +49,8 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
     std::vector<wmml::variant> v(GRID_WIDTH);
     wmml targetfile(file);
     while (targetfile.read(v)) {
+        if (std::get<std::string>(v[1]) == "this")
+            continue;
         if (std::get<bool>(v[2])) {
             if (!std::filesystem::exists(stc::cwmm::ram_mods(std::get<std::string>(v[0]))))
                 throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod " + std::get<std::string>(v[0]));
@@ -120,7 +122,7 @@ void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::
 }
 
 
-void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesystem::path& path) {
+void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesystem::path& path, const std::string& name) {
     wmml file(path, GRID_WIDTH);
     std::vector<wmml::variant> v(GRID_WIDTH);
 
@@ -128,6 +130,8 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
         v = {ptr.name, ptr.version, true, ptr.id, true};
         file.write(v);
     }
+    v = {name, "this", true, 0, true};
+    file.write(v);
 }
 
 
@@ -155,7 +159,7 @@ void Core::collector(const std::filesystem::path& name, bool type) {
             fs::create_directories(directory);
             compiller(newstruct, directory);
         }
-        collection_info(newstruct, oldFile);
+        collection_info(newstruct, oldFile, name);
     }
     catch (const std::string& error) {
         ERRORdialog* dialog = new ERRORdialog(error);
@@ -209,7 +213,7 @@ void Core::exporter (const std::string& name, const bool monolith) {
         }
 
         if (monolith) {
-            collection_info(modlist, tempName);
+            collection_info(modlist, tempName, name);
             archive.write_in_archive(tempName, stc::cwmm::ram_collection());
         }
         else {

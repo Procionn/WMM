@@ -55,7 +55,7 @@ CContentList::CContentList () {
 void CContentList::updateList (CObjectsButton* pointer, bool type) {
     targetName = pointer->name;
     targetType = type;
-    contentList->clear();
+    clear();
     if (type) sPath = stc::cwmm::ram_preset(targetName);
     else      sPath = stc::cwmm::ram_collection(targetName);
     wmml file(sPath);
@@ -90,7 +90,8 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
         connect(buttonWidget, &CObject::ON,     this, &CContentList::changeStatusOn);
         connect(buttonWidget, &CObject::OFF,    this, &CContentList::changeStatusOff);
-        connect(buttonWidget, &CObject::remove, this, &CContentList::deleting);
+        connect(buttonWidget, &CObject::remove, contentList, &CObjectsContainer::delete_target);
+        connect(contentList, &CObjectsContainer::removed, this, &CContentList::deleting);
     }
 }
 
@@ -109,7 +110,11 @@ void CContentList::changeStatusOff(CObject* toggledElements) {
     file.overwriting_sector(toggledElements->index, 4, bol);
 }
 void CContentList::deleting (CObject* pointer) {
-    wmml file(sPath);
-    file.remove_object(pointer->index);
-    delete pointer;
+    static CObject* last;
+    if (last != pointer) {
+        wmml file(sPath);
+        file.remove_object(pointer->index);
+        delete pointer;
+        last = pointer;
+    }
 }

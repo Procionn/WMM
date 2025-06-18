@@ -45,3 +45,14 @@ void CObjectsContainer::deletionSignals () {
     childList.clear();
     childList = std::move(newVector);
 }
+
+
+void CObjectsContainer::delete_target(CObject* target) {
+    std::vector<CObject*> newVector;
+    for (CObject* indexed : childList)
+        if (indexed != target)
+            newVector.emplace_back(indexed);
+    childList.clear();
+    childList = std::move(newVector);
+    emit removed(target);
+}

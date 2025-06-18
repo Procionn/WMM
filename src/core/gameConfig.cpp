@@ -164,8 +164,15 @@ void CGameConfig::symlink_deliting () {
 void CGameConfig::dir_comparison (const std::filesystem::path& file) {
     wmml targetFile(file);
     std::vector<wmml::variant> v(GRID_WIDTH);
+#ifndef NDEBUG
+
+    std::cout << targetFile.height() << std::endl;
+    std::cout << targetFile.width() << std::endl;
+
+#endif
     while(targetFile.read(v))
-        if (std::get<std::string>(v[0]) == "this") break;
+        if (std::get<std::string>(v[1]) == "this")
+            break;
     try {
         // targetpath       =  game/Cyberpunk 2077/
         // pt               =  C://Game/Cyberpunk 2077/[MGD]/

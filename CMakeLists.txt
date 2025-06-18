@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Wirus VERSION 0.75 LANGUAGES CXX)
+project(Wirus VERSION 0.77 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
