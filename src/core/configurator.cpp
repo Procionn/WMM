@@ -159,7 +159,7 @@ void Core::collector(const std::filesystem::path& name, bool type) {
             fs::create_directories(directory);
             compiller(newstruct, directory);
         }
-        collection_info(newstruct, oldFile, name);
+        collection_info(newstruct, oldFile, name.string());
     }
     catch (const std::string& error) {
         ERRORdialog* dialog = new ERRORdialog(error);
