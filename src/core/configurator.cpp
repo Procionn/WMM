@@ -217,12 +217,17 @@ void Core::exporter (const std::string& name, const bool monolith) {
             archive.write_in_archive(tempName, stc::cwmm::ram_collection());
         }
         else {
+#if 0
             std::filesystem::copy(filename, (tempName));
             wmml file(tempName);
             for (const auto& entry : presets)
                 file.set_wmml(new wmml_marker(stc::cwmm::ram_preset(entry)));
             file.flush();
             archive.write_in_archive(tempName, stc::cwmm::ram_collection());
+#endif
+            archive.write_in_archive(filename, stc::cwmm::ram_collection());
+            for (const auto& entry : presets)
+                archive.write_in_archive(stc::cwmm::ram_preset(entry), stc::cwmm::ram_preset());
         }
         std::filesystem::remove(tempName);
     }
@@ -239,5 +244,6 @@ void Core::exporter (const std::string& name, const bool monolith) {
 
 
 void Core::importer(const std::string& path) {
+    ArchiveReader archive(path);
 
 }

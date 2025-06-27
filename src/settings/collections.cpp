@@ -136,7 +136,13 @@ void collections::exporting () {
 
 
 void collections::importing () {
-
+    QString buffer = QFileDialog::getOpenFileName(
+        nullptr,
+        QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_COLLECTION"]),
+        "",
+        QString::fromStdString(Core::lang["LANG_LABEL_ALL_FILE"] + " (*.tar.zst)")
+    );
+    Core::get().importer(buffer.toStdString());
 }
 
 
