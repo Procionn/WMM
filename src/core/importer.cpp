@@ -25,17 +25,13 @@
 
 
 import::import (const std::string& path) : archivePath(path) {
-    try {
-        collectionPath = stc::cwmm::ram_collection();
-        presetPath = stc::cwmm::ram_preset();
-        unarchivate_main_objects();
-        if (presetsRenamed) {
-            renaming_fix();
-        }
-        mods_import(mods_import_list());
-    } catch (...) {
-        std::cout << "AHTUNG!!" << std::endl;
+    collectionPath = stc::cwmm::ram_collection();
+    presetPath = stc::cwmm::ram_preset();
+    unarchivate_main_objects();
+    if (presetsRenamed) {
+        renaming_fix();
     }
+    mods_import(mods_import_list());
 }
 
 
@@ -54,11 +50,17 @@ void import::unarchivate_main_objects () {
         // if (archivedFilePath.starts_with(collectionPath)) {
             if (std::filesystem::exists(archivedFilePath)) {
                 std::string dir, expansion;
-                mainCollectionFile = file_renaming(stc::string::get_name(archivedFilePath, dir, expansion),
-                                                   Core::lang["LANG_LABEL_RENAME_COLLECTIONS"]);
-                if (mainCollectionFile == "")
-                    throw Core::lang["LANG_LABEL_EXPORRT_INTERRUPTED"];
-                archivedFilePath = dir + mainCollectionFile + expansion;
+                renameMark:
+                    mainCollectionFile = file_renaming(stc::string::get_name(archivedFilePath, dir, expansion),
+                                                       Core::lang["LANG_LABEL_RENAME_COLLECTIONS"]);
+                    if (mainCollectionFile.empty())
+                        throw Core::lang["LANG_LABEL_EXPORT_INTERRUPTED"];
+                    archivedFilePath = dir + mainCollectionFile + expansion;
+                    if (std::filesystem::exists(archivedFilePath)) {
+                        ERRORdialog* error = new ERRORdialog(Core::lang["LANG_LABEL_R34"]);
+                        error->exec();
+                        goto renameMark;
+                    }
             }
             else {
                 mainCollectionFile = stc::string::get_name(archivedFilePath);
