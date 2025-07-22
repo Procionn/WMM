@@ -28,6 +28,7 @@ namespace stc {
         void replace (std::string& input, const char replaceable, const char target);
         std::filesystem::path replace (const std::filesystem::path& input, const char& replaceable, const char& target);
         std::string get_name(const std::string& path);
+        std::string get_name(const std::string& path, std::string& directory, std::string& expansion);
     }
     namespace cwmm { // Constants WMM
         std::string backup_path ();

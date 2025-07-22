@@ -46,6 +46,9 @@ protected:
 public:
     collections();
 
+signals:
+    void import_completed();
+
 public slots:
     void update_list();
 

@@ -47,6 +47,8 @@ Window::Window () {
 
     inpad->target = &target;
 
+    connect(settingsWindow->settings_modules_list->settings_collections,
+            &collections::import_completed,                  this,          &Window::import_completed);
     connect(menu,               &CMenuBar::content_click,    this,          &Window::inpadShow);
     connect(menu,               &CMenuBar::settings_click,   this,          &Window::settings);
     connect(menu,               &CMenuBar::object_click,     this,          &Window::NewObjectDialog);
@@ -74,6 +76,13 @@ void Window::NewObjectDialog() {
     else
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
 }
+
+
+void Window::import_completed() {
+    ObjectList->updateList();
+    ObjectList->render();
+}
+
 
 void Window::settings() {
     settingsWindow->show();

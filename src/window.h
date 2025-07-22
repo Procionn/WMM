@@ -50,6 +50,7 @@ public slots:
 private slots:
     void inpad_reset();
     void grounding(CObjectsButton* pointer);
+    void import_completed();
 };
 
 #endif // WINDOW_H

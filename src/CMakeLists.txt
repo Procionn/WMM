@@ -41,6 +41,8 @@ add_library(CORE STATIC
     core/configurator.cpp
 
     methods.cpp                         methods.h
+    core/importer.cpp
+    importer.h
 )
 add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp
@@ -60,10 +62,12 @@ add_library(PATTERNS STATIC
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
     patterns/CScrollWindow.h
+    patterns/RenameDialog.h             patterns/RrenameDialog.cpp
 )
 target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)
 target_link_libraries(CORE     PUBLIC  wmml)
+target_link_libraries(CORE     PUBLIC  PATTERNS)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(SETTINGS PRIVATE wmml)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

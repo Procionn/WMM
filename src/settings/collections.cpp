@@ -143,6 +143,8 @@ void collections::importing () {
         QString::fromStdString(Core::lang["LANG_LABEL_ALL_FILE"] + " (*.tar.zst)")
     );
     Core::get().importer(buffer.toStdString());
+    update_list();
+    emit import_completed();
 }
 
 

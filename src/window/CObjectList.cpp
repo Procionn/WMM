@@ -61,7 +61,7 @@ CObjectList::CObjectList () {
 void CObjectList::newObject (CNewObjectDialog* dialog) {
     QString tab = dialog->nameTab->text();
     CreteObject(tab.toStdString());
-    dialog->reject();
+    delete dialog;
 }
 
 

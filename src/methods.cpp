@@ -49,6 +49,15 @@ std::string stc::string::get_name(const std::string& path) {
     return path.substr(part, (expansion - part));
 }
 
+std::string stc::string::get_name(const std::string& path, std::string& directory, std::string& exp) {
+    std::size_t part = path.find_last_of('/');
+    std::size_t expansion = path.find_last_of('.');
+    ++part;
+    directory = path.substr(0, part);
+    exp = path.substr(expansion);
+    return path.substr(part, (expansion - part));
+}
+
 
 
 std::string stc::cwmm::backup_path () {

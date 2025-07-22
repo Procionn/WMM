@@ -110,6 +110,7 @@ class Core final : public CConfigs, public Lang, public CGameConfig
 {
     Core() = default;
     ~Core() = default;
+    friend class import;
 
 protected:
     struct wmmb
