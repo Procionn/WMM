@@ -16,6 +16,9 @@
  */
 #include "CInpad.h"
 
+#include "../../ModManager.h"
+#include <QMenuBar>
+
 CInpad::CInpad(bool& type) {
     callType = &type;
     setMinimumHeight(400);
@@ -82,8 +85,9 @@ void CInpad::render () {
     }
 }
 
-bool CInpad::nameTest (std::vector<Cbox>& existsElements, int indicator, std::string str) {
-    for (int i = 0; i != indicator; ++i)
+bool CInpad::nameTest (std::vector<Cbox>& existsElements, std::string str) {
+    //  проверяет, не существует ли объекта
+    for (int i = existsElements.size(); i != 0; --i)
         if (str == existsElements[i].path)
             return false;
     return true;
@@ -93,34 +97,35 @@ void CInpad::reader () {
     std::string stringDir1 = stc::cwmm::ram_preset();
     std::string stringDir2 = stc::cwmm::ram_mods();
     std::string targetFiledDirectory;
-    if ((*target)->type) targetFiledDirectory = stc::cwmm::ram_preset((*target)->name);
-    else                 targetFiledDirectory = stc::cwmm::ram_collection((*target)->name);
+    if ((*target)->type)
+        targetFiledDirectory = stc::cwmm::ram_preset((*target)->name);
+    else
+        targetFiledDirectory = stc::cwmm::ram_collection((*target)->name);
 
     wmml file(targetFiledDirectory);
     std::vector<wmml::variant> v(file.width());
-    std::vector<Cbox> existsElements(file.height());
-    int arraySize = 0;
-    while (file.read(v)) {
+    std::vector<Cbox> existsElements;
+    existsElements.reserve(file.height());
+
+    for (int arraySize = 0; file.read(v); arraySize++) {
         if (std::get<bool>(v[2]))
-             existsElements[arraySize].path = stc::cwmm::ram_mods(std::get<std::string>(v[0]));
-        else existsElements[arraySize].path = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
-        arraySize++;
+            existsElements[arraySize].path = stc::cwmm::ram_mods(std::get<std::string>(v[0]));
+        else
+            existsElements[arraySize].path = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
     }
-    bool count_type = false;
-    fsScaner(stringDir1, true, arraySize, existsElements, count_type);
-    fsScaner(stringDir2, false, arraySize, existsElements, count_type);
+    fsScaner(stringDir1, true, existsElements);
+    fsScaner(stringDir2, false, existsElements);
     vector = true;
 }
 
 
 void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
-                      const int& arraySize, std::vector<Cbox>& existsElements, bool& count_type) {
+                      std::vector<Cbox>& existsElements) {
     if (std::filesystem::exists(directory)) {
-
         for (auto const& objects : std::filesystem::directory_iterator{directory}) {
             std::string newButton = objects.path().string();
             stc::string::replace(newButton, '\\', '/');
-            if (nameTest(existsElements, arraySize, newButton)) {
+            if (nameTest(existsElements, newButton)) {
                 size_t part = newButton.find_last_of('/');
                 newButton = newButton.substr(part + 1);
                 CInpadButton* button;
@@ -131,9 +136,7 @@ void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
                 else
                     button = new CInpadButton(newButton, false, count_type);
                 newObjectList->add(button);
-                button->setMinimumHeight(35);
                 vlist.emplace_back(button);
-                button->hide();
             }
         }
     }
@@ -148,19 +151,14 @@ void CInpad::application(std::string& targetName, bool targetType) {
     std::vector<wmml::variant> v(file.width());
     for (CInpadButton* target : vlist) {
         if (target->is_target()) {
+            std::string name = target->get_name();
             if  (target->type == true) {
-                v = {target->get_name(), "", false, (unsigned long)(0), true};
+                v = {name, "", false, (unsigned long)(0), true};
                 file.write(v);
             }
             else {
-                std::ifstream openedFile(stc::cwmm::ram_mods_info(target->get_name()));
-                std::string str;
-                for (int n = 0; n != 2; ++n)
-                    std::getline(openedFile, str);
-                std::string version = str;
-                std::getline(openedFile, str);
-                unsigned long id = std::stoi(str);
-                v = {target->get_name(), version, true, (unsigned long)(id), true};
+                unsigned long id = ModManager::get().mod_data_converter(name);
+                v = {name, ModManager::get().mod_recommended_version(id), true, id, true};
                 file.write(v);
             }
         }

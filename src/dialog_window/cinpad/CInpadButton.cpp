@@ -24,6 +24,7 @@ CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& c
     list->addWidget(label);
     setFrameShape(QFrame::WinPanel);
     setFrameShadow(QFrame::Raised);
+    setMinimumHeight(35);
     if (counter) {
         setStyleSheet(QString::fromStdString(untoggledColor1));
         counter = false;
@@ -33,6 +34,7 @@ CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& c
         counter = true;
     }
     count_type = counter;
+    button->hide();
 }
 
 
