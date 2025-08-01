@@ -42,6 +42,8 @@ struct Mod
 
     std::vector<ModInfo>* versions = nullptr;
     unsigned long modId;
+
+    std::string recommended_version();
 };
 
 
@@ -107,6 +109,8 @@ public:
 
     unsigned long mod_data_converter(const std::string& modName);
     std::string mod_data_converter(const unsigned long modId);
+
+    std::string mod_recommended_version(const unsigned long modId);
 };
 
 #endif // MODMANAGER_H

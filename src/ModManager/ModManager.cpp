@@ -146,3 +146,11 @@ unsigned long ModManager::mod_data_converter (const std::string& modName) {
 std::string ModManager::mod_data_converter (const unsigned long modId) {
     return reverceDictionary[modId];
 }
+
+
+std::string ModManager::mod_recommended_version (const unsigned long modId) {
+    auto* ptr = bsearch(modId);
+    if (!ptr)
+        throw std::runtime_error("unknown mod id");
+    return ptr->recommended_version();
+}

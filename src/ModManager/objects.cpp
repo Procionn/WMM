@@ -15,6 +15,7 @@
  *
  */
 #include "../ModManager.h"
+#include <cassert>
 
 ModInfo::ModInfo(const std::string& modversion, const unsigned long& localid) :
     localId(localid),
@@ -27,7 +28,16 @@ Mod::Mod (const std::string& modversion, const unsigned long& modid, const unsig
     versions = new std::vector<ModInfo>;
     versions->emplace_back(modversion, localid);
 }
+
+
 Mod::Mod (const unsigned long& modid) : modId(modid) {}
+
+
 Mod::~Mod () {
     delete versions;
+}
+
+std::string Mod::recommended_version () {
+    assert(versions);
+    return (*versions)[versions->size()].modVersion;
 }
