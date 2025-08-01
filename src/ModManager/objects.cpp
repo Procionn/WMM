@@ -14,31 +14,20 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef DND_H
-#define DND_H
+#include "../ModManager.h"
 
-#include <QVBoxLayout>
-#include <QLabel>
-#include <filesystem>
+ModInfo::ModInfo(const std::string& modversion, const unsigned long& localid) :
+    localId(localid),
+    modVersion(modversion)
+{}
 
-class CDND : public QLabel
-{
-    Q_OBJECT
 
-    std::string name;
-    std::string id;
-    std::string version;
-
-public:
-    CDND(QVBoxLayout* parent = nullptr, std::string name = "");
-    void dragEnterEvent(QDragEnterEvent* e);
-    void dropEvent(QDropEvent* e);
-
-signals:
-    void launch();
-
-protected:
-    void modInfoSave(const std::filesystem::path& directory);
-
-};
-#endif // DND_H
+Mod::Mod (const std::string& modversion, const unsigned long& modid, const unsigned long& localid) :
+          modId(modid) {
+    versions = new std::vector<ModInfo>;
+    versions->emplace_back(modversion, localid);
+}
+Mod::Mod (const unsigned long& modid) : modId(modid) {}
+Mod::~Mod () {
+    delete versions;
+}

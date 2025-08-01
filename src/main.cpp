@@ -16,6 +16,7 @@
  */
 #include "core.h"
 #include "window.h"
+#include "ModManager.h"
 
 #include <QApplication>
 
@@ -26,7 +27,8 @@ int main(int argc, char *argv[])
     while(true) {
         try {
             try {
-                static Core& globalCore = Core::get();
+                Core::get();
+                ModManager::get();
                 app.setApplicationName("Wirus Mod Manager");
                 QApplication::setStyle("Fusion");
                 Window w;

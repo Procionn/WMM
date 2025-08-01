@@ -148,13 +148,10 @@ void import::mods_import (void* vector) {
     std::string targetFilename;
     for (const auto* entry : archive) {
         targetFilename = archive.get_target_filename();
-        if (targetFilename.compare(0, modsDirectory.size(), modsDirectory) == 0) {
-            for (const auto& importingMod : *importList) {
-                if (targetFilename.compare(modsDirectory.size(), (modsDirectory.size() + importingMod.name.size()), importingMod.name) == 0) {
+        if (targetFilename.compare(0, modsDirectory.size(), modsDirectory) == 0)
+            for (const auto& importingMod : *importList)
+                if (targetFilename.compare(modsDirectory.size(), (modsDirectory.size() + importingMod.name.size()), importingMod.name) == 0)
                     archive.write_on_disk();
-                }
-            }
-        }
         else if (targetFilename.compare(0, archiveDirectory.size(), archiveDirectory) == 0)
             if (!std::filesystem::exists(targetFilename))
                 archive.write_on_disk();

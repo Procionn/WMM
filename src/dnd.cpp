@@ -20,12 +20,12 @@
 #include "core.h"
 #include "patterns/ERRORdialog.h"
 #include "methods.h"
+#include "ModManager.h"
 
 #include <iostream>
 #include <hpp-archive.h>
 #include <QDragEnterEvent>
 #include <QMimeData>
-#include <regex>
 
 
 
@@ -54,7 +54,7 @@ void CDND::dropEvent(QDropEvent* e) {
             for (const QUrl &url : e->mimeData()->urls()) {
                 std::string fileName = url.toLocalFile().toStdString();
                 stc::cerr("Dropped file:" + fileName);
-
+#if 0
                 regex(fileName);
                 std::filesystem::path modsDir = stc::cwmm::ram_mods(name);
                 if (std::filesystem::exists(modsDir))
@@ -79,8 +79,11 @@ void CDND::dropEvent(QDropEvent* e) {
                 modStructFile.close();
 
                 stc::cerr("The archive has been successfully extracted to the folder: " + modsDir.string());
-                emit launch();
+#else
+                ModManager::get().load(fileName);
+#endif
             }
+            emit launch();
         }
         catch (const std::exception& e) {
             ERRORdialog* dialog = new ERRORdialog(std::string("DND ERROR: ") + e.what());
@@ -90,23 +93,8 @@ void CDND::dropEvent(QDropEvent* e) {
 }
 
 
-
-void CDND::regex (const std::string& ArchiveName) {
-    size_t part = ArchiveName.find_last_of('/');
-    std::string nameArchive = ArchiveName.substr(part + 1);
-    std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?\.(\w+)$)");
-    std::smatch matches;
-    if (!std::regex_match(nameArchive, matches, archiveRegex))
-        throw ("ERROR:  REGULAR NAME ERROR");
-    name               = matches[1];
-    id                 = matches[2];
-    version            = matches[3];
-    // uniqueNumber    = matches[4];
-    // extension       = matches[5];
-}
-
-
 void CDND::modInfoSave(const std::filesystem::path& directory) {
+#if 0
     std::filesystem::path path = directory / (WML + name + EXPANSION2);
     std::filesystem::create_directories(path.parent_path());
 
@@ -115,4 +103,5 @@ void CDND::modInfoSave(const std::filesystem::path& directory) {
     file << version << "\n";
     file << id << "\n";
     file.close();
+#endif
 }
