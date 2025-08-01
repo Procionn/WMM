@@ -19,16 +19,10 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
-#include <filesystem>
 
 class CDND : public QLabel
 {
     Q_OBJECT
-
-    std::string name;
-    std::string id;
-    std::string version;
-
 public:
     CDND(QVBoxLayout* parent = nullptr, std::string name = "");
     void dragEnterEvent(QDragEnterEvent* e);
@@ -36,9 +30,5 @@ public:
 
 signals:
     void launch();
-
-protected:
-    void modInfoSave(const std::filesystem::path& directory);
-
 };
 #endif // DND_H
