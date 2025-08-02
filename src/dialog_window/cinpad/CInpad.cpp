@@ -85,17 +85,14 @@ void CInpad::render () {
     }
 }
 
-bool CInpad::nameTest (std::vector<Cbox>& existsElements, std::string str) {
-    //  проверяет, не существует ли объекта
+bool CInpad::not_exists (const std::vector<std::string>& existsElements, const std::string& str) {
     for (int i = existsElements.size(); i != 0; --i)
-        if (str == existsElements[i].path)
+        if (str == existsElements[i])
             return false;
     return true;
 }
 
 void CInpad::reader () {
-    std::string stringDir1 = stc::cwmm::ram_preset();
-    std::string stringDir2 = stc::cwmm::ram_mods();
     std::string targetFiledDirectory;
     if ((*target)->type)
         targetFiledDirectory = stc::cwmm::ram_preset((*target)->name);
@@ -104,37 +101,30 @@ void CInpad::reader () {
 
     wmml file(targetFiledDirectory);
     std::vector<wmml::variant> v(file.width());
-    std::vector<Cbox> existsElements;
+    std::vector<std::string> existsElements;
     existsElements.reserve(file.height());
 
     for (int arraySize = 0; file.read(v); arraySize++) {
         if (std::get<bool>(v[2]))
-            existsElements[arraySize].path = stc::cwmm::ram_mods(std::get<std::string>(v[0]));
+            existsElements[arraySize] = std::get<std::string>(v[0]);
         else
-            existsElements[arraySize].path = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
+            existsElements[arraySize] = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
     }
-    fsScaner(stringDir1, true, existsElements);
-    fsScaner(stringDir2, false, existsElements);
+    presets_directory_scaner(existsElements);
+    mods_scaner(existsElements);
     vector = true;
 }
 
 
-void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
-                      std::vector<Cbox>& existsElements) {
+void CInpad::presets_directory_scaner(const std::vector<std::string>& existsElements) {
+    std::filesystem::path directory = stc::cwmm::ram_preset();
     if (std::filesystem::exists(directory)) {
-        for (auto const& objects : std::filesystem::directory_iterator{directory}) {
+        for (auto const& objects : std::filesystem::directory_iterator(directory)) {
             std::string newButton = objects.path().string();
             stc::string::replace(newButton, '\\', '/');
-            if (nameTest(existsElements, newButton)) {
-                size_t part = newButton.find_last_of('/');
-                newButton = newButton.substr(part + 1);
-                CInpadButton* button;
-                if (type) {
-                    newButton = newButton.substr(0, newButton.size() - MAIN_PART);
-                    button = new CInpadButton(newButton, true, count_type);
-                }
-                else
-                    button = new CInpadButton(newButton, false, count_type);
+            if (not_exists(existsElements, newButton)) {
+                newButton = stc::string::get_name(newButton);
+                CInpadButton* button = new CInpadButton(newButton, true, count_type);
                 newObjectList->add(button);
                 vlist.emplace_back(button);
             }
@@ -143,11 +133,26 @@ void CInpad::fsScaner(const std::filesystem::path& directory, const bool& type,
 }
 
 
+void CInpad::mods_scaner(const std::vector<std::string>& existsElements) {
+    std::pair<Mod*, size_t> modList = ModManager::get().all_mods_list();
+    const auto* array = modList.first;
+    for (size_t i = modList.second; i != 0; --i) {
+        std::string buttonName = ModManager::get().mod_data_converter(array->modId);
+        if (not_exists(existsElements, buttonName)) {
+            CInpadButton* button = new CInpadButton(buttonName, false, count_type);
+            newObjectList->add(button);
+            vlist.emplace_back(button);
+        }
+        ++array;
+    }
+}
+
+
 void CInpad::application(std::string& targetName, bool targetType) {
-    std::string name;
-    if (targetType) name = stc::cwmm::ram_preset(targetName);
-    else            name = stc::cwmm::ram_collection(targetName);
-    wmml file(name);
+    std::string fileName;
+    if (targetType) fileName = stc::cwmm::ram_preset(targetName);
+    else            fileName = stc::cwmm::ram_collection(targetName);
+    wmml file(fileName);
     std::vector<wmml::variant> v(file.width());
     for (CInpadButton* target : vlist) {
         if (target->is_target()) {

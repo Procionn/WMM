@@ -34,7 +34,7 @@ CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& c
         counter = true;
     }
     count_type = counter;
-    button->hide();
+    hide();
 }
 
 

@@ -29,15 +29,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QLabel>
-
-
-
-struct Cbox
-{
-    std::string path = "";
-};
-
-
+#include <filesystem>
 
 class CInpad : public CFastDialog
 {
@@ -62,10 +54,10 @@ private:
 
     void render();
     void reader();
-    void fsScaner(const std::filesystem::path& directory, const bool& type,
-                  std::vector<Cbox>& existsElements);
+    void presets_directory_scaner(const std::vector<std::string>& existsElements);
+    void mods_scaner(const std::vector<std::string>& existsElements);
     void distributor();
-    bool nameTest(std::vector<Cbox>& existsElements, std::string str);
+    bool not_exists(const std::vector<std::string>& existsElements, const std::string& str);
 };
 
 #endif // CINPAD_H
