@@ -50,7 +50,7 @@ CObjectList::CObjectList () {
         render();
     });
 
-    connect(Preset,     &QPushButton::clicked, this, [=]{
+    connect(Preset, &QPushButton::clicked, this, [=]{
         TypeTarget = true;
         render();
     });
