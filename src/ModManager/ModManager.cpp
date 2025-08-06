@@ -128,8 +128,8 @@ std::string ModManager::get_path(const std::string& name, const std::string& ver
 }
 
 
-std::string ModManager::get_log_path(const std::string name, const std::string& version) {
-    get_log_path(mod_data_converter(name), version);
+std::string ModManager::get_log_path(const std::string& name, const std::string& version) {
+    return get_log_path(mod_data_converter(name), version);
 }
 
 

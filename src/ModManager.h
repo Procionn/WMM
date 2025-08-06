@@ -66,7 +66,8 @@ private:
     void add(const std::vector<wmml::variant>&);
 
 protected:
-    ModList();
+    ModList() = default;
+    virtual ~ModList();
     Mod*     bsearch(const unsigned long& modId);
     ModInfo* bsearch(Mod* ptr, const std::string& modVersion);
     void add(const unsigned long& modId, const std::string& modVersion, const std::string& modName);

@@ -34,7 +34,7 @@ namespace {
 
 
 
-ModList::ModList () {
+ModList::~ModList () {
     delete dataSaveFile;
 }
 
@@ -69,8 +69,10 @@ void ModList::import_saved_data () {
         while(dataSaveFile->read(v))
             add(v);
     }
-    else
+    else {
+        std::filesystem::create_directories(std::filesystem::path(saveFile).parent_path());
         dataSaveFile = new wmml(saveFile, gridSize);
+    }
 }
 
 
