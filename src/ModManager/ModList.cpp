@@ -146,6 +146,6 @@ void ModList::ML_remove (const unsigned long& modId) {
 }
 
 
-std::pair<Mod*, size_t> ModList::all_mods_list() {
-    return std::pair<Mod*, size_t>(list.data(), list.size());
+ const std::vector<Mod>& ModList::all_mods_list() {
+   return list;
 }

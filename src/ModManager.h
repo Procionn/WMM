@@ -75,7 +75,7 @@ protected:
     void import_saved_data();
 
 public:
-    std::pair<Mod*, size_t> all_mods_list();
+    const std::vector<Mod>& all_mods_list();
 };
 
 

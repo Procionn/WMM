@@ -43,7 +43,7 @@ public:
 
     CInpad(bool& type);
     void reset();
-    void application(std::string& targetName, bool targetType);
+    void application(const std::string& targetName, const bool targetType);
 
 private:
     std::vector<CInpadButton*> vlist;

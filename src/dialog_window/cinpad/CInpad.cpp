@@ -134,21 +134,18 @@ void CInpad::presets_directory_scaner(const std::vector<std::string>& existsElem
 
 
 void CInpad::mods_scaner(const std::vector<std::string>& existsElements) {
-    std::pair<Mod*, size_t> modList = ModManager::get().all_mods_list();
-    const auto* array = modList.first;
-    for (size_t i = modList.second; i != 0; --i) {
-        std::string buttonName = ModManager::get().mod_data_converter(array->modId);
+    for (const auto& entry : ModManager::get().all_mods_list()) {
+        std::string buttonName = ModManager::get().mod_data_converter(entry.modId);
         if (not_exists(existsElements, buttonName)) {
             CInpadButton* button = new CInpadButton(buttonName, false, count_type);
             newObjectList->add(button);
             vlist.emplace_back(button);
         }
-        ++array;
     }
 }
 
 
-void CInpad::application(std::string& targetName, bool targetType) {
+void CInpad::application(const std::string& targetName, const bool targetType) {
     std::string fileName;
     if (targetType) fileName = stc::cwmm::ram_preset(targetName);
     else            fileName = stc::cwmm::ram_collection(targetName);
