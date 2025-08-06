@@ -98,19 +98,26 @@ public:
     static ModManager& get();
     void load(const std::string& path);
 
-    bool exists(const unsigned long id, const std::string& version);
+    bool exists(const unsigned long id,  const std::string& version);
+    bool exists(const std::string& name, const std::string& version);
 
     void remove(const unsigned long id);
-    void remove(const unsigned long id, const std::string& version);
+    void remove(const unsigned long id,  const std::string& version);
+    void remove(const std::string& name);
+    void remove(const std::string& name, const std::string& version);
 
     std::string get_path(const unsigned long id);
     std::string get_path(const unsigned long id, const std::string& version);
     std::string get_log_path(const unsigned long id, const std::string& version);
+    std::string get_path(const std::string& name);
+    std::string get_path(const std::string& name, const std::string& version);
+    std::string get_log_path(const std::string& name, const std::string& version);
 
     unsigned long mod_data_converter(const std::string& modName);
     std::string mod_data_converter(const unsigned long modId);
 
     std::string mod_recommended_version(const unsigned long modId);
+    std::string mod_recommended_version(const std::string& modName);
 };
 
 #endif // MODMANAGER_H

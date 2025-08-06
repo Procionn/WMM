@@ -118,6 +118,21 @@ std::string ModManager::get_log_path(const unsigned long id, const std::string& 
 }
 
 
+std::string ModManager::get_path(const std::string& name){
+    return get_path(mod_data_converter(name));
+}
+
+
+std::string ModManager::get_path(const std::string& name, const std::string& version) {
+    return get_path(mod_data_converter(name), version);
+}
+
+
+std::string ModManager::get_log_path(const std::string name, const std::string& version) {
+    get_log_path(mod_data_converter(name), version);
+}
+
+
 bool ModManager::exists (const unsigned long id, const std::string& version) {
     Mod* ptr = bsearch(id);
     if (ptr && bsearch(ptr, version))
@@ -126,15 +141,19 @@ bool ModManager::exists (const unsigned long id, const std::string& version) {
 }
 
 
-void ModManager::remove (const unsigned long id) {
-    ML_remove(id);
-    stc::fs::remove_all(get_path(id));
+bool ModManager::exists (const std::string& name, const std::string& version) {
+    return exists(mod_data_converter(name), version);
 }
 
 
 void ModManager::remove (const unsigned long id, const std::string& version) {
     ML_remove(id, version);
     std::filesystem::remove(get_path(id, version));
+}
+
+
+void ModManager::remove (const std::string& name, const std::string& version) {
+    remove(mod_data_converter(name), version);
 }
 
 
@@ -153,4 +172,10 @@ std::string ModManager::mod_recommended_version (const unsigned long modId) {
     if (!ptr)
         throw std::runtime_error("unknown mod id");
     return ptr->recommended_version();
+}
+
+
+
+std::string ModManager::mod_recommended_version(const std::string& modName) {
+    return mod_recommended_version(mod_data_converter(modName));
 }
