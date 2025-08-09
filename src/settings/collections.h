@@ -17,6 +17,7 @@
 #ifndef COLLECTIONS_H
 #define COLLECTIONS_H
 
+#include <QLabel>
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QFrame>
@@ -36,6 +37,9 @@ public:
 class collections : public QWidget
 {
     Q_OBJECT
+    QLabel* mods;
+    QLabel* presets;
+    QLabel* allMods;
 protected:
     CToggledButton* target = nullptr;
     QVBoxLayout* collections_list;

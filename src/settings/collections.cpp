@@ -16,7 +16,6 @@
  */
 #include "collections.h"
 
-#include <QLabel>
 #include <QGridLayout>
 #include <QDesktopServices>
 #include <QFileDialog>
