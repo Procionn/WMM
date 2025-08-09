@@ -18,6 +18,8 @@
 #define CONSTANTS_H
 #include <string>
 
+#define RESET 187
+
 const int INI_MAIN_PART         = 4;
 const int MAIN_PART             = 5;
 const int GRID_WIDTH            = 5;

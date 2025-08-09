@@ -26,25 +26,16 @@
 #include "CInpadList.h"
 
 #include <vector>
-#include <iostream>
 #include <QMenu>
 #include <QAction>
-#include <QMenuBar>
 #include <QLabel>
-
-
-
-struct Cbox
-{
-    std::string path = "";
-};
-
-
+#include <filesystem>
 
 class CInpad : public CFastDialog
 {
     Q_OBJECT
 public:
+
     bool targetType = false;
     bool* callType;
     CInpadList* newObjectList;
@@ -52,19 +43,21 @@ public:
 
     CInpad(bool& type);
     void reset();
-    void application(std::string& targetName, bool targetType);
+    void application(const std::string& targetName, const bool targetType);
+
 private:
     std::vector<CInpadButton*> vlist;
     bool vector = false;
+    bool count_type = false;
     QMenu* menu;
     QAction* presets;
 
     void render();
     void reader();
-    void fsScaner(const std::filesystem::path& directory, const bool& type,
-                  const int& arraySize, std::vector<Cbox>& existsElements, bool& count_type);
+    void presets_directory_scaner(const std::vector<std::string>& existsElements);
+    void mods_scaner(const std::vector<std::string>& existsElements);
     void distributor();
-    bool nameTest(std::vector<Cbox>& existsElements, int indicator, std::string str);
+    bool not_exists(const std::vector<std::string>& existsElements, const std::string& str);
 };
 
 #endif // CINPAD_H

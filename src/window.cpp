@@ -24,6 +24,7 @@
 #include <filesystem>
 #include <QString>
 #include <stdlib.h>
+#include <QApplication>
 
 // #include <QDockWidget>
 #include <QPushButton>
@@ -44,6 +45,8 @@ Window::Window () {
 
     ObjectList->resize(200, 0);
     ContentWidget->resize(1000, 0);
+    resize(1200, 800);
+    show();
 
     inpad->target = &target;
 
@@ -93,7 +96,7 @@ void Window::updatePointer(CObjectsButton* pointer) {
 }
 
 void Window::grounding (CObjectsButton* pointer) {
-    if (pointer->name == target->name)
+    if (target && pointer->name == target->name)
         target = nullptr;
 }
 
@@ -109,8 +112,8 @@ void Window::inpad_reset () {
 }
 
 
-void Window::closeEvent (QCloseEvent *event) {
-    throw new exit_signal;
+void Window::closeEvent (QCloseEvent* event) {
+    QApplication::exit();
 }
 
 

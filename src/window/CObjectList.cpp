@@ -50,7 +50,7 @@ CObjectList::CObjectList () {
         render();
     });
 
-    connect(Preset,     &QPushButton::clicked, this, [=]{
+    connect(Preset, &QPushButton::clicked, this, [=]{
         TypeTarget = true;
         render();
     });
@@ -91,9 +91,9 @@ void CObjectList::scan_directory (const std::filesystem::path& directory, const 
                 targetName = newButton;
             });
             connect(button, &CObjectsButton::remove, this, [=]{
+                emit remove(button);
                 updateList();
                 render();
-                emit remove(button);
             });
             button->hide();
             list.emplace_back(button);
