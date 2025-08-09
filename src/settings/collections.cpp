@@ -38,6 +38,11 @@ collections::collections () {
     QPushButton* importButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_IMPORT"]));
     QPushButton* exportButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_EXPORT"]));
     settingsBox = new SettingsBox;
+    QFrame* modInfoFrame = new QFrame;
+    QGridLayout* modInfoList = new QGridLayout(modInfoFrame);
+    mods = new QLabel;
+    presets = new QLabel;
+    allMods = new QLabel;
 
     hbox->setAlignment(Qt::AlignCenter);
     line->setFrameShape(QFrame::VLine);
@@ -45,6 +50,9 @@ collections::collections () {
     collections_list->setAlignment(Qt::AlignTop);
     right_list->setAlignment(Qt::AlignTop);
     addScrollable(pad, collections_list);
+    modInfoFrame->setFrameShape(QFrame::WinPanel);
+    modInfoFrame->setFrameShadow(QFrame::Raised);
+    modInfoFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     hbox->addLayout(left_list);
     hbox->addWidget(line);
@@ -53,6 +61,14 @@ collections::collections () {
     left_list->addWidget(collections_label);
     left_list->addWidget(pad);
     left_list->addWidget(importButton);
+
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MODS"])));
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_PRESETS"])));
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ALL_MODS"])));
+    modInfoList->addWidget(mods,    0, 1);
+    modInfoList->addWidget(presets, 1, 1);
+    modInfoList->addWidget(allMods, 2, 1);
+    right_list->addWidget(modInfoFrame);
 
     update_list();
     update_collection_info(nullptr);
@@ -85,29 +101,6 @@ void collections::update_list () {
 
 
 void collections::update_collection_info (CToggledButton* target) {
-    static QLabel* mods;
-    static QLabel* presets;
-    static QLabel* allMods;
-    if (!mods) {
-        QFrame* main = new QFrame;
-        QGridLayout* list = new QGridLayout(main);
-        list->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MODS"])));
-        list->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_PRESETS"])));
-        list->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ALL_MODS"])));
-        mods = new QLabel;
-        presets = new QLabel;
-        allMods = new QLabel;
-
-        main->setFrameShape(QFrame::WinPanel);
-        main->setFrameShadow(QFrame::Raised);
-        main->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-        list->addWidget(mods,    0, 1);
-        list->addWidget(presets, 1, 1);
-        list->addWidget(allMods, 2, 1);
-        right_list->addWidget(main);
-    }
-
     if (target) {
         Core::CollectionInfo* info = new Core::CollectionInfo(target->name);
         mods->setText(QString::number(info->mods));
