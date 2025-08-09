@@ -67,7 +67,9 @@ void ModList::import_saved_data () {
         std::vector<wmml::variant> v(gridSize);
         list.reserve(dataSaveFile->height());
         while(dataSaveFile->read(v))
-            add(v);
+            add_in_ram(v);
+        delete dataSaveFile;
+        dataSaveFile = new wmml(saveFile);
     }
     else {
         std::filesystem::create_directories(std::filesystem::path(saveFile).parent_path());
@@ -77,6 +79,14 @@ void ModList::import_saved_data () {
 
 
 void ModList::add (const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
+    add_in_ram(modId, modVersion, modName);
+    add_in_rom(modId, modVersion, modName);
+    ++localId;
+
+}
+
+
+void ModList::add_in_ram(const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
@@ -86,30 +96,29 @@ void ModList::add (const unsigned long& modId, const std::string& modVersion, co
             ptr->versions->emplace_back(modVersion, localId);
             std::qsort(ptr->versions->data(), ptr->versions->size(),
                        sizeof(ModInfo), &modinfo_cmp);
-            if (dataSaveFile) {
-                std::vector<wmml::variant> v{modName, modVersion, modId};
-                dataSaveFile->write(v);
-                dictionary[modName] = modId;
-                reverceDictionary[modId] = modName;
-            }
         }
     }
     else {
         list.emplace_back(modVersion, modId, localId);
         std::qsort(list.data(), list.size(), sizeof(Mod), &mod_cmp);
-        if (dataSaveFile) {
-            std::vector<wmml::variant> v{modName, modVersion, modId};
-            dataSaveFile->write(v);
-            dictionary[modName] = modId;
-            reverceDictionary[modId] = modName;
-        }
     }
-    ++localId;
+    dictionary[modName] = modId;
+    reverceDictionary[modId] = modName;
 }
 
 
-void ModList::add (const std::vector<wmml::variant>& v) {
-    add(std::get<unsigned long>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
+void ModList::add_in_rom(const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
+    if (dataSaveFile) {
+        std::vector<wmml::variant> v{modName, modVersion, modId};
+        dataSaveFile->write(v);
+    }
+    else
+        std::runtime_error("BD file is not open");
+}
+
+
+void ModList::add_in_ram (const std::vector<wmml::variant>& v) {
+    add_in_ram(std::get<unsigned long>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
 }
 
 

@@ -16,6 +16,7 @@
  */
 #include "../importer.h"
 
+#include "../ModManager.h"
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/RenameDialog.h"
 #include "../methods.h"
@@ -28,9 +29,8 @@ import::import (const std::string& path) : archivePath(path) {
     collectionPath = stc::cwmm::ram_collection();
     presetPath = stc::cwmm::ram_preset();
     unarchivate_main_objects();
-    if (presetsRenamed) {
+    if (presetsRenamed)
         renaming_fix();
-    }
     mods_import(mods_import_list());
 }
 
@@ -108,7 +108,6 @@ void import::renaming_fix () {
     std::filesystem::remove(filePath);
     wmml newFile(filePath, GRID_WIDTH);
 
-    // for (const auto& entry : list) {
     for (auto& entry : list) {
         if (!std::get<bool>(entry[2]))
             entry[0] = renamedList[std::get<std::string>(entry[0])];
@@ -118,22 +117,13 @@ void import::renaming_fix () {
 
 
 void* import::mods_import_list () {
-    std::vector<Core::wmmb> modlist = Core::get().parser(stc::cwmm::ram_collection(mainCollectionFile));
+    std::vector<Core::wmmb> modlist = Core::get().parser(stc::cwmm::ram_collection(mainCollectionFile), nullptr, false);
     std::vector<Core::wmmb>* importList = new std::vector<Core::wmmb>;
     importList->reserve(modlist.size());
 
-    for(auto& entry : modlist) {
-        std::string infoPath = stc::cwmm::ram_mods_info(entry.name);
-        if (std::filesystem::exists(infoPath)) {
-            std::ifstream info (infoPath);
-            std::string str;
-            for (int i = 0; i != 2; ++i)
-                std::getline(info, str);
-            if (str != entry.version)
-                importList->emplace_back(entry);
-        }
-        else importList->emplace_back(entry);
-    }
+    for(auto& entry : modlist)
+        if (!ModManager::get().exists(entry.id, entry.version))
+            importList->emplace_back(entry);
     return static_cast<void*>(importList);
 }
 
@@ -148,10 +138,17 @@ void import::mods_import (void* vector) {
     std::string targetFilename;
     for (const auto* entry : archive) {
         targetFilename = archive.get_target_filename();
-        if (targetFilename.compare(0, modsDirectory.size(), modsDirectory) == 0)
-            for (const auto& importingMod : *importList)
-                if (targetFilename.compare(modsDirectory.size(), (modsDirectory.size() + importingMod.name.size()), importingMod.name) == 0)
+        if (targetFilename.compare(0, modsDirectory.size(), modsDirectory) == 0) {
+            std::string hash;
+            for (const auto& importingMod : *importList) {
+                hash = std::to_string(importingMod.id) + "/" + importingMod.version;
+                if (targetFilename.compare(modsDirectory.size(), hash.size(), hash) == 0) {
                     archive.write_on_disk();
+                    ModManager::get().add(importingMod.id, importingMod.version, importingMod.name);
+                    break;
+                }
+            }
+        }
         else if (targetFilename.compare(0, archiveDirectory.size(), archiveDirectory) == 0)
             if (!std::filesystem::exists(targetFilename))
                 archive.write_on_disk();

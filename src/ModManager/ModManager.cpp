@@ -64,32 +64,26 @@ void ModManager::mod_log (const std::string& path, const unsigned long id, const
 }
 
 
-void* ModManager::regex (const std::string& filename) {
+std::tuple<std::string, unsigned long, std::string> ModManager::regex (const std::string& filename) {
     std::string nameArchive = stc::string::get_name(filename);
-    std::smatch* matches = new std::smatch;
-    std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?\$)");
-    if (!std::regex_match(nameArchive, *matches, archiveRegex))
+    std::smatch matches;
+    std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?$)");
+    if (!std::regex_match(nameArchive, matches, archiveRegex))
         throw ("ERROR:  REGULAR NAME ERROR");
-    // return Mod(matches[3], matches[1], std::stol(matches[2]), 0);
-    return static_cast<void*>(matches);
+    return {matches[1], std::stoi(matches[2]), matches[3]};
 }
 
 
 void ModManager::load (const std::string& path) {
-    std::smatch* dataBlock = static_cast<std::smatch*>(regex(path));
-    const unsigned long modId = std::stol((*dataBlock)[2]);
-    const std::string modVersion = (*dataBlock)[3];
-    const std::string modName = (*dataBlock)[1];
-    delete dataBlock;
+    auto dataBlock = regex(path);
+    unsigned long modId 	= std::get<1>(dataBlock);
+    std::string modVersion  = std::get<2>(dataBlock);
+    std::string modName 	= std::get<0>(dataBlock);
 
     stc::cerr("ModManager::load: regex complete");
-
     add(modId, modVersion, modName);
-
     stc::cerr("ModManager::load: database adding complete");
-
     mod_log(path, modId, modVersion);
-
     stc::cerr("ModManager::load: log created");
 
     std::filesystem::path archivePath = get_path(modId, modVersion);
@@ -100,6 +94,7 @@ void ModManager::load (const std::string& path) {
         std::filesystem::rename(path, archivePath);
 
     stc::cerr("ModManager::load: data move complete");
+    dataSaveFile->flush();
 }
 
 

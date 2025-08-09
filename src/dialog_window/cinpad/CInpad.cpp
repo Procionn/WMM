@@ -86,8 +86,8 @@ void CInpad::render () {
 }
 
 bool CInpad::not_exists (const std::vector<std::string>& existsElements, const std::string& str) {
-    for (int i = existsElements.size(); i != 0; --i)
-        if (str == existsElements[i])
+    for (const auto& entry : existsElements)
+        if (str == entry)
             return false;
     return true;
 }
@@ -104,12 +104,11 @@ void CInpad::reader () {
     std::vector<std::string> existsElements;
     existsElements.reserve(file.height());
 
-    for (int arraySize = 0; file.read(v); arraySize++) {
+    for (int arraySize = 0; file.read(v); arraySize++)
         if (std::get<bool>(v[2]))
-            existsElements[arraySize] = std::get<std::string>(v[0]);
+            existsElements.emplace_back(std::get<std::string>(v[0]));
         else
-            existsElements[arraySize] = stc::cwmm::ram_preset(std::get<std::string>(v[0]));
-    }
+            existsElements.emplace_back(stc::cwmm::ram_preset(std::get<std::string>(v[0])));
     presets_directory_scaner(existsElements);
     mods_scaner(existsElements);
     vector = true;
@@ -166,5 +165,5 @@ void CInpad::application(const std::string& targetName, const bool targetType) {
         }
     }
     reset();
-    this->reject();
+    reject();
 }

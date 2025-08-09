@@ -21,6 +21,7 @@
 #include <vector>
 #include <wmml.h>
 #include <map>
+#include <tuple>
 
 struct ModInfo
 {
@@ -39,6 +40,8 @@ struct Mod
     Mod(const unsigned long& modId);
     Mod(const std::string& modVersion, const unsigned long& modId, const unsigned long& localId);
     ~Mod();
+    Mod(Mod&& ref) noexcept;
+    Mod& operator=(Mod&& other) noexcept;
 
     std::vector<ModInfo>* versions = nullptr;
     unsigned long modId;
@@ -63,19 +66,21 @@ protected:
     wmml* dataSaveFile = nullptr;
 
 private:
-    void add(const std::vector<wmml::variant>&);
+    void add_in_ram(const std::vector<wmml::variant>&);
 
 protected:
     ModList() = default;
     virtual ~ModList();
     Mod*     bsearch(const unsigned long& modId);
     ModInfo* bsearch(Mod* ptr, const std::string& modVersion);
-    void add(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
+    void add_in_ram(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
+    void add_in_rom(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
     void ML_remove(const unsigned long& modId, const std::string& modVersion);
     void ML_remove(const unsigned long& modId);
     void import_saved_data();
 
 public:
+    void add(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
     const std::vector<Mod>& all_mods_list();
 };
 
@@ -88,7 +93,7 @@ class ModManager final : public ModList
     bool copy = true; // false to move new mods in directory
     std::string archiveExpansion = ".MOD";
 
-    void* regex(const std::string& path);
+    std::tuple<std::string, unsigned long, std::string> regex(const std::string& path);
     std::string path();
     void update();
     void mod_log(const std::string& archivePath, const unsigned long id, const std::string& version);

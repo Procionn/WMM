@@ -33,11 +33,28 @@ Mod::Mod (const std::string& modversion, const unsigned long& modid, const unsig
 Mod::Mod (const unsigned long& modid) : modId(modid) {}
 
 
+Mod::Mod(Mod&& ref) noexcept : versions(ref.versions), modId(ref.modId) {
+    ref.versions = nullptr;
+}
+
+
+Mod& Mod::operator=(Mod&& other) noexcept {
+    if (this != &other) {
+        delete versions;
+        versions = other.versions;
+        modId = other.modId;
+        other.versions = nullptr;
+    }
+    return *this;
+}
+
+
+
 Mod::~Mod () {
     delete versions;
 }
 
 std::string Mod::recommended_version () {
     assert(versions);
-    return (*versions)[versions->size()].modVersion;
+    return versions->back().modVersion;
 }

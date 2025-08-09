@@ -81,11 +81,7 @@ void CObject::DELETE() {
 }
 
 void CObject::INFO() {
-    std::ifstream file(stc::cwmm::ram_mods_info(name));
-    std::string id;
-    for (int i = 0; i != 3; ++i)
-        std::getline(file, id);
-    stc::net::openURL(stc::cwmm::modsURL(id));
+    stc::net::openURL(stc::cwmm::modsURL(std::to_string(id)));
 }
 
 void CObject::turnOff () {

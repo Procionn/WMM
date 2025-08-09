@@ -17,6 +17,8 @@
 #include "ERRORdialog.h"
 
 #include "../core.h"
+#include "../CONSTANTS.h"
+#include <QApplication>
 
 ERRORdialog::ERRORdialog (const std::string& label) {
     show();
@@ -53,12 +55,12 @@ FatalError::FatalError (const std::string& error, bool fatality) {
     DialogButtonBox->addWidget(resetButton);
     connect(resetButton, &QPushButton::clicked, [&]{
         delete this;
-        throw new reset;
+        QApplication::exit(RESET);
     });
 }
 
 
 FatalError::~FatalError () {
     if (fatality)
-        abort();
+        QApplication::exit();
 }
