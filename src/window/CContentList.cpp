@@ -91,7 +91,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(buttonWidget, &CObject::ON,     this, &CContentList::changeStatusOn);
         connect(buttonWidget, &CObject::OFF,    this, &CContentList::changeStatusOff);
         connect(buttonWidget, &CObject::remove, contentList, &CObjectsContainer::delete_target);
-        connect(contentList, &CObjectsContainer::removed, this, &CContentList::deleting);
+        connect(contentList,  &CObjectsContainer::removed, this, &CContentList::deleting);
     }
 }
 

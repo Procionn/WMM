@@ -41,8 +41,10 @@ add_library(CORE STATIC
     core/configurator.cpp
 
     methods.cpp                         methods.h
-    core/importer.cpp
-    importer.h
+    core/importer.cpp                   importer.h
+    ModManager/ModManager.cpp           ModManager.h
+    ModManager/ModList.cpp
+    ModManager/objects.cpp
 )
 add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp

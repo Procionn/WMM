@@ -25,6 +25,7 @@
 #include "../core.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
+#include "../patterns/ERRORdialog.h"
 
 
 collections::collections () {
@@ -117,6 +118,10 @@ void collections::update_collection_info (CToggledButton* target) {
 
 
 void collections::exporting () {
+    if (!target || target->name.empty()) {
+        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R39"]);
+        return;
+    }
     if (!std::filesystem::exists(EXPORT))
          std::filesystem::create_directory(EXPORT);
     if (!settingsBox->online)

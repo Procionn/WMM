@@ -17,6 +17,7 @@
 #include "../core.h"
 
 #include <hpp-archive.h>
+#include "../ModManager.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
 #include "../patterns/ERRORdialog.h"
@@ -41,7 +42,7 @@ bool Core::wmmb::operator== (const wmmb& last) const noexcept{
 }
 
 
-std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::vector<std::string>* presets) {
+std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::vector<std::string>* presets, bool except) {
     // Recursively processes the collection file, producing a monotonous vector of mods at the output
     if (presets && presets->empty())
         presets->reserve(20);
@@ -54,20 +55,20 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
         if (std::get<std::string>(v[1]) == "this")
             continue;
         if (std::get<bool>(v[2])) {
-            if (!std::filesystem::exists(stc::cwmm::ram_mods(std::get<std::string>(v[0]))))
-                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod " + std::get<std::string>(v[0]));
+            if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
+                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
             list.emplace_back(v);
         }
         else {
-            if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))))
-                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset " + std::get<std::string>(v[0]));
+            if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))) && except)
+                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset - " + std::get<std::string>(v[0]));
             if (presets)
                 presets->emplace_back(std::get<std::string>(v[0]));
             wmml file(stc::cwmm::ram_preset(std::get<std::string>(v[0])));
             while(file.read(v)) {
                 assert(std::get<bool>(v[2]));
-                if (!std::filesystem::exists(stc::cwmm::ram_mods(std::get<std::string>(v[0]))))
-                    throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod " + std::get<std::string>(v[0]));
+                if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
+                    throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
                 list.emplace_back(v);
             }
         }
@@ -80,16 +81,14 @@ void Core::compiller (const std::vector<wmmb>& list, const std::filesystem::path
     // Using a monotone vector of mods, it collects their files into a directory
     for (const auto& obj : list) {
         if (obj.status) {
-            fs::path path = stc::cwmm::ram_mods(obj.name);
-            for (const auto& entry : fs::recursive_directory_iterator(path)) {
-                if (fs::is_regular_file(entry.path())) {
-                    fs::path relative_path = fs::relative(entry.path(), path);
-                    fs::path target_file_path = directory / relative_path;
-                    fs::create_directories(target_file_path.parent_path());
-                    fs::remove(target_file_path);
-                    fs::copy_file(entry.path(), target_file_path,
-                                  fs::copy_options::overwrite_existing);
-                }
+            ArchiveReader archive(ModManager::get().get_path(obj.id, obj.version));
+            archive.set_export_directory(directory);
+            for (const auto* entry : archive) {
+                fs::path entryPath = archive.get_target_filename();
+                fs::path targetFilePath = directory / entryPath;
+                fs::create_directories(targetFilePath.parent_path());
+                fs::remove(targetFilePath);
+                archive.write_on_disk();
             }
         }
     }
@@ -113,7 +112,8 @@ void Core::optimizations (std::vector<wmmb>& mainList, std::vector<wmmb>& oldstr
 void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::path& directory) {
     // deleting the files of old mods
     for (const auto& mod : oldstruct) {
-        fs::path path = (ARCHIVE + Core::CONFIG_GAME) / (fs::path)std::to_string(mod.id) / (mod.version + EXPANSION2);
+        // fs::path path = (ARCHIVE + Core::CONFIG_GAME) / (fs::path)std::to_st ring(mod.id) / (mod.version + EXPANSION2);
+        fs::path path = ModManager::get().get_log_path(mod.id, mod.version);
         std::string str;
         std::ifstream readedFile(path);
         while (std::getline(readedFile, str)) {
@@ -209,9 +209,10 @@ void Core::exporter (const std::string& name, const bool monolith) {
         std::vector<Core::wmmb> modlist = parser(filename, &presets);
 
         for (const auto& entry : modlist) {
-            archive.write_in_archive(stc::cwmm::ram_mods(entry.name), stc::cwmm::ram_mods(entry.name));
-            archive.write_in_archive((ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id) + "/" + entry.version + EXPANSION2),
-                                     (ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(entry.id)));
+            std::filesystem::path path = ModManager::get().get_path(entry.id, entry.version);
+            std::filesystem::path logPath = ModManager::get().get_log_path(entry.id, entry.version);
+            archive.write_in_archive(path, path.parent_path());
+            archive.write_in_archive(logPath, logPath.parent_path());
         }
 
         if (monolith) {

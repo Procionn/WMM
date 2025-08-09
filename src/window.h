@@ -27,12 +27,13 @@
 #include <QVBoxLayout>
 
 
-class Window : public QMainWindow
+class Window final : public QMainWindow
 {
 Q_OBJECT
     CSettings* settingsWindow = nullptr;
 
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
+
 public:
     CNewObjectDialog* newObjectDialog;
     CObjectList* ObjectList;
@@ -42,11 +43,13 @@ public:
     
     Window();
     ~Window();
+
 public slots:
     void NewObjectDialog();
     void settings();
     void updatePointer(CObjectsButton* pointer);
     void inpadShow();
+
 private slots:
     void inpad_reset();
     void grounding(CObjectsButton* pointer);

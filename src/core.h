@@ -124,7 +124,8 @@ protected:
         bool operator==(const wmmb& last) const noexcept;
     };
     std::vector<Core::wmmb> parser(const std::filesystem::path& file,
-                                   std::vector<std::string>* presets = nullptr);
+                                   std::vector<std::string>* presets = nullptr,
+                                   bool except = true);
     void compiller      (const std::vector<wmmb>& list,
                          const std::filesystem::path& directory);
     void optimizations  (std::vector<wmmb>& mainList,
@@ -148,23 +149,6 @@ public:
         unsigned long mods = 0, presets = 0, allMods = 0;
         CollectionInfo(const std::filesystem::path& name);
     };
-};
-
-
-
-
-
-struct reset final
-{
-    reset() = default;
-    ~reset() = default;
-};
-
-
-struct exit_signal final
-{
-    exit_signal() = default;
-    ~exit_signal() = default;
 };
 
 #endif // CORE_H
