@@ -15,20 +15,13 @@
  *
  */
 #include "window.h"
+
 #include "core.h"
 #include "CONSTANTS.h"
-
-#include <filesystem>
-#include <iostream>
 #include <string>
-#include <filesystem>
-#include <QString>
-#include <stdlib.h>
 #include <QApplication>
-
-// #include <QDockWidget>
-#include <QPushButton>
 #include <QSplitter>
+// #include <QDockWidget>
 
 Window::Window () {
     CMenuBar* menu = new CMenuBar(this);

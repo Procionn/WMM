@@ -19,6 +19,7 @@
 #include "../ModManager.h"
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/RenameDialog.h"
+#include "../patterns/WaitingWindow.h"
 #include "../methods.h"
 #include "../core.h"
 #include "../CONSTANTS.h"
@@ -29,9 +30,11 @@ import::import (const std::string& path) : archivePath(path) {
     collectionPath = stc::cwmm::ram_collection();
     presetPath = stc::cwmm::ram_preset();
     unarchivate_main_objects();
+    Wait(
     if (presetsRenamed)
         renaming_fix();
     mods_import(mods_import_list());
+    );
 }
 
 

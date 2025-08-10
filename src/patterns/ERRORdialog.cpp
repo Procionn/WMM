@@ -19,6 +19,7 @@
 #include "../core.h"
 #include "../CONSTANTS.h"
 #include <QApplication>
+#include <QLabel>
 
 ERRORdialog::ERRORdialog (const std::string& label) {
     show();
@@ -41,13 +42,10 @@ FatalError::FatalError (const std::string& error, bool fatality) {
 
     QVBoxLayout* tempLay = new QVBoxLayout(list);
     QLabel* label = new QLabel(QString::fromStdString(error));
-    QLabel* errorLable = new QLabel("Fatal Error!");
     QPushButton* resetButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_RESET"]));
 
     if (fatality)
-        tempLay->addWidget(errorLable);
-    else
-        delete errorLable;
+        tempLay->addWidget(new QLabel("Fatal Error!"));
     tempLay->setAlignment(Qt::AlignTop);
     label->setWordWrap(true);
     tempLay->addWidget(label);

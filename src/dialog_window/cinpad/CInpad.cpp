@@ -17,6 +17,7 @@
 #include "CInpad.h"
 
 #include "../../ModManager.h"
+#include "../../core.h"
 #include <QMenuBar>
 
 CInpad::CInpad(bool& type) {

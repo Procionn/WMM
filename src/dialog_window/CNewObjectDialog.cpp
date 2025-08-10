@@ -15,6 +15,7 @@
  *
  */
 #include "CNewObjectDialog.h"
+#include "../core.h"
 
 CNewObjectDialog::CNewObjectDialog () {
     QHBoxLayout* glist = new QHBoxLayout;

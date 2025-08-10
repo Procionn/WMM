@@ -65,6 +65,7 @@ add_library(PATTERNS STATIC
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
     patterns/CScrollWindow.h
     patterns/RenameDialog.h             patterns/RrenameDialog.cpp
+    patterns/WaitingWindow.h
 )
 target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)

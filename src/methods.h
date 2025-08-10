@@ -39,7 +39,6 @@ namespace stc {
         std::string modsURL(const std::string& id);
         std::string ram_mods();
         std::string ram_mods(const std::string& name);
-        std::string ram_mods_info(const std::string& name);
 
     }
     namespace fs {   // file system

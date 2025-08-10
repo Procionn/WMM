@@ -15,6 +15,8 @@
  *
  */
 #include "CFastDialog.h"
+
+#include <QVBoxLayout>
 #include "../core.h"
 
 CFastDialog::CFastDialog () {
@@ -24,7 +26,7 @@ CFastDialog::CFastDialog () {
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
     DialogButtonBox = new QHBoxLayout();
     apply = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_APPLY"]), this);
-    QPushButton* cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]), this);
+    cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]), this);
     list = new QWidget();
     list->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     dialogLayout->addWidget(list);

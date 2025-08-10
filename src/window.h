@@ -23,9 +23,6 @@
 #include "settings/settings.h"
 
 #include <QMainWindow>
-#include <QDialog>
-#include <QVBoxLayout>
-
 
 class Window final : public QMainWindow
 {

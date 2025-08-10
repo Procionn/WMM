@@ -25,6 +25,7 @@
 #include "../methods.h"
 #include "../CONSTANTS.h"
 #include "../patterns/ERRORdialog.h"
+#include "../patterns/WaitingWindow.h"
 
 
 collections::collections () {
@@ -117,6 +118,7 @@ void collections::update_collection_info (CToggledButton* target) {
 
 
 void collections::exporting () {
+    Wait(
     if (!target || target->name.empty()) {
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R39"]);
         return;
@@ -124,11 +126,13 @@ void collections::exporting () {
     if (!std::filesystem::exists(EXPORT))
          std::filesystem::create_directory(EXPORT);
     if (!settingsBox->online)
+
         Core::get().exporter(target->name, settingsBox->monolith);
     else
         stc::cerr("online export may be added later");
     if (!QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(EXPORT))))
         throw ("Error when opening a directory");
+    );
 }
 
 

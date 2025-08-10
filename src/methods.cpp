@@ -88,10 +88,6 @@ std::string stc::cwmm::ram_mods(const std::string& name) {
     return (MODS + CConfigs::CONFIG_GAME + "/" + name);
 }
 
-std::string stc::cwmm::ram_mods_info(const std::string& name) {
-    return (MODS + CConfigs::CONFIG_GAME + "/" + name + "/" + WML + name + EXPANSION2);
-}
-
 
 
 std::string stc::cwmm::modsURL (const std::string& id) {

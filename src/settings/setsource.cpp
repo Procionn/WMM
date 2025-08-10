@@ -18,7 +18,9 @@
 
 #include <filesystem>
 #include <QFileDialog>
+#include <QLabel>
 #include "../methods.h"
+#include "../patterns/WaitingWindow.h"
 
 setsource::setsource() {
     QHBoxLayout* list = new QHBoxLayout;
@@ -79,8 +81,8 @@ setsource::setsource() {
     connect(dirBTN, &QPushButton::clicked, [=]{chooseExe(dirBTN);});
     connect(backupBTN, &QPushButton::clicked, [=]{createBackup();});
     connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
-    connect(clearBTN, &QPushButton::clicked, [=]{Core::get().symlink_deliting();});
-    connect(recoveryBTN, &QPushButton::clicked, [=]{Core::get().game_recovery();});
+    connect(clearBTN, &QPushButton::clicked, [=]{Wait(Core::get().symlink_deliting(););});
+    connect(recoveryBTN, &QPushButton::clicked, [=]{Wait(Core::get().game_recovery(););});
 }
 
 
@@ -123,8 +125,9 @@ void setsource::chooseExe (QPushButton* dirBTN) {
 
 
 void setsource::createBackup () {
-    if (Core::CONFIG_GAME != "None") {
+    Wait(
+    if (Core::CONFIG_GAME != "None")
         Core::get().game_dir_backup();
-    }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R32"]);
+    );
 }

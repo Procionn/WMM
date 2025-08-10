@@ -17,6 +17,7 @@
 #include "CMenuBar.h"
 
 #include "../window.h"
+#include "../patterns/WaitingWindow.h"
 
 CMenuBar::CMenuBar(Window* parent) {
     this->parent = parent;
@@ -46,17 +47,20 @@ CMenuBar::CMenuBar(Window* parent) {
 
 
 void CMenuBar::assembling_clicked () {
+    Wait(
     if (parent->target != nullptr) {
         if (parent->ObjectList->TypeTarget)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
         else  Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
+    );
 }
 
 
 
 void CMenuBar::linking_clicked () {
+    Wait(
     if (parent->target != nullptr) {
         if (parent->ObjectList->TypeTarget)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
@@ -70,11 +74,13 @@ void CMenuBar::linking_clicked () {
         }
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
+    );
 }
 
 
 
 void CMenuBar::reassembly_clicked () {
+    Wait(
     if (parent->target != nullptr && !parent->ObjectList->TypeTarget) {
         if (Core::CONFIG_GAME_PATH != "") {
             std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
@@ -84,4 +90,5 @@ void CMenuBar::reassembly_clicked () {
     else if (parent->ObjectList->TypeTarget)
          ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
+    );
 }
