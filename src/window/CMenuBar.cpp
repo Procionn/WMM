@@ -60,21 +60,20 @@ void CMenuBar::assembling_clicked () {
 
 
 void CMenuBar::linking_clicked () {
-    Wait(
     if (parent->target != nullptr) {
         if (parent->ObjectList->TypeTarget)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
         else {
-            if (!std::filesystem::exists(stc::cwmm::backup_path())) {
-                ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R38"]);
-                return;
+            if (std::filesystem::exists(stc::cwmm::backup_path())) {
+                Wait(
+                    Core::get().symlink_deliting();
+                    Core::get().symlink_creating(parent->target->name);
+                );
             }
-            Core::get().symlink_deliting();
-            Core::get().symlink_creating(parent->target->name);
+            else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R38"]);
         }
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
-    );
 }
 
 
