@@ -57,6 +57,10 @@ void CGameConfig::update_data_from_file () {
     std::ifstream readedFile ((GAMES + Core::CONFIG_GAME + EXPANSION3).c_str());
     std::string parameter;
     std::string indicator;
+    if (!MGD.empty())
+        MGD.clear();
+    if (!OMD.empty())
+        OMD.clear();
     while (configRead(readedFile, parameter, indicator)) {
              if (parameter == config_string[0]) GAME_CORE_DIR_STAGE = std::stoi(indicator);
         else if (parameter == config_string[1]) OMD.push_back(indicator);
@@ -70,6 +74,7 @@ void CGameConfig::write(wmml& input, std::string str) {
     std::vector<wmml::variant> v(wmml_size);
     v[0] = Core::CONFIG_GAME;
     v[1] = str;
+    CONFIG_EXECUTABLE_FILE = str;
     if (!GAME_CORE_DIR_STAGE)
         stc::cerr("error, GAME_CORE_DIR_STAGE not valid!");
     for (int counter = GAME_CORE_DIR_STAGE; counter != 0; --counter) {
@@ -77,6 +82,8 @@ void CGameConfig::write(wmml& input, std::string str) {
         str = str.substr(0, part);
     }
     v[2] = str;
+    CONFIG_GAME_PATH = str;
+    core_dir_name = stc::string::get_name(CONFIG_GAME_PATH);
     input.write(v);
 }
 
