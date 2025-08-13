@@ -76,7 +76,7 @@ target_link_libraries(SETTINGS PRIVATE wmml)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE wmml)
 
-target_compile_definitions(CORE PRIVATE LOG)
+target_compile_definitions(CORE PUBLIC LOG)
 
 
 set(PROJECT_SOURCES
