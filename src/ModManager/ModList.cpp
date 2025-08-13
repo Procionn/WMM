@@ -74,6 +74,7 @@ void ModList::import_saved_data () {
     else {
         std::filesystem::create_directories(std::filesystem::path(saveFile).parent_path());
         dataSaveFile = new wmml(saveFile, gridSize);
+        dataSaveFile->flush();
     }
 }
 
