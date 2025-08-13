@@ -30,8 +30,7 @@
 // id       unsigned long
 
 ModManager::ModManager() {
-    saveFile = path();
-    import_saved_data();
+    update();
 }
 
 
@@ -45,6 +44,11 @@ void ModManager::update () {
     saveFile = path();
     delete dataSaveFile;
     import_saved_data();
+}
+
+
+void ModManager::flush () {
+    dataSaveFile->flush();
 }
 
 

@@ -18,6 +18,7 @@
 #include "../CONSTANTS.h"
 #include "../patterns/CScrollWindow.h"
 #include "../core.h"
+#include "../ModManager.h"
 
 #include <QDialog>
 #include <QVBoxLayout>
@@ -67,6 +68,7 @@ void CSettings::save () {
         Core::get().overwriting_config_data();
         settings_modules_list->settings_source->target = nullptr;
         Core::get().update_data_from_file();
+        ModManager::get().update();
     }
     if (!settings_modules_list->settings_source->buffer.isEmpty()) {
         Core::get().save_game_path(settings_modules_list->settings_source->buffer.toStdString());

@@ -95,13 +95,15 @@ class ModManager final : public ModList
 
     std::tuple<std::string, unsigned long, std::string> regex(const std::string& path);
     std::string path();
-    void update();
     void mod_log(const std::string& archivePath, const unsigned long id, const std::string& version);
     ModManager();
     ~ModManager() = default;
 
 public:
     static ModManager& get();
+    void update();
+    void flush(); // enforces changes made to the database file
+
     void load(const std::string& path);
 
     bool exists(const unsigned long id,  const std::string& version);

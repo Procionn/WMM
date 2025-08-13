@@ -16,6 +16,7 @@
  */
 #include "../ModManager.h"
 #include <filesystem>
+#include "../core.h"
 
 namespace {
     int modinfo_cmp (const void* a, const void* b) {
@@ -60,6 +61,8 @@ ModInfo* ModList::bsearch (Mod* ptr, const std::string& modVersion) {
 
 
 void ModList::import_saved_data () {
+    if (Core::CONFIG_GAME == "None")
+        return;
     if (!list.empty())
         list.clear();
     if (std::filesystem::exists(saveFile)) {

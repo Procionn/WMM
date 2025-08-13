@@ -35,6 +35,7 @@ import::import (const std::string& path) : archivePath(path) {
         renaming_fix();
     mods_import(mods_import_list());
     );
+    ModManager::get().flush();
 }
 
 

@@ -118,21 +118,21 @@ void collections::update_collection_info (CToggledButton* target) {
 
 
 void collections::exporting () {
-    Wait(
     if (!target || target->name.empty()) {
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R39"]);
         return;
     }
     if (!std::filesystem::exists(EXPORT))
          std::filesystem::create_directory(EXPORT);
-    if (!settingsBox->online)
-
+    if (!settingsBox->online) {
+        Wait(
         Core::get().exporter(target->name, settingsBox->monolith);
+        );
+    }
     else
         stc::cerr("online export may be added later");
     if (!QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(EXPORT))))
         throw ("Error when opening a directory");
-    );
 }
 
 
