@@ -19,6 +19,10 @@
 
 #include <string>
 #include <filesystem>
+#ifdef LOG
+#include <fstream>
+#include <QDateTime>
+#endif
 #ifndef NDEBUG
 #include <iostream>
 #endif
@@ -56,6 +60,12 @@ namespace stc {
     void cerr(const T& t) {
 #ifndef NDEBUG
         std::cerr << t << std::endl;
+#endif
+#ifdef LOG
+        if (!std::filesystem::exists("logs/"))
+            std::filesystem::create_directories("logs/");
+        static std::ofstream logFile(("logs/" + QDateTime::currentDateTime().toString().toStdString() + ".log").c_str());
+        logFile << t << std::endl;
 #endif
     }
 }

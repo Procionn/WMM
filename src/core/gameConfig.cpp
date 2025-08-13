@@ -72,8 +72,6 @@ void CGameConfig::update_data_from_file () {
 
 void CGameConfig::write(wmml& input, std::string str) {
     std::vector<wmml::variant> v(wmml_size);
-    v[0] = Core::CONFIG_GAME;
-    v[1] = str;
     CONFIG_EXECUTABLE_FILE = str;
     if (!GAME_CORE_DIR_STAGE)
         stc::cerr("error, GAME_CORE_DIR_STAGE not valid!");
@@ -81,9 +79,11 @@ void CGameConfig::write(wmml& input, std::string str) {
         size_t part = str.find_last_of('/');
         str = str.substr(0, part);
     }
-    v[2] = str;
     CONFIG_GAME_PATH = str;
     core_dir_name = stc::string::get_name(CONFIG_GAME_PATH);
+    v[0] = Core::CONFIG_GAME;
+    v[1] = CONFIG_EXECUTABLE_FILE;
+    v[2] = CONFIG_GAME_PATH;
     input.write(v);
 }
 
@@ -126,7 +126,7 @@ void CGameConfig::game_dir_backup () {
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+        stc::cerr(std::string("Error: ") + e.what());
     }
 }
 
@@ -163,7 +163,7 @@ void CGameConfig::symlink_deliting () {
 #endif
     }
     catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+        stc::cerr(std::string("Error: ") + e.what());
     }
 }
 
@@ -224,7 +224,7 @@ void CGameConfig::dir_comparison (const std::filesystem::path& file) {
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+        stc::cerr(std::string("Error: ") + e.what());
     }
 }
 
@@ -251,7 +251,7 @@ void CGameConfig::symlink_creating (const std::string& targetCollection) {
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+        stc::cerr(std::string("Error: ") + e.what());
     }
 }
 
