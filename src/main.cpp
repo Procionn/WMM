@@ -38,10 +38,12 @@ int main (int argc, char *argv[]) {
     } catch(const char* error) {
         stc::cerr(error);
         FatalError* error_dialog = new FatalError(error, true);
+        stc::cerr(error);
         error_dialog->exec();
     } catch (const std::exception& e) {
         stc::cerr(std::string("Error: ") + e.what());
         FatalError* error_dialog = new FatalError(e.what(), true);
+        stc::cerr(e.what());
         error_dialog->exec();
     }
     return code;
