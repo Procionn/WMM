@@ -22,6 +22,7 @@
 #ifdef LOG
 #include <fstream>
 #include <QDateTime>
+#include <mutex>
 #endif
 #ifndef NDEBUG
 #include <iostream>
@@ -56,16 +57,25 @@ namespace stc {
         void new_object(const std::filesystem::path& path);
     }
 
+    namespace {
+#ifdef LOG
+        std::ofstream& log () {
+            if (!std::filesystem::exists("logs/"))
+                std::filesystem::create_directories("logs/");
+            static std::ofstream logFile(("logs/" + QDateTime::currentDateTime().toString("dd_MM_yy-hh_mm_ss").toStdString() + ".log").c_str());
+            return logFile;
+        }
+        std::mutex thisIsMutex;
+#endif
+    }
     template<typename T>
-    void cerr(const T& t) {
+    void cerr(const T& t) noexcept {
 #ifndef NDEBUG
         std::cerr << t << std::endl;
 #endif
 #ifdef LOG
-        if (!std::filesystem::exists("logs/"))
-            std::filesystem::create_directories("logs/");
-        static std::ofstream logFile(("logs/" + QDateTime::currentDateTime().toString().toStdString() + ".log").c_str());
-        logFile << t << std::endl;
+        std::lock_guard<std::mutex> lock(thisIsMutex);
+        log() << t << std::endl << std::flush;
 #endif
     }
 }
