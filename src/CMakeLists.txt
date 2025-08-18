@@ -20,7 +20,7 @@ include(FetchContent)
 FetchContent_Declare(
   HPP_ARCHIVE
   GIT_REPOSITORY https://github.com/Procionn/hpp-archive
-  GIT_TAG 0cc2a95d6413d2061c631f6ff822ca7e0b3d6ae0
+  GIT_TAG bbf05133fb358a75205160291a1a47cd4f5be7c2
 )
 FetchContent_MakeAvailable(HPP_ARCHIVE)
 
