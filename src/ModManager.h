@@ -25,9 +25,9 @@
 
 struct ModInfo
 {
-    ModInfo(const std::string& modVersion, const unsigned long& localId);
+    ModInfo(const std::string& modVersion, const u_int64_t& localId);
 
-    unsigned long localId;
+    u_int64_t localId;
     std::string modVersion;
 };
 
@@ -37,14 +37,14 @@ struct ModInfo
 
 struct Mod
 {
-    Mod(const unsigned long& modId);
-    Mod(const std::string& modVersion, const unsigned long& modId, const unsigned long& localId);
+    Mod(const u_int64_t& modId);
+    Mod(const std::string& modVersion, const u_int64_t& modId, const u_int64_t& localId);
     ~Mod();
     Mod(Mod&& ref) noexcept;
     Mod& operator=(Mod&& other) noexcept;
 
     std::vector<ModInfo>* versions = nullptr;
-    unsigned long modId;
+    u_int64_t modId;
 
     std::string recommended_version();
 };
@@ -56,13 +56,13 @@ struct Mod
 class ModList
 {
     std::vector<Mod> list;
-    unsigned long long localId = 0;
+    u_int64_t localId = 0;
     static constexpr const unsigned char gridSize = 3;
 
 protected:
     std::string saveFile;
-    std::map<std::string, unsigned long> dictionary;
-    std::map<unsigned long, std::string> reverceDictionary;
+    std::map<std::string, u_int64_t> dictionary;
+    std::map<u_int64_t, std::string> reverceDictionary;
     wmml* dataSaveFile = nullptr;
 
 private:
@@ -71,16 +71,16 @@ private:
 protected:
     ModList() = default;
     virtual ~ModList();
-    Mod*     bsearch(const unsigned long& modId);
+    Mod*     bsearch(const u_int64_t& modId);
     ModInfo* bsearch(Mod* ptr, const std::string& modVersion);
-    void add_in_ram(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
-    void add_in_rom(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
-    void ML_remove(const unsigned long& modId, const std::string& modVersion);
-    void ML_remove(const unsigned long& modId);
+    void add_in_ram(const u_int64_t& modId, const std::string& modVersion, const std::string& modName);
+    void add_in_rom(const u_int64_t& modId, const std::string& modVersion, const std::string& modName);
+    void ML_remove(const u_int64_t& modId, const std::string& modVersion);
+    void ML_remove(const u_int64_t& modId);
     void import_saved_data();
 
 public:
-    void add(const unsigned long& modId, const std::string& modVersion, const std::string& modName);
+    void add(const u_int64_t& modId, const std::string& modVersion, const std::string& modName);
     const std::vector<Mod>& all_mods_list();
 };
 
@@ -93,9 +93,9 @@ class ModManager final : public ModList
     bool copy = true; // false to move new mods in directory
     std::string archiveExpansion = ".MOD";
 
-    std::tuple<std::string, unsigned long, std::string> regex(const std::string& path);
+    std::tuple<std::string, u_int64_t, std::string> regex(const std::string& path);
     std::string path();
-    void mod_log(const std::string& archivePath, const unsigned long id, const std::string& version);
+    void mod_log(const std::string& archivePath, const u_int64_t id, const std::string& version);
     ModManager();
     ~ModManager() = default;
 
@@ -106,25 +106,25 @@ public:
 
     void load(const std::string& path);
 
-    bool exists(const unsigned long id,  const std::string& version);
+    bool exists(const u_int64_t id,  const std::string& version);
     bool exists(const std::string& name, const std::string& version);
 
-    void remove(const unsigned long id);
-    void remove(const unsigned long id,  const std::string& version);
+    void remove(const u_int64_t id);
+    void remove(const u_int64_t id,  const std::string& version);
     void remove(const std::string& name);
     void remove(const std::string& name, const std::string& version);
 
-    std::string get_path(const unsigned long id);
-    std::string get_path(const unsigned long id, const std::string& version);
-    std::string get_log_path(const unsigned long id, const std::string& version);
+    std::string get_path(const u_int64_t id);
+    std::string get_path(const u_int64_t id, const std::string& version);
+    std::string get_log_path(const u_int64_t id, const std::string& version);
     std::string get_path(const std::string& name);
     std::string get_path(const std::string& name, const std::string& version);
     std::string get_log_path(const std::string& name, const std::string& version);
 
-    unsigned long mod_data_converter(const std::string& modName);
-    std::string mod_data_converter(const unsigned long modId);
+    u_int64_t mod_data_converter(const std::string& modName);
+    std::string mod_data_converter(const u_int64_t modId);
 
-    std::string mod_recommended_version(const unsigned long modId);
+    std::string mod_recommended_version(const u_int64_t modId);
     std::string mod_recommended_version(const std::string& modName);
 };
 

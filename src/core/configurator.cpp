@@ -28,7 +28,7 @@ namespace fs = std::filesystem;
 
 Core::wmmb::wmmb (std::vector<wmml::variant>& v) noexcept {
     assert(std::get<bool>(v[4]));
-    id = std::get<unsigned long int>(v[3]);
+    id = std::get<u_int64_t>(v[3]);
     assert(std::get<bool>(v[2]));
     version = std::get<std::string>(v[1]);
     name = std::get<std::string>(v[0]);

@@ -40,7 +40,7 @@ ModList::~ModList () {
 }
 
 
-Mod* ModList::bsearch (const unsigned long& modId) {
+Mod* ModList::bsearch (const u_int64_t& modId) {
     auto key = Mod(modId);
     return static_cast<Mod*>(std::bsearch(&key,
                                            list.data(),
@@ -82,7 +82,7 @@ void ModList::import_saved_data () {
 }
 
 
-void ModList::add (const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
+void ModList::add (const u_int64_t& modId, const std::string& modVersion, const std::string& modName) {
     add_in_ram(modId, modVersion, modName);
     add_in_rom(modId, modVersion, modName);
     ++localId;
@@ -90,7 +90,7 @@ void ModList::add (const unsigned long& modId, const std::string& modVersion, co
 }
 
 
-void ModList::add_in_ram(const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
+void ModList::add_in_ram(const u_int64_t& modId, const std::string& modVersion, const std::string& modName) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
@@ -111,7 +111,7 @@ void ModList::add_in_ram(const unsigned long& modId, const std::string& modVersi
 }
 
 
-void ModList::add_in_rom(const unsigned long& modId, const std::string& modVersion, const std::string& modName) {
+void ModList::add_in_rom(const u_int64_t& modId, const std::string& modVersion, const std::string& modName) {
     if (dataSaveFile) {
         std::vector<wmml::variant> v{modName, modVersion, modId};
         dataSaveFile->write(v);
@@ -122,11 +122,11 @@ void ModList::add_in_rom(const unsigned long& modId, const std::string& modVersi
 
 
 void ModList::add_in_ram (const std::vector<wmml::variant>& v) {
-    add_in_ram(std::get<unsigned long>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
+    add_in_ram(std::get<u_int64_t>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
 }
 
 
-void ModList::ML_remove (const unsigned long& modId, const std::string& modVersion) {
+void ModList::ML_remove (const u_int64_t& modId, const std::string& modVersion) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
@@ -148,7 +148,7 @@ void ModList::ML_remove (const unsigned long& modId, const std::string& modVersi
 }
 
 
-void ModList::ML_remove (const unsigned long& modId) {
+void ModList::ML_remove (const u_int64_t& modId) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         for (const ModInfo& entry : *ptr->versions)

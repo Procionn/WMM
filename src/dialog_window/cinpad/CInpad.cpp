@@ -155,11 +155,11 @@ void CInpad::application(const std::string& targetName, const bool targetType) {
         if (target->is_target()) {
             std::string name = target->get_name();
             if  (target->type == true) {
-                v = {name, "", false, (unsigned long)(0), true};
+                v = {name, "", false, (u_int64_t)(0), true};
                 file.write(v);
             }
             else {
-                unsigned long id = ModManager::get().mod_data_converter(name);
+                u_int64_t id = ModManager::get().mod_data_converter(name);
                 v = {name, ModManager::get().mod_recommended_version(id), true, id, true};
                 file.write(v);
             }
