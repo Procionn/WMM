@@ -27,7 +27,7 @@
 //
 // name     std::string
 // version  std::string
-// id       u_int64_t
+// id       uint64_t
 
 ModManager::ModManager() {
     update();
@@ -57,7 +57,7 @@ std::string ModManager::path () {
 }
 
 
-void ModManager::mod_log (const std::string& path, const u_int64_t id, const std::string& version) {
+void ModManager::mod_log (const std::string& path, const uint64_t id, const std::string& version) {
     std::filesystem::path logPath = get_log_path(id, version);
     ArchiveReader archive(path);
     std::filesystem::create_directories(logPath.parent_path());
@@ -68,7 +68,7 @@ void ModManager::mod_log (const std::string& path, const u_int64_t id, const std
 }
 
 
-std::tuple<std::string, u_int64_t, std::string> ModManager::regex (const std::string& filename) {
+std::tuple<std::string, uint64_t, std::string> ModManager::regex (const std::string& filename) {
     std::string nameArchive = stc::string::get_name(filename);
     std::smatch matches;
     std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?$)");
@@ -80,7 +80,7 @@ std::tuple<std::string, u_int64_t, std::string> ModManager::regex (const std::st
 
 void ModManager::load (const std::string& path) {
     auto dataBlock = regex(path);
-    u_int64_t modId 	= std::get<1>(dataBlock);
+    uint64_t modId 	= std::get<1>(dataBlock);
     std::string modVersion  = std::get<2>(dataBlock);
     std::string modName 	= std::get<0>(dataBlock);
 
@@ -102,17 +102,17 @@ void ModManager::load (const std::string& path) {
 }
 
 
-std::string ModManager::get_path(const u_int64_t id) {
+std::string ModManager::get_path(const uint64_t id) {
     return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id));
 }
 
 
-std::string ModManager::get_path(const u_int64_t id, const std::string& version) {
+std::string ModManager::get_path(const uint64_t id, const std::string& version) {
     return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + version + archiveExpansion);
 }
 
 
-std::string ModManager::get_log_path(const u_int64_t id, const std::string& version) {
+std::string ModManager::get_log_path(const uint64_t id, const std::string& version) {
     return (ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + version + EXPANSION2);
 }
 
@@ -132,7 +132,7 @@ std::string ModManager::get_log_path(const std::string& name, const std::string&
 }
 
 
-bool ModManager::exists (const u_int64_t id, const std::string& version) {
+bool ModManager::exists (const uint64_t id, const std::string& version) {
     Mod* ptr = bsearch(id);
     if (ptr && bsearch(ptr, version))
         return true;
@@ -145,7 +145,7 @@ bool ModManager::exists (const std::string& name, const std::string& version) {
 }
 
 
-void ModManager::remove (const u_int64_t id, const std::string& version) {
+void ModManager::remove (const uint64_t id, const std::string& version) {
     ML_remove(id, version);
     std::filesystem::remove(get_path(id, version));
 }
@@ -156,17 +156,17 @@ void ModManager::remove (const std::string& name, const std::string& version) {
 }
 
 
-u_int64_t ModManager::mod_data_converter (const std::string& modName) {
+uint64_t ModManager::mod_data_converter (const std::string& modName) {
     return dictionary[modName];
 }
 
 
-std::string ModManager::mod_data_converter (const u_int64_t modId) {
+std::string ModManager::mod_data_converter (const uint64_t modId) {
     return reverceDictionary[modId];
 }
 
 
-std::string ModManager::mod_recommended_version (const u_int64_t modId) {
+std::string ModManager::mod_recommended_version (const uint64_t modId) {
     auto* ptr = bsearch(modId);
     if (!ptr)
         throw std::runtime_error("unknown mod id");

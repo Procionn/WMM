@@ -16,7 +16,7 @@
  */
 #include "cobject.h"
 
-CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const u_int64_t& index) {
+CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const uint64_t& index) {
     Box = new QHBoxLayout(this);
 
 
@@ -31,7 +31,7 @@ CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const u_int
     name = std::get<std::string>(v[0]);
     version = std::get<std::string>(v[1]);
     type = std::get<bool>(v[2]);
-    id = std::get<u_int64_t>(v[3]);
+    id = std::get<uint64_t>(v[3]);
     switcher->setTheme("orange");
     if (std::get<bool>(v[4])) switcher->isTarget(true);
     else             switcher->isTarget(false);

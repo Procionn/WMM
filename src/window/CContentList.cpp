@@ -61,7 +61,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     wmml file(sPath);
     std::vector<wmml::variant> v(file.width());
     bool counter = false;
-    for (u_int64_t index = 0; file.read(v); ++index) {
+    for (uint64_t index = 0; file.read(v); ++index) {
         CObject* buttonWidget = new CObject(v, counter, index);
         contentList->add(buttonWidget);
 

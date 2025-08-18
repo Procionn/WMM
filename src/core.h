@@ -115,7 +115,7 @@ class Core final : public CConfigs, public Lang, public CGameConfig
 protected:
     struct wmmb
     {
-        u_int64_t id;
+        uint64_t id;
         std::string version;
         std::string name;
         bool status = true;
@@ -146,7 +146,7 @@ public:
 
     struct CollectionInfo
     {
-        u_int64_t mods = 0, presets = 0, allMods = 0;
+        uint64_t mods = 0, presets = 0, allMods = 0;
         CollectionInfo(const std::filesystem::path& name);
     };
 };

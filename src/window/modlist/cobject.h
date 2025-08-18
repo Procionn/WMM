@@ -38,8 +38,8 @@ public:
     std::string name;
     std::string version;
     bool type;
-    u_int64_t id;
-    u_int64_t index;
+    uint64_t id;
+    uint64_t index;
 protected:
     std::string untoggledColor1 = " background-color: #2e2e2e;";
     std::string untoggledColor2 = " background-color: #404040;";
@@ -57,7 +57,7 @@ public:
     CSplitter* spl2;
     CSwitchButton* switcher;
 public:
-    CObject(const std::vector<wmml::variant>& v, bool& counter, const u_int64_t& index);
+    CObject(const std::vector<wmml::variant>& v, bool& counter, const uint64_t& index);
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);

@@ -17,20 +17,20 @@
 #include "../ModManager.h"
 #include <cassert>
 
-ModInfo::ModInfo(const std::string& modversion, const u_int64_t& localid) :
+ModInfo::ModInfo(const std::string& modversion, const uint64_t& localid) :
     localId(localid),
     modVersion(modversion)
 {}
 
 
-Mod::Mod (const std::string& modversion, const u_int64_t& modid, const u_int64_t& localid) :
+Mod::Mod (const std::string& modversion, const uint64_t& modid, const uint64_t& localid) :
           modId(modid) {
     versions = new std::vector<ModInfo>;
     versions->emplace_back(modversion, localid);
 }
 
 
-Mod::Mod (const u_int64_t& modid) : modId(modid) {}
+Mod::Mod (const uint64_t& modid) : modId(modid) {}
 
 
 Mod::Mod(Mod&& ref) noexcept : versions(ref.versions), modId(ref.modId) {
