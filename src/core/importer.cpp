@@ -45,7 +45,11 @@ void import::unarchivate_main_objects () {
 
     std::string archivedFilePath;
     for (const auto* entry : archive) {
+#ifdef __linux__
         archivedFilePath = archive.get_target_filename();
+#elif WIN64
+        archivedFilePath = (std::filesystem::path(archive.get_target_filename()).string());
+#endif
 
         // compare is used here instead of starts_with, because the program is tailored to cpp17.
         // In the future, support for the 20 format will be added and the functions will be rewritten using new tools.
@@ -141,7 +145,11 @@ void import::mods_import (void* vector) {
     ArchiveReader archive(archivePath);
     std::string targetFilename;
     for (const auto* entry : archive) {
+#ifdef __linux__
         targetFilename = archive.get_target_filename();
+#elif WIN64
+        targetFilename = (std::filesystem::path(archive.get_target_filename()).string());
+#endif
         if (targetFilename.compare(0, modsDirectory.size(), modsDirectory) == 0) {
             std::string hash;
             for (const auto& importingMod : *importList) {
