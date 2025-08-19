@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(HPP_ARCHIVE)
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG 9f43e182a04f09cddb7ce40c6ddfede00816611c
+  GIT_TAG 0be446474d5583f54cd7ee8fcf0583df0d7976e1
 )
 FetchContent_MakeAvailable(wmml)
 
