@@ -51,6 +51,8 @@ private slots:
     void inpad_reset();
     void grounding(CObjectsButton* pointer);
     void import_completed();
+    void removing(CObjectsButton*);
+    void objectChoosing(CObjectsButton* pointer, bool type);
 };
 
 #endif // WINDOW_H

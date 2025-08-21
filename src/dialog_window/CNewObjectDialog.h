@@ -25,9 +25,17 @@
 class CNewObjectDialog : public CFastDialog
 {
     Q_OBJECT
-public:
     QLineEdit* nameTab;
+
+public:
     CNewObjectDialog();
+    std::string name;
+
+protected slots:
+    void test();
+
+signals:
+    void success();
 };
 
 #endif // CNEWOBJECTDIALOG_H

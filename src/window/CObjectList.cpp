@@ -58,14 +58,8 @@ CObjectList::CObjectList () {
     render();
 }
 
-void CObjectList::newObject (CNewObjectDialog* dialog) {
-    QString tab = dialog->nameTab->text();
-    CreteObject(tab.toStdString());
-    delete dialog;
-}
 
-
-void CObjectList::CreteObject (std::string name) {
+void CObjectList::CreteObject (const std::string& name) {
     std::filesystem::path path;
     if (TypeTarget) path = stc::cwmm::ram_preset(name);
     else            path = stc::cwmm::ram_collection(name);

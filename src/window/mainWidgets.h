@@ -29,8 +29,6 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 
-
-
 class CObjectList : public QWidget
 {
     Q_OBJECT
@@ -42,7 +40,6 @@ public:
 
 public:
     CObjectList();
-    void CreteObject(std::string name);
     void updateList();
     void render();
 
@@ -53,7 +50,7 @@ signals:
     void remove(CObjectsButton* pointer);
 
 public slots:
-    void newObject(CNewObjectDialog* dialog);
+    void CreteObject(const std::string& name);
 };
 
 

@@ -48,13 +48,8 @@ Window::Window () {
     connect(menu,               &CMenuBar::content_click,    this,          &Window::inpadShow);
     connect(menu,               &CMenuBar::settings_click,   this,          &Window::settings);
     connect(menu,               &CMenuBar::object_click,     this,          &Window::NewObjectDialog);
-    connect(ObjectList,         &CObjectList::objectChoosed, ContentWidget, &CContentList::updateList);
-    connect(ObjectList,         &CObjectList::remove,        ContentWidget, &CContentList::clear);
-    connect(ObjectList,         &CObjectList::remove,        this,          &Window::grounding);
-    connect(ObjectList,         &CObjectList::remove,        settingsWindow->settings_modules_list->settings_collections,
-                                                                            &collections::update_list);
-    connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::updatePointer);
-    connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::inpad_reset);
+    connect(ObjectList,         &CObjectList::remove,        this,          &Window::removing);
+    connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::objectChoosing);
     connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
     connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
     connect(inpad,              &CInpad::applyClicked,       inpad,         [=]{inpad->application(ObjectList->targetName, ObjectList->TypeTarget);});
@@ -65,13 +60,27 @@ void Window::NewObjectDialog() {
     if (Core::CONFIG_GAME != "None") {
         newObjectDialog = new CNewObjectDialog();
         newObjectDialog->show();
-        connect(newObjectDialog, &CFastDialog::applyClicked, [this]{
-            ObjectList->newObject(newObjectDialog);
+        connect(newObjectDialog, &CNewObjectDialog::success, [this]{
+            ObjectList->CreteObject(newObjectDialog->name);
             settingsWindow->settings_modules_list->settings_collections->update_list();
         });
     }
     else
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
+}
+
+
+void Window::removing (CObjectsButton* pointer) {
+    ContentWidget->clear();
+    grounding(pointer);
+    settingsWindow->settings_modules_list->settings_collections->update_list();
+}
+
+
+void Window::objectChoosing (CObjectsButton* pointer, bool type) {
+    ContentWidget->updateList(pointer, type);
+    updatePointer(pointer);
+    inpad_reset();
 }
 
 

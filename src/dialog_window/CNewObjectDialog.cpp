@@ -16,6 +16,7 @@
  */
 #include "CNewObjectDialog.h"
 #include "../core.h"
+#include "../patterns/ERRORdialog.h"
 
 CNewObjectDialog::CNewObjectDialog () {
     QHBoxLayout* glist = new QHBoxLayout;
@@ -25,4 +26,21 @@ CNewObjectDialog::CNewObjectDialog () {
     glist->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_NAME"])));
     nameTab = new QLineEdit;
     glist->addWidget(nameTab);
+    connect(apply, &QPushButton::clicked, this, &CNewObjectDialog::test);
+}
+
+
+void CNewObjectDialog::test () {
+    std::string tab = nameTab->text().toStdString();
+#ifdef __linux__
+    std::string separator = "/";
+#elif WIN64
+    std::string separator = "<>”/\|?*:";
+#endif
+    if (tab.find_last_of(separator) == std::string::npos) {
+        name = std::move(tab);
+        emit success();
+        delete this;
+    }
+    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_PATH_RULES"] + separator);
 }
