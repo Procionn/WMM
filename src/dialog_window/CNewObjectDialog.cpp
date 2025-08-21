@@ -35,7 +35,7 @@ void CNewObjectDialog::test () {
 #ifdef __linux__
     std::string separator = "/";
 #elif WIN64
-    std::string separator = "<>”/\|?*:";
+    std::string separator = "<>:\"/\\|?*";
 #endif
     if (tab.find_last_of(separator) == std::string::npos) {
         name = std::move(tab);
