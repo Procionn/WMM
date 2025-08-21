@@ -65,9 +65,10 @@ void Window::NewObjectDialog() {
     if (Core::CONFIG_GAME != "None") {
         newObjectDialog = new CNewObjectDialog();
         newObjectDialog->show();
-        connect(newObjectDialog, &CFastDialog::applyClicked, ObjectList,    [=]{ObjectList->newObject(newObjectDialog);});
-        connect(newObjectDialog, &CFastDialog::applyClicked, settingsWindow->settings_modules_list->settings_collections,
-                                                                            &collections::update_list);
+        connect(newObjectDialog, &CFastDialog::applyClicked, [this]{
+            ObjectList->newObject(newObjectDialog);
+            settingsWindow->settings_modules_list->settings_collections->update_list();
+        });
     }
     else
         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);

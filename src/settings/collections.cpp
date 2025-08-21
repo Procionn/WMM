@@ -72,7 +72,6 @@ collections::collections () {
     right_list->addWidget(modInfoFrame);
 
     update_list();
-    update_collection_info(nullptr);
     right_list->addWidget(settingsBox);
     right_list->addWidget(exportButton);
     connect(importButton, &QPushButton::clicked, [&]{importing();});
@@ -98,6 +97,7 @@ void collections::update_list () {
         collections_list->addWidget(button);
         last = button;
     }
+    update_collection_info(nullptr);
 }
 
 

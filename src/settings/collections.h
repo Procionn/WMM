@@ -41,12 +41,14 @@ class collections : public QWidget
     QLabel* presets;
     QLabel* allMods;
 protected:
+
     CToggledButton* target = nullptr;
     QVBoxLayout* collections_list;
     QVBoxLayout* right_list;
     SettingsBox* settingsBox;
 
     void update_collection_info(CToggledButton* target);
+
 public:
     collections();
 
