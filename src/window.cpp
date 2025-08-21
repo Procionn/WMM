@@ -52,8 +52,7 @@ Window::Window () {
     connect(ObjectList,         &CObjectList::objectChoosed, this,          &Window::objectChoosing);
     connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
     connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
-    connect(inpad,              &CInpad::applyClicked,       inpad,         [=]{inpad->application(ObjectList->targetName, ObjectList->TypeTarget);});
-    connect(inpad,              &CInpad::applyClicked,       ContentWidget, [=]{ContentWidget->updateList(target, ContentWidget->targetType);});
+    connect(inpad,              &CInpad::applyClicked,       this,          &Window::applyClicking);
 }
 
 void Window::NewObjectDialog() {
@@ -81,6 +80,12 @@ void Window::objectChoosing (CObjectsButton* pointer, bool type) {
     ContentWidget->updateList(pointer, type);
     updatePointer(pointer);
     inpad_reset();
+}
+
+
+void Window::applyClicking () {
+    inpad->application(ObjectList->targetName, ObjectList->TypeTarget);
+    ContentWidget->updateList(target, ContentWidget->targetType);
 }
 
 

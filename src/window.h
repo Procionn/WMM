@@ -53,6 +53,7 @@ private slots:
     void import_completed();
     void removing(CObjectsButton*);
     void objectChoosing(CObjectsButton* pointer, bool type);
+    void applyClicking();
 };
 
 #endif // WINDOW_H
