@@ -48,7 +48,9 @@ void CGameConfig::update_data_from_file () {
         CONFIG_GAME_PATH = std::get<std::string>(v[2]);
         CONFIG_EXECUTABLE_FILE = std::get<std::string>(v[1]);
         core_dir_name = CONFIG_GAME_PATH;
+#ifdef WIN64
         stc::string::replace(core_dir_name, '\\', '/');
+#endif
         core_dir_name = stc::string::get_name(core_dir_name);
     }
     else {
