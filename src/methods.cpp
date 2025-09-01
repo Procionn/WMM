@@ -108,10 +108,22 @@ void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem:
     std::filesystem::create_directories(newName.parent_path());
     try {
 #ifdef _WIN32
-        if (!CreateSymbolicLinkW(newName.wstring().c_str(), newFile.wstring().c_str(), 0x2))
-            std::cerr << "AHTUNG!!! I'm facking hate windows!!!"
-                      << "\n" << newName << "\n" << newFile << std::endl;
-#elif defined(__linux__)
+        if (!CreateSymbolicLinkW(newName.wstring().c_str(), newFile.wstring().c_str(), 0x0)) {
+            LPSTR messageBuffer = nullptr;
+            FormatMessageA(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                    FORMAT_MESSAGE_FROM_SYSTEM,
+                nullptr,
+                GetLastError(),
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPSTR)&messageBuffer,
+                0,
+                nullptr
+                );
+            stc::cerr("Error with linking [" + newName.string() + "] to [" + newFile.string() + "]");
+            stc::cerr(messageBuffer);
+            LocalFree(messageBuffer);
+        }
         std::filesystem::create_symlink(newFile, newName);
 #endif
     }
