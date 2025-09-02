@@ -79,25 +79,6 @@ void CMenuBar::linking_clicked () {
 
 
 void CMenuBar::reassembly_clicked () {
-    if (parent->target && !parent->target->type) {
-        if (!Core::CONFIG_GAME_PATH.empty()) {
-            std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
-            Wait(
-                Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
-            );
-        }
-    }
-    else if (parent->target->type)
-         ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
-
-
-
-
-
-
-
-
     if (parent->target) {
         if (!parent->target->type) {
             if (!Core::CONFIG_GAME_PATH.empty()) {
