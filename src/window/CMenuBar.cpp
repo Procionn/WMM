@@ -48,7 +48,7 @@ CMenuBar::CMenuBar(Window* parent) {
 
 void CMenuBar::assembling_clicked () {
     if (parent->target != nullptr) {
-        if (parent->ObjectList->TypeTarget)
+        if (parent->target->type)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
         else {
             Wait(
@@ -63,7 +63,7 @@ void CMenuBar::assembling_clicked () {
 
 void CMenuBar::linking_clicked () {
     if (parent->target != nullptr) {
-        if (parent->ObjectList->TypeTarget)
+        if (parent->target->type)
             ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
         else {
             if (std::filesystem::exists(stc::cwmm::backup_path())) {
@@ -81,7 +81,7 @@ void CMenuBar::linking_clicked () {
 
 
 void CMenuBar::reassembly_clicked () {
-    if (parent->target != nullptr && !parent->ObjectList->TypeTarget) {
+    if (parent->target != nullptr && !parent->target->type) {
         if (Core::CONFIG_GAME_PATH != "") {
             std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
             Wait(
@@ -89,7 +89,7 @@ void CMenuBar::reassembly_clicked () {
             );
         }
     }
-    else if (parent->ObjectList->TypeTarget)
+    else if (parent->target->type)
          ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
 }
