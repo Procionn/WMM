@@ -132,6 +132,14 @@ if(WIN32)
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+    add_custom_command(
+        OUTPUT resources.o
+        COMMAND ${CMAKE_RC_COMPILER} ${CMAKE_SOURCE_DIR}/winRes/resources.rc -O coff -o resources.o
+        DEPENDS ${CMAKE_SOURCE_DIR}/winRes/resources.rc
+                ${CMAKE_SOURCE_DIR}/winRes/rule.manifest
+                ${CMAKE_SOURCE_DIR}/winRes/logo.ico
+    )
+    target_sources(Wirus PRIVATE resources.o)
 elseif(UNIX)
     target_include_directories(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_LIBRARIES})
