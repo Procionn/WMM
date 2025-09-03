@@ -39,9 +39,9 @@ Arch: `sudo pacman -S cmake base-devel qt6-base libarchive`
 И выполнить:
 `cmake -B "test" && cmake --build "test"`
 
-### Windows:
-Удалите Windows
-Установите Linux
+### Windows:  
+Удалите Windows  
+Установите Linux  
 Воспользуйтесь инструкцией выше
 
 Если сообщения выше вас не убедили, настоятельно рекомендую использовать QtCreator для сборки проекта, поскольку большую часть зависимостей он устранит за вас.
