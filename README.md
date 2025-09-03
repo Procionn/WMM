@@ -43,8 +43,8 @@ And build it:
 `cmake -B "test" && cmake --build "test"`
 
 ### Windows:
-Remove Windows
-Install Linux
+Remove Windows  
+Install Linux  
 Follow the Linux instructions above
 
 If the above steps do not convince you, it is strongly recommended to use QtCreator to build the project, as it will resolve most dependencies for you.
