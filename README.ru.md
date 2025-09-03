@@ -50,5 +50,9 @@ Arch: `sudo pacman -S cmake base-devel qt6-base libarchive`
 Проект лицензируется под лицензией GPL-2.0, подробнее вы можете прочесть LICENSE файле.
 Если кратко - вы можете свободно  копировать, распространять и модифицировать проект, но не можете распространять его под закрытой лицензией.
 
+## Сторонние лицензии
+- [Qt 6](https://www.qt.io/) — licensed under GPL-3.0 or LGPL-3.0  
+- [libarchive](https://www.libarchive.org/) — licensed under BSD 2-clause 
+
 ## issues
 По поводу всех проблем и идей просьба сообщать в [issues](https://github.com/Procionn/WMM/issues).
