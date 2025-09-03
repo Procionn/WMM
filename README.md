@@ -55,6 +55,6 @@ See the LICENSE file for details.
 
 In short — you are free to copy, distribute, and modify the project, but you may not distribute it under a closed-source license.
 
-Issues
+## Issues
 
 Please report any problems or ideas in the [issues](https://github.com/Procionn/WMM/issues) section.
