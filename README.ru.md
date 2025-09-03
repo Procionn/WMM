@@ -12,9 +12,9 @@ Wirus Mod Manager - это легковесный мод менеджер на �
 
 ## Зависимости:
 WMM использует для работы QT6 и libarchive. В случае использования windows - все зависимости распространяются вместе с исполняемым файлом. В случае же linux вам потребуется установить требуемые пакеты с зависимостями вручную.  
-Fedora: `sudo dnf install qt6-qtbase libarchive`  
-Debian: `sudo apt install qt6-base libarchive13`  
-Arch: `sudo pacman -S qt6-base libarchive`
+- Fedora: `sudo dnf install qt6-qtbase libarchive`  
+- Debian: `sudo apt install qt6-base libarchive13`  
+- Arch: `sudo pacman -S qt6-base libarchive`
 
 ## Установка:
 Скачайте [архив сборки](https://github.com/Procionn/WMM/releases) для вашей системы и распакуйте.  
@@ -26,11 +26,9 @@ Arch: `sudo pacman -S qt6-base libarchive`
 ### Linux:
 Для сборки проекта из исходников вам нужно иметь dev пакеты зависимостей:
 
-Fedora: `sudo dnf install cmake g++ make qt6-devel libarchive-devel`
-
-Debian: `sudo apt install cmake g++ make qt6-dev libarchive-dev`
-
-Arch: `sudo pacman -S cmake base-devel qt6-base libarchive`
+- Fedora: `sudo dnf install cmake g++ make qt6-devel libarchive-devel`
+- Debian: `sudo apt install cmake g++ make qt6-dev libarchive-dev`
+- Arch: `sudo pacman -S cmake base-devel qt6-base libarchive`
 
 Затем можете клонировать репозиторий:
 
