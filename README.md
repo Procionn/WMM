@@ -39,8 +39,8 @@ Then clone the repository:
 
 `git clone https://github.com/Procionn/wmm.git`
 
-And build it:
-cmake -B "test" && cmake --build "test"
+And build it:  
+`cmake -B "test" && cmake --build "test"`
 
 ### Windows:
 Remove Windows
