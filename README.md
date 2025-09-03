@@ -56,8 +56,8 @@ See the LICENSE file for details.
 In short — you are free to copy, distribute, and modify the project, but you may not distribute it under a closed-source license.
 
 ## third-party licenses
-- [Qt 6](https://www.qt.io/) — licensed under GPL-3.0 or LGPL-3.0  
-- [libarchive](https://www.libarchive.org/) — licensed under BSD 2-clause 
+- [Qt 6](https://www.qt.io/) — GPL-3.0 
+- [libarchive](https://www.libarchive.org/) — BSD 2-clause 
 
 ## Issues
 
