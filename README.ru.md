@@ -3,7 +3,7 @@
 | [English](README.md) | [Русский](README.ru.md) |
 | -------------------- | ----------------------- |
 
-Wirus Mod Manager - это легковесный мод менеджер на системе ссылок. 
+Wirus Mod Manager - это легковесный мод менеджер на системе ссылок.  
 Основные функции:
 - Работа с несколькими изолированными сборками
 - Объединение модификаций в пресеты
@@ -37,7 +37,7 @@ Arch: `sudo pacman -S cmake base-devel qt6-base libarchive`
 `git clone https://github.com/Procionn/wmm.git`
 
 И выполнить:
-cmake -B "test" && cmake --build "test"
+`cmake -B "test" && cmake --build "test"`
 
 ### Windows:
 Удалите Windows
