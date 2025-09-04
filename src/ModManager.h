@@ -59,6 +59,11 @@ class ModList
     uint64_t localId = 0;
     static constexpr const unsigned char gridSize = 3;
 
+    ModList(ModList&& ref) = delete;
+    ModList& operator=(ModList&& other) = delete;
+    ModList(const ModList& ref) = delete;
+    ModList& operator=(const ModList& other) = delete;
+
 protected:
     std::string saveFile;
     std::map<std::string, uint64_t> dictionary;

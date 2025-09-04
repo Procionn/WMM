@@ -30,8 +30,10 @@ class import
     std::string presetPath;
     std::map<std::string, std::string> renamedList;
     bool presetsRenamed = false;
+
 public:
     import(const std::string& path);
+
 private:
     void unarchivate_main_objects();
     void renaming_fix();

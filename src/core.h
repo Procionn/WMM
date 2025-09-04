@@ -112,6 +112,12 @@ class Core final : public CConfigs, public Lang, public CGameConfig
     ~Core() = default;
     friend class import;
 
+
+    Core(Core&& ref) = delete;
+    Core& operator=(Core&& other) = delete;
+    Core(const Core& ref) = delete;
+    Core& operator=(const Core& other) = delete;
+
 protected:
     struct wmmb
     {
