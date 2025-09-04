@@ -22,6 +22,7 @@ On **Linux**, you need to install the required packages manually:
 
 ## Installation
 Download the [release archive](https://github.com/Procionn/WMM/releases) for your system and unpack it.  
+RPM packages for installation on linux will be prepared later.
 
 **Note:**  
 Mods will be stored in the program’s directory. To avoid in-game stutters, it is recommended to install the program on the same drive as the game, or on another drive with comparable read speed.
