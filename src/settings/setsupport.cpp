@@ -31,6 +31,7 @@ setsupport::setsupport() {
     list->addWidget(new QLabel("\tQt Framework\t" + QString::fromStdString(Core::lang["LABEL_CREDITS_QT"])));
     list->addWidget(new QLabel("\tLibarchive\t" + QString::fromStdString(Core::lang["LABEL_CREDITS_LIBARCHIVE"])));
     list->addWidget(new QLabel("\tJekkks\t\t" + QString::fromStdString(Core::lang["LABEL_CREDITS_JEKKKS"])));
+    list->addWidget(new QLabel("\tMihail go#\t" + QString::fromStdString(Core::lang["LABEL_CREDITS_GO#"])));
     list->addWidget(new QLabel());
     list->addWidget(new QLabel(QString::fromStdString(Core::lang["LABEL_CREDITS_MORE_INFO"])));
 
