@@ -131,7 +131,7 @@ void setsource::createBackup () {
                 Core::get().game_dir_backup();
             );
         }
-        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANL_LABEL_R40"]);
+        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R40"]);
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R32"]);
 }
