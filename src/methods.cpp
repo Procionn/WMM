@@ -124,6 +124,7 @@ void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem:
             stc::cerr(messageBuffer);
             LocalFree(messageBuffer);
         }
+#elif linux
         std::filesystem::create_symlink(newFile, newName);
 #endif
     }
