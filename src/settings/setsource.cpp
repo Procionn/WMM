@@ -126,9 +126,12 @@ void setsource::chooseExe (QPushButton* dirBTN) {
 
 void setsource::createBackup () {
     if (Core::CONFIG_GAME != "None") {
-        Wait(
-            Core::get().game_dir_backup();
-        );
+        if (!Core::CONFIG_GAME_PATH.empty()) {
+            Wait(
+                Core::get().game_dir_backup();
+            );
+        }
+        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANL_LABEL_R40"]);
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R32"]);
 }
