@@ -17,6 +17,7 @@
 #include "../core.h"
 
 #include <hpp-archive.h>
+#include <archive_entry.h>
 #include "../ModManager.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
@@ -83,9 +84,12 @@ void Core::compiller (const std::vector<wmmb>& list, const std::filesystem::path
         if (obj.status) {
             ArchiveReader archive(ModManager::get().get_path(obj.id, obj.version));
             archive.set_export_directory(directory);
-            for (const auto* entry : archive) {
-                fs::path entryPath = archive.get_target_filename();
-                fs::path targetFilePath = directory / entryPath;
+            fs::path entryPath, targetFilePath;
+            for (auto* entry : archive) {
+                entryPath = archive.get_target_filename();
+                targetFilePath = directory / entryPath;
+                if (archive_entry_filetype(entry) == AE_IFDIR)
+                    continue;
                 fs::create_directories(targetFilePath.parent_path());
                 fs::remove(targetFilePath);
                 archive.write_on_disk();
@@ -150,24 +154,30 @@ void Core::collector(const std::filesystem::path& name, bool type) {
 
         if (fs::exists(directory)) {
             std::vector<wmmb> oldstruct = parser(oldFile);
-
+            stc::cerr("1");
             optimizations(newstruct, oldstruct);
+            stc::cerr("2");
             clearing(oldstruct, directory);
+            stc::cerr("3");
             compiller(newstruct, directory);
+            stc::cerr("4");
 
             fs::remove(oldFile);
         }
         else {
+            stc::cerr("4");
             fs::create_directories(directory);
+            stc::cerr("5");
             compiller(newstruct, directory);
+            stc::cerr("6");
         }
         collection_info(newstruct, oldFile, name.string());
     }
     catch (const std::string& error) {
-        ERRORdialog* dialog = new ERRORdialog(error);
+        ERRORdialog* dialog = new ERRORdialog(__func__ + error);
     }
     catch (const std::exception& e) {
-        ERRORdialog* dialog = new ERRORdialog(std::string("Error: ") + e.what());
+        ERRORdialog* dialog = new ERRORdialog(__func__ + std::string("Error: ") + e.what());
     }
 }
 
