@@ -175,29 +175,25 @@ void CGameConfig::symlink_deliting () {
 void CGameConfig::dir_comparison (const std::filesystem::path& file) {
     wmml targetFile(file);
     std::vector<wmml::variant> v(GRID_WIDTH);
-#ifndef NDEBUG
-
-    std::cout << targetFile.height() << std::endl;
-    std::cout << targetFile.width() << std::endl;
-
-#endif
     while(targetFile.read(v))
         if (std::get<std::string>(v[1]) == "this")
             break;
     try {
-        // targetpath       =  game/Cyberpunk 2077/
-        // pt               =  C://Game/Cyberpunk 2077/[MGD]/
-        // CONFIG_GAME_PATH =  C://Game/Cyberpunk 2077/
+        // pathToBackupPath   =  game/Cyberpunk 2077/
+        // mixedGameDirectory =  C://Game/Cyberpunk 2077/[MGD]/
+        // CONFIG_GAME_PATH   =  C://Game/Cyberpunk 2077/
 
-        std::string targetpath = GAME + "/" + core_dir_name;
+        fs::path pathToBackupPath = GAME / fs::path(core_dir_name);
+        fs::path mixedGameDirectory;
         for (const auto& directory : MGD) {
-            std::string pt = CONFIG_GAME_PATH + "/" + directory;
-            for (const auto& entry : fs::recursive_directory_iterator(pt)) {
-                fs::path relative = fs::relative(entry.path(), CONFIG_GAME_PATH);
-                fs::path target_path = targetpath / relative;
-                fs::path backup_path = (COLLECTIONS + Core::CONFIG_GAME + "/" +
+            mixedGameDirectory = CONFIG_GAME_PATH / fs::path(directory);
+            fs::path relative, pathToBackupFile, collectionFile;
+            for (const auto& entry : fs::recursive_directory_iterator(mixedGameDirectory)) {
+                relative = fs::relative(entry.path(), CONFIG_GAME_PATH);
+                pathToBackupFile = pathToBackupPath / relative;
+                collectionFile = (COLLECTIONS + Core::CONFIG_GAME + "/" +
                                         std::get<std::string>(v[0])) / relative;
-                if (!fs::exists(target_path)) {
+                if (!fs::exists(pathToBackupFile)) {
 #ifdef _WIN32
                     auto is_symlink = [](const std::filesystem::path& p) -> bool {
                         DWORD attrs = GetFileAttributesA(p.string().c_str());
@@ -212,16 +208,15 @@ void CGameConfig::dir_comparison (const std::filesystem::path& file) {
                         S_ISDIR(info.st_mode))
                         continue;
 
-                    fs::create_directories(backup_path.parent_path());
-                    if (fs::exists(backup_path))
-                        fs::remove(backup_path);
+                    fs::create_directories(collectionFile.parent_path());
+                    if (fs::exists(collectionFile))
+                        fs::remove(collectionFile);
                     fs::rename(stc::string::replace(entry.path(), '\\', '/'),
-                               stc::string::replace(backup_path, '\\', '/'));
+                               stc::string::replace(collectionFile, '\\', '/'));
 #elif defined(__linux__)
                     if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path()))
                         continue;
-                    fs::rename(stc::string::replace(entry.path(), '\\', '/'),
-                               stc::string::replace(backup_path, '\\', '/'));
+                    fs::rename(entry.path(), collectionFile);
 #endif
                 }
             }
