@@ -65,9 +65,12 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
                 throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset - " + std::get<std::string>(v[0]));
             if (presets)
                 presets->emplace_back(std::get<std::string>(v[0]));
+            bool status = std::get<bool>(v[4]);
             wmml file(stc::cwmm::ram_preset(std::get<std::string>(v[0])));
             while(file.read(v)) {
                 assert(std::get<bool>(v[2]));
+                if (!status)
+                    v[4] = false;
                 if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
                     throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
                 list.emplace_back(v);
