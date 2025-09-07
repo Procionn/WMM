@@ -63,7 +63,7 @@ void ModManager::mod_log (const std::string& path, const uint64_t id, const std:
     std::filesystem::create_directories(logPath.parent_path());
     std::ofstream log(logPath);
     for (const auto& entry : archive)
-        log << archive.get_target_filename();
+        log << archive.get_target_filename() << "\n";
     log.close();
 }
 
@@ -84,11 +84,8 @@ void ModManager::load (const std::string& path) {
     std::string modVersion  = std::get<2>(dataBlock);
     std::string modName 	= std::get<0>(dataBlock);
 
-    stc::cerr("ModManager::load: regex complete");
     add(modId, modVersion, modName);
-    stc::cerr("ModManager::load: database adding complete");
     mod_log(path, modId, modVersion);
-    stc::cerr("ModManager::load: log created");
 
     std::filesystem::path archivePath = get_path(modId, modVersion);
     std::filesystem::create_directories(archivePath.parent_path());
@@ -96,8 +93,6 @@ void ModManager::load (const std::string& path) {
         std::filesystem::copy(path, archivePath);
     else
         std::filesystem::rename(path, archivePath);
-
-    stc::cerr("ModManager::load: data move complete");
     dataSaveFile->flush();
 }
 
