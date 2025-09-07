@@ -28,7 +28,7 @@
 namespace fs = std::filesystem;
 
 Core::wmmb::wmmb (std::vector<wmml::variant>& v) noexcept {
-    assert(std::get<bool>(v[4]));
+    status = std::get<bool>(v[4]);
     id = std::get<uint64_t>(v[3]);
     assert(std::get<bool>(v[2]));
     version = std::get<std::string>(v[1]);
@@ -37,7 +37,7 @@ Core::wmmb::wmmb (std::vector<wmml::variant>& v) noexcept {
 
 
 bool Core::wmmb::operator== (const wmmb& last) const noexcept{
-    if (this->id == last.id && this->version == last.version)
+    if (this->id == last.id && this->version == last.version && this->status == last.status)
         return true;
     else return false;
 }
@@ -116,13 +116,14 @@ void Core::optimizations (std::vector<wmmb>& mainList, std::vector<wmmb>& oldstr
 void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::path& directory) {
     // deleting the files of old mods
     for (const auto& mod : oldstruct) {
-        // fs::path path = (ARCHIVE + Core::CONFIG_GAME) / (fs::path)std::to_st ring(mod.id) / (mod.version + EXPANSION2);
-        fs::path path = ModManager::get().get_log_path(mod.id, mod.version);
-        std::string str;
-        std::ifstream readedFile(path);
-        while (std::getline(readedFile, str)) {
-            fs::path deletedFile = directory / str;
-            fs::remove(deletedFile);
+        if (mod.status) {
+            fs::path path = ModManager::get().get_log_path(mod.id, mod.version);
+            std::string str;
+            std::ifstream readedFile(path);
+            while (std::getline(readedFile, str)) {
+                fs::path deletedFile = directory / str;
+                fs::remove(deletedFile);
+            }
         }
     }
 }
@@ -133,7 +134,7 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
     std::vector<wmml::variant> v(GRID_WIDTH);
 
     for (const auto& ptr : newstruct) {
-        v = {ptr.name, ptr.version, true, ptr.id, true};
+        v = {ptr.name, ptr.version, true, ptr.id, ptr.status};
         file.write(v);
     }
     v = {name, "this", true, 0, true};
@@ -153,25 +154,22 @@ void Core::collector(const std::filesystem::path& name, bool type) {
         std::vector<wmmb> newstruct = parser(file);
 
         if (fs::exists(directory)) {
+            fs::path tempFile = oldFile;
+            tempFile += ".tmp";
+            collection_info(newstruct, tempFile, name.string());
             std::vector<wmmb> oldstruct = parser(oldFile);
-            stc::cerr("1");
             optimizations(newstruct, oldstruct);
-            stc::cerr("2");
             clearing(oldstruct, directory);
-            stc::cerr("3");
             compiller(newstruct, directory);
-            stc::cerr("4");
 
             fs::remove(oldFile);
+            fs::rename(tempFile, oldFile);
         }
         else {
-            stc::cerr("4");
             fs::create_directories(directory);
-            stc::cerr("5");
             compiller(newstruct, directory);
-            stc::cerr("6");
+            collection_info(newstruct, oldFile, name.string());
         }
-        collection_info(newstruct, oldFile, name.string());
     }
     catch (const std::string& error) {
         ERRORdialog* dialog = new ERRORdialog(__func__ + error);
