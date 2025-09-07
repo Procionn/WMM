@@ -62,8 +62,13 @@ void ModManager::mod_log (const std::string& path, const uint64_t id, const std:
     ArchiveReader archive(path);
     std::filesystem::create_directories(logPath.parent_path());
     std::ofstream log(logPath);
-    for (const auto& entry : archive)
-        log << archive.get_target_filename() << "\n";
+    std::filesystem::path filename;
+    for (const auto& entry : archive) {
+        filename = archive.get_target_filename();
+        if (std::filesystem::is_directory(filename))
+            continue;
+        log << filename << "\n";
+    }
     log.close();
 }
 
