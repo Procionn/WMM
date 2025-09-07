@@ -216,6 +216,7 @@ void CGameConfig::dir_comparison (const std::filesystem::path& file) {
 #elif defined(__linux__)
                     if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path()))
                         continue;
+                    fs::create_directories(collectionFile.parent_path());
                     fs::rename(entry.path(), collectionFile);
 #endif
                 }
