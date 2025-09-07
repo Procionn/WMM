@@ -18,10 +18,16 @@
 
 #include "../core.h"
 #include "../CONSTANTS.h"
+#include "../methods.h"
+#include <iostream>
 #include <QApplication>
 #include <QLabel>
 
 ERRORdialog::ERRORdialog (const std::string& label) {
+    std::cout << "printing" << std::endl;
+    stc::cerr(label);
+    std::cout << "printing2" << std::endl;
+    setModal(true);
     show();
     apply->hide();
     QLayout* tempLay = new QVBoxLayout(list);
@@ -36,6 +42,8 @@ ERRORdialog::ERRORdialog (const std::string& label) {
 
 
 FatalError::FatalError (const std::string& error, bool fatality) {
+    stc::cerr(error);
+    setModal(true);
     this->fatality = fatality;
     show();
     apply->hide();
