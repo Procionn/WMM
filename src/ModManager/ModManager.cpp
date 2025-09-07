@@ -22,6 +22,7 @@
 #include <hpp-archive.h>
 #include <filesystem>
 #include <regex>
+#include <archive_entry.h>
 
 // Save file struct:
 //
@@ -64,10 +65,9 @@ void ModManager::mod_log (const std::string& path, const uint64_t id, const std:
     std::ofstream log(logPath);
     std::filesystem::path filename;
     for (const auto& entry : archive) {
-        filename = archive.get_target_filename();
-        if (std::filesystem::is_directory(filename))
+        if (archive_entry_filetype(entry) == AE_IFDIR)
             continue;
-        log << filename << "\n";
+        log << archive.get_target_filename() << "\n";
     }
     log.close();
 }
