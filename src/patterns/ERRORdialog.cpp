@@ -24,9 +24,7 @@
 #include <QLabel>
 
 ERRORdialog::ERRORdialog (const std::string& label) {
-    std::cout << "printing" << std::endl;
     stc::cerr(label);
-    std::cout << "printing2" << std::endl;
     setModal(true);
     show();
     apply->hide();

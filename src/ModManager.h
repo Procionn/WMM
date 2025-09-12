@@ -78,14 +78,16 @@ protected:
     virtual ~ModList();
     Mod*     bsearch(const uint64_t& modId);
     ModInfo* bsearch(Mod* ptr, const std::string& modVersion);
-    void add_in_ram(const uint64_t& modId, const std::string& modVersion, const std::string& modName);
+    void add_in_ram(const uint64_t& modId, const std::string& modVersion,
+                    const std::string& modName, const std::string&);
     void add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName);
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
     void ML_remove(const uint64_t& modId);
     void import_saved_data();
 
 public:
-    void add(const uint64_t& modId, const std::string& modVersion, const std::string& modName);
+    void add(const uint64_t& modId, const std::string& modVersion,
+             const std::string& modName, const std::string&);
     const std::vector<Mod>& all_mods_list();
 };
 

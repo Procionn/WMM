@@ -89,7 +89,16 @@ void ModManager::load (const std::string& path) {
     std::string modVersion  = std::get<2>(dataBlock);
     std::string modName 	= std::get<0>(dataBlock);
 
-    add(modId, modVersion, modName);
+    try {
+        add(modId, modVersion, modName, path);
+    }
+    catch (const int err) {
+        switch (err) {
+        case  1:
+        case -1: return;
+        case  0: break;
+        }
+    }
     mod_log(path, modId, modVersion);
 
     std::filesystem::path archivePath = get_path(modId, modVersion);

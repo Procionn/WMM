@@ -20,7 +20,7 @@ include(FetchContent)
 FetchContent_Declare(
   HPP_ARCHIVE
   GIT_REPOSITORY https://github.com/Procionn/hpp-archive
-  GIT_TAG 8c8128d2d4af8333f33c29334f8e173a262fdb04
+  GIT_TAG 86f721ea666bc9fe2da4669e21fb3cb0070946c4
 )
 FetchContent_MakeAvailable(HPP_ARCHIVE)
 
@@ -45,6 +45,8 @@ add_library(CORE STATIC
     ModManager/ModManager.cpp           ModManager.h
     ModManager/ModList.cpp
     ModManager/objects.cpp
+
+    dialog_window/unificator.cpp        dialog_window/unificator.h
 )
 add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp

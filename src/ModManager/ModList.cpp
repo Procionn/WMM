@@ -17,6 +17,9 @@
 #include "../ModManager.h"
 #include <filesystem>
 #include "../core.h"
+#include "hpp-archive.h"
+#include "../dialog_window/unificator.h"
+#include "../patterns/WaitingWindow.h"
 
 namespace {
     int modinfo_cmp (const void* a, const void* b) {
@@ -82,20 +85,48 @@ void ModList::import_saved_data () {
 }
 
 
-void ModList::add (const uint64_t& modId, const std::string& modVersion, const std::string& modName) {
-    add_in_ram(modId, modVersion, modName);
+void ModList::add(const uint64_t& modId, const std::string& modVersion,
+                  const std::string& modName, const std::string& path) {
+    add_in_ram(modId, modVersion, modName, path);
     add_in_rom(modId, modVersion, modName);
     ++localId;
 
 }
 
 
-void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion, const std::string& modName) {
+void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
+                         const std::string& modName, const std::string& path) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
+        if (modName != reverceDictionary[modId]) {
+            auto version = unificator::start(static_cast<void*>(ptr->versions));
+            if (version.empty())
+                throw -1;
+            else {
+#define PARAMETERS , modId, version, &d, path
+                Wait2({
+                    auto mainArchivePath = ModManager::get().get_path(modId, version);
+                    auto newMainArchivePath = mainArchivePath + "2";
+
+                    ArchiveReader mainArchive(mainArchivePath);
+                    ArchiveReader archivePart(path);
+                    CustomArchive newArchive(newMainArchivePath, "");
+
+                    d.setValue(10);
+                    newArchive.clone(&mainArchive);
+                    d.setValue(60);
+                    newArchive.clone(&archivePart);
+                    d.setValue(90);
+
+                    std::filesystem::remove(mainArchivePath);
+                    std::filesystem::rename(newMainArchivePath, mainArchivePath);
+                }, PARAMETERS);
+            }
+            throw 1;
+        }
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr)
-            throw ("The added mod is already exists");
+            throw Core::lang["LANG_LABEL_MOD_EXISTS"];
         else {
             ptr->versions->emplace_back(modVersion, localId);
             std::qsort(ptr->versions->data(), ptr->versions->size(),
@@ -122,7 +153,7 @@ void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, c
 
 
 void ModList::add_in_ram (const std::vector<wmml::variant>& v) {
-    add_in_ram(std::get<uint64_t>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
+    add_in_ram(std::get<uint64_t>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]), "");
 }
 
 
