@@ -35,4 +35,17 @@
     taskThread.join();                          \
     d.setValue(100)
 
+
+#define Wait2(func, PARAMETERS)                 \
+    QProgressDialog d(QString::fromStdString(   \
+    Core::lang["LANG_LABERL_WAIT"]), nullptr, 0, 100, nullptr); \
+    d.setWindowModality(Qt::WindowModal);       \
+    d.setMinimumDuration(0);                    \
+    d.show();                                   \
+    std::atomic<bool> flag = false;             \
+    std::thread taskThread([this, &flag PARAMETERS]{func; flag.store(true);});   \
+    while (!flag) QApplication::processEvents();\
+    taskThread.join();                          \
+    d.setValue(100)
+
 #endif // WAITINGWINDOW_H
