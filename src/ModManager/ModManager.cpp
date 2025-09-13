@@ -63,7 +63,6 @@ void ModManager::mod_log (const std::string& path, const uint64_t id, const std:
     ArchiveReader archive(path);
     std::filesystem::create_directories(logPath.parent_path());
     std::ofstream log(logPath);
-    std::filesystem::path filename;
     for (const auto& entry : archive) {
         if (archive_entry_filetype(entry) == AE_IFDIR)
             continue;

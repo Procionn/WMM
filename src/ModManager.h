@@ -83,6 +83,7 @@ protected:
     void add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName);
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
     void ML_remove(const uint64_t& modId);
+    void mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr);
     void import_saved_data();
 
 public:
@@ -97,6 +98,7 @@ public:
 
 class ModManager final : public ModList
 {
+    friend class ModList;
     bool copy = true; // false to move new mods in directory
     std::string archiveExpansion = ".MOD";
 

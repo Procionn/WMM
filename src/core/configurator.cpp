@@ -118,14 +118,16 @@ void Core::optimizations (std::vector<wmmb>& mainList, std::vector<wmmb>& oldstr
 
 void Core::clearing (const std::vector<wmmb>& oldstruct, const std::filesystem::path& directory) {
     // deleting the files of old mods
+    fs::path path, deletedFile;
     for (const auto& mod : oldstruct) {
         if (mod.status) {
-            fs::path path = ModManager::get().get_log_path(mod.id, mod.version);
+            path = ModManager::get().get_log_path(mod.id, mod.version);
             std::string str;
             std::ifstream readedFile(path);
             while (std::getline(readedFile, str)) {
-                fs::path deletedFile = directory / str;
-                fs::remove(deletedFile);
+                deletedFile = directory / str;
+                if (std::filesystem::exists(deletedFile))
+                    fs::remove(deletedFile);
             }
         }
     }

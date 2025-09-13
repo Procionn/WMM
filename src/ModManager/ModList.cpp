@@ -99,30 +99,7 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
     Mod* ptr = bsearch(modId);
     if (ptr) {
         if (modName != reverceDictionary[modId]) {
-            auto version = unificator::start(static_cast<void*>(ptr->versions));
-            if (version.empty())
-                throw -1;
-            else {
-#define PARAMETERS , modId, version, &d, path
-                Wait2({
-                    auto mainArchivePath = ModManager::get().get_path(modId, version);
-                    auto newMainArchivePath = mainArchivePath + "2";
-
-                    ArchiveReader mainArchive(mainArchivePath);
-                    ArchiveReader archivePart(path);
-                    CustomArchive newArchive(newMainArchivePath, "");
-
-                    d.setValue(10);
-                    newArchive.clone(&mainArchive);
-                    d.setValue(60);
-                    newArchive.clone(&archivePart);
-                    d.setValue(90);
-
-                    std::filesystem::remove(mainArchivePath);
-                    std::filesystem::rename(newMainArchivePath, mainArchivePath);
-                }, PARAMETERS);
-            }
-            throw 1;
+            mod_archive_unificator(path, modId, ptr);
         }
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr)
@@ -192,6 +169,37 @@ void ModList::ML_remove (const uint64_t& modId) {
 }
 
 
- const std::vector<Mod>& ModList::all_mods_list() {
+const std::vector<Mod>& ModList::all_mods_list() {
    return list;
+}
+
+
+void ModList::mod_archive_unificate (const std::string& path, const uint64_t& modId, Mod* ptr) {
+    auto version = unificator::start(static_cast<void*>(ptr->versions));
+    if (version.empty())
+        throw -1;
+    else {
+#define PARAMETERS , modId, version, &d, path
+        Wait2({
+            auto mainArchivePath = ModManager::get().get_path(modId, version);
+            auto newMainArchivePath = mainArchivePath + "2";
+
+            ArchiveReader mainArchive(mainArchivePath);
+            ArchiveReader archivePart(path);
+            CustomArchive newArchive(newMainArchivePath, "");
+
+            d.setValue(10);
+            newArchive.clone(&mainArchive);
+            d.setValue(60);
+            newArchive.clone(&archivePart);
+            d.setValue(90);
+
+            std::filesystem::remove(mainArchivePath);
+            std::filesystem::rename(newMainArchivePath, mainArchivePath);
+
+        }, PARAMETERS);
+        std::filesystem::remove(ModManager::get().get_log_path(modId, version));
+        ModManager::get().mod_log(ModManager::get().get_path(modId, version), modId, version);
+    }
+    throw 1;
 }
