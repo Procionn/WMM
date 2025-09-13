@@ -20,6 +20,9 @@
 #include <QDialog>
 #include <QWidget>
 #include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <string>
 #include <hpp-archive.h>
 #include "../patterns/CLinkTumbler.h"
 
@@ -28,7 +31,7 @@ class questioner final : public QWidget
     Q_OBJECT
 
 public:
-    questioner();
+    questioner(const std::string& name, QPushButton*);
 };
 
 
@@ -45,25 +48,46 @@ private slots:
 };
 
 
+class renamer final : public QWidget
+{
+    Q_OBJECT
+
+public:
+    QLineEdit* string;
+    QLabel* errorLabel;
+
+    renamer(const std::string& version);
+};
+
+
 class unificator final : public QDialog
 {
     Q_OBJECT
 
     QPushButton* back;
     QPushButton* next;
+    QPushButton* newVersion;
     questioner* firstPage;
     choicer* secondPage;
-    bool status = false;
+    renamer* thirdPage;
+    unsigned char status = 0;
     std::string* string;
+    uint64_t modId;
 
-    unificator(void*);
+    unificator(void*, const std::string& name, const std::string& version, const uint64_t& id);
+    void closeEvent(QCloseEvent* e) override;
+
+protected slots:
+    void reject() override;
 
 public:
-    static std::string start(void*);
+    static std::string start(void*, const std::string& name,
+                             const std::string& version, const uint64_t& id);
 
 private slots:
     void back_click();
     void next_click();
+    void version_click();
 };
 
 

@@ -93,9 +93,9 @@ void ModManager::load (const std::string& path) {
     }
     catch (const int err) {
         switch (err) {
-        case  1:
-        case -1: return;
-        case  0: break;
+            case  1:
+            case -1: return;
+            case  0: break;
         }
     }
     mod_log(path, modId, modVersion);

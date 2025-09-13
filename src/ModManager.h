@@ -78,16 +78,22 @@ protected:
     virtual ~ModList();
     Mod*     bsearch(const uint64_t& modId);
     ModInfo* bsearch(Mod* ptr, const std::string& modVersion);
-    void add_in_ram(const uint64_t& modId, const std::string& modVersion,
+    void add_in_ram(const uint64_t& modId, std::string& modVersion,
                     const std::string& modName, const std::string&);
-    void add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName);
+    void add_in_ram(const uint64_t& modId, const std::string& modVersion,
+                    const std::string& modName);
+    void add_in_rom(const uint64_t& modId, const std::string& modVersion,
+                    const std::string& modName);
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
     void ML_remove(const uint64_t& modId);
-    void mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr);
+    std::string mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr,
+                                      const std::string& version, const std::string& name);
     void import_saved_data();
 
 public:
-    void add(const uint64_t& modId, const std::string& modVersion,
+    void add(const uint64_t& modId, const std::string&& modVersion,
+             const std::string&& modName);
+    void add(const uint64_t& modId, std::string& modVersion,
              const std::string& modName, const std::string&);
     const std::vector<Mod>& all_mods_list();
 };

@@ -156,7 +156,8 @@ void import::mods_import (void* vector) {
                 hash = std::to_string(importingMod.id) + "/" + importingMod.version;
                 if (targetFilename.compare(modsDirectory.size(), hash.size(), hash) == 0) {
                     archive.write_on_disk();
-                    ModManager::get().add(importingMod.id, importingMod.version, importingMod.name, "");
+                    ModManager::get().add(importingMod.id, std::move(importingMod.version),
+                                          std::move(importingMod.name));
                     break;
                 }
             }
