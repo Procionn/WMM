@@ -58,6 +58,9 @@ void CDND::dropEvent(QDropEvent* e) {
         catch (const std::exception& e) {
             ERRORdialog* dialog = new ERRORdialog(std::string("DND ERROR: ") + e.what());
         }
+        catch (const std::string& e) {
+            ERRORdialog* dialog = new ERRORdialog(std::string("DND ERROR: ") + e);
+        }
     }
     else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
 }
