@@ -102,13 +102,11 @@ void CContentList::clear () {
 
 void CContentList::changeStatusOn(CObject* toggledElements) {
     wmml file(sPath);
-    auto bol = true;
-    file.overwriting_sector(toggledElements->index, 4, bol);
+    file.overwriting_sector(toggledElements->index, 4, true);
 }
 void CContentList::changeStatusOff(CObject* toggledElements) {
     wmml file(sPath);
-    auto bol = false;
-    file.overwriting_sector(toggledElements->index, 4, bol);
+    file.overwriting_sector(toggledElements->index, 4, false);
 }
 void CContentList::deleting (CObject* pointer) {
     static CObject* last;
