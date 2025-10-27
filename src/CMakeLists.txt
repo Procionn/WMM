@@ -116,7 +116,6 @@ target_link_libraries(Wirus PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     wmml_static
 
-    HPP_ARCHIVE
     PATTERNS
     CORE
     SETTINGS
