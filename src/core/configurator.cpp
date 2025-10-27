@@ -179,10 +179,10 @@ void Core::collector(const std::filesystem::path& name, bool type) {
         }
     }
     catch (const std::string& error) {
-        ERRORdialog* dialog = new ERRORdialog(__func__ + error);
+        ERRORdialog* dialog = new ERRORdialog(error);
     }
     catch (const std::exception& e) {
-        ERRORdialog* dialog = new ERRORdialog(__func__ + std::string("Error: ") + e.what());
+        ERRORdialog* dialog = new ERRORdialog(__func__ + std::string(" Error: ") + e.what());
     }
 }
 

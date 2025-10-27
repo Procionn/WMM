@@ -24,15 +24,15 @@
 #include <QLabel>
 
 ERRORdialog::ERRORdialog (const std::string& label) {
-    stc::cerr(label);
     setModal(true);
-    show();
     apply->hide();
     QLayout* tempLay = new QVBoxLayout(list);
     tempLay->setAlignment(Qt::AlignTop);
     QLabel* lbl = new QLabel(QString::fromStdString(label));
     lbl->setWordWrap(true);
     tempLay->addWidget(lbl);
+    show();
+    stc::cerr(label);
 }
 
 
@@ -40,10 +40,8 @@ ERRORdialog::ERRORdialog (const std::string& label) {
 
 
 FatalError::FatalError (const std::string& error, bool fatality) {
-    stc::cerr(error);
     setModal(true);
     this->fatality = fatality;
-    show();
     apply->hide();
 
     QVBoxLayout* tempLay = new QVBoxLayout(list);
@@ -61,6 +59,8 @@ FatalError::FatalError (const std::string& error, bool fatality) {
         delete this;
         QApplication::exit(RESET);
     });
+    stc::cerr(error);
+    show();
 }
 
 
