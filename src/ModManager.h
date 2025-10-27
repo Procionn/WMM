@@ -19,9 +19,10 @@
 
 #include <string>
 #include <vector>
-#include <wmml.h>
 #include <map>
 #include <tuple>
+#include <stdint.h>
+class wmml;
 
 struct ModInfo
 {
@@ -71,7 +72,7 @@ protected:
     wmml* dataSaveFile = nullptr;
 
 private:
-    void add_in_ram(const std::vector<wmml::variant>&);
+    void add_in_ram(const void*);
 
 protected:
     ModList() = default;

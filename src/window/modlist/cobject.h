@@ -57,7 +57,7 @@ public:
     CSplitter* spl2;
     CSwitchButton* switcher;
 public:
-    CObject(const std::vector<wmml::variant>& v, bool& counter, const uint64_t& index);
+    CObject(const void* v, bool& counter, const uint64_t& index);
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);

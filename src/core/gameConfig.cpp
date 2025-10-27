@@ -25,7 +25,7 @@
     #include <sys/stat.h>
 #endif
 #include <QCoreApplication>
-
+#include <wmml.h>
 #include "../CONSTANTS.h"
 #include "../methods.h"
 
@@ -74,7 +74,7 @@ void CGameConfig::update_data_from_file () {
 }
 
 
-void CGameConfig::write(wmml& input, std::string str) {
+void CGameConfig::write(wmml* input, std::string str) {
     std::vector<wmml::variant> v(wmml_size);
     CONFIG_EXECUTABLE_FILE = str;
     if (!GAME_CORE_DIR_STAGE)
@@ -88,7 +88,7 @@ void CGameConfig::write(wmml& input, std::string str) {
     v[0] = Core::CONFIG_GAME;
     v[1] = CONFIG_EXECUTABLE_FILE;
     v[2] = CONFIG_GAME_PATH;
-    input.write(v);
+    input->write(v);
 }
 
 
@@ -100,13 +100,13 @@ void CGameConfig::save_game_path (const std::string& path) {
         for (int counter = 0; file.read(v); ++counter) {
             if (std::get<std::string>(v[0]) == Core::CONFIG_GAME) {
                 file.remove_object(counter);
-                write(file, path);
+                write(&file, path);
             }
         }
     }
     else {
         wmml file(SAVE, wmml_size);
-        write(file, path);
+        write(&file, path);
     }
 }
 

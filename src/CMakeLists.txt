@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(HPP_ARCHIVE)
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG 0be446474d5583f54cd7ee8fcf0583df0d7976e1
+  GIT_TAG v1.4.0
 )
 FetchContent_MakeAvailable(wmml)
 
@@ -69,14 +69,13 @@ add_library(PATTERNS STATIC
     patterns/RenameDialog.h             patterns/RrenameDialog.cpp
     patterns/WaitingWindow.h
 )
-target_link_libraries(CORE     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(CORE     PRIVATE HPP_ARCHIVE)
-target_link_libraries(CORE     PUBLIC  wmml)
-target_link_libraries(CORE     PUBLIC  PATTERNS)
+target_link_libraries(CORE PRIVATE
+  Qt${QT_VERSION_MAJOR}::Widgets
+  HPP_ARCHIVE
+  wmml_static
+)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(SETTINGS PRIVATE wmml)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(PATTERNS PRIVATE wmml)
 
 target_compile_definitions(CORE     PUBLIC LOG)
 target_compile_definitions(PATTERNS PUBLIC LOG)
@@ -113,10 +112,9 @@ target_compile_definitions(SETTINGS PRIVATE
   VERSION="${PROJECT_VERSION}"
 )
 
-target_link_libraries(Wirus
-    PRIVATE
+target_link_libraries(Wirus PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
-    wmml
+    wmml_static
 
     HPP_ARCHIVE
     PATTERNS

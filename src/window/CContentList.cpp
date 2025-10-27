@@ -19,6 +19,7 @@
 #include "../window/modlist/cobject.h"
 #include <QLabel>
 #include <QTimer>
+#include <wmml.h>
 
 CContentList::CContentList () {
     setMinimumWidth(200);
@@ -62,7 +63,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     std::vector<wmml::variant> v(file.width());
     bool counter = false;
     for (uint64_t index = 0; file.read(v); ++index) {
-        CObject* buttonWidget = new CObject(v, counter, index);
+        CObject* buttonWidget = new CObject(static_cast<void*>(&v), counter, index);
         contentList->add(buttonWidget);
 
 

@@ -16,6 +16,7 @@
  */
 #include "../ModManager.h"
 #include <filesystem>
+#include <wmml.h>
 #include "../core.h"
 #include "hpp-archive.h"
 #include "../dialog_window/unificator.h"
@@ -32,7 +33,7 @@ namespace {
         const Mod* arg1 = static_cast<const Mod*>(a);
         const Mod* arg2 = static_cast<const Mod*>(b);
         return arg1->modId > arg2->modId ?  1 :
-                   arg1->modId < arg2->modId ? -1 : 0;
+               arg1->modId < arg2->modId ? -1 : 0;
     }
 }
 
@@ -73,7 +74,7 @@ void ModList::import_saved_data () {
         std::vector<wmml::variant> v(gridSize);
         list.reserve(dataSaveFile->height());
         while(dataSaveFile->read(v))
-            add_in_ram(v);
+            add_in_ram(static_cast<void*>(&v));
         delete dataSaveFile;
         dataSaveFile = new wmml(saveFile);
     }
@@ -162,8 +163,10 @@ void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, c
 }
 
 
-void ModList::add_in_ram (const std::vector<wmml::variant>& v) {
-    add_in_ram(std::get<uint64_t>(v[2]), std::get<std::string>(v[1]), std::get<std::string>(v[0]));
+void ModList::add_in_ram (const void* v) {
+    const auto* c = static_cast<const std::vector<wmml::variant>*>(v);
+    add_in_ram(std::get<uint64_t>(c->at(2)), std::get<std::string>(c->at(1)),
+               std::get<std::string>(c->at(0)));
 }
 
 

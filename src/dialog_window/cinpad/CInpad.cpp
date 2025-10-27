@@ -19,6 +19,7 @@
 #include "../../ModManager.h"
 #include "../../core.h"
 #include <QMenuBar>
+#include <wmml.h>
 
 CInpad::CInpad(bool& type) {
     callType = &type;

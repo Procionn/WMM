@@ -24,6 +24,7 @@
 #include "../core.h"
 #include "../CONSTANTS.h"
 #include <hpp-archive.h>
+#include <wmml.h>
 
 
 import::import (const std::string& path) : archivePath(path) {

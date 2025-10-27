@@ -18,6 +18,7 @@
 
 #include <hpp-archive.h>
 #include <archive_entry.h>
+#include <wmml.h>
 #include "../ModManager.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
@@ -27,12 +28,13 @@
 
 namespace fs = std::filesystem;
 
-Core::wmmb::wmmb (std::vector<wmml::variant>& v) noexcept {
-    status = std::get<bool>(v[4]);
-    id = std::get<uint64_t>(v[3]);
-    assert(std::get<bool>(v[2]));
-    version = std::get<std::string>(v[1]);
-    name = std::get<std::string>(v[0]);
+Core::wmmb::wmmb (void* v) noexcept {
+    std::vector<wmml::variant>* c = static_cast<std::vector<wmml::variant>*>(v);
+    status = std::get<bool>(c->at(4));
+    id = std::get<uint64_t>(c->at(3));
+    assert(std::get<bool>(c->at(2)));
+    version = std::get<std::string>(c->at(1));
+    name = std::get<std::string>(c->at(0));
 }
 
 
@@ -58,7 +60,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
         if (std::get<bool>(v[2])) {
             if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
                 throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
-            list.emplace_back(v);
+            list.emplace_back(static_cast<void*>(&v));
         }
         else {
             if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))) && except)
@@ -73,7 +75,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
                     v[4] = false;
                 if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
                     throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
-                list.emplace_back(v);
+                list.emplace_back(static_cast<void*>(&v));
             }
         }
     }
