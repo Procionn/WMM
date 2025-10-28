@@ -19,7 +19,6 @@
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/CScrollWindow.h"
 #include "../core.h"
-#include <QTimer>
 #include <QLineEdit>
 
 CObjectList::CObjectList () {
