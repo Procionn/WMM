@@ -58,6 +58,10 @@ private:
     void mods_scaner(const std::vector<std::string>& existsElements);
     void distributor();
     bool not_exists(const std::vector<std::string>& existsElements, const std::string& str);
+    void search(const QString&, const bool);
+
+private slots:
+    void search_slot(const QString&);
 };
 
 #endif // CINPAD_H

@@ -68,7 +68,8 @@ private:
                 }
             }
             for (int i = min; i <= max; ++i)
-                childList[i]->turnOn();
+                if(childList[i]->isVisible())
+                    childList[i]->turnOn();
         }
         else {
             target->ChangeOfState();

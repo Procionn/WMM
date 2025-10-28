@@ -20,6 +20,7 @@
 #include "../../core.h"
 #include <QMenuBar>
 #include <wmml.h>
+#include <QLineEdit>
 
 CInpad::CInpad(bool& type) {
     callType = &type;
@@ -31,8 +32,13 @@ CInpad::CInpad(bool& type) {
     vertBox->addLayout(horBox);
     QLabel* label = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ADD"]));
     QMenuBar* menuBar = new QMenuBar;
+    QLineEdit* searchTab = new QLineEdit;
     horBox->addWidget(label);
     horBox->addWidget(menuBar);
+    horBox->addWidget(searchTab);
+    menuBar->setMinimumWidth(80);
+    menuBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    searchTab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     menu = new QMenu("v");
     menuBar->addMenu(menu);
@@ -52,6 +58,7 @@ CInpad::CInpad(bool& type) {
         targetType = false;
         distributor();
     });
+    connect(searchTab, &QLineEdit::textEdited, this, &CInpad::search_slot);
 
     newObjectList = new CInpadList;
     vertBox->addWidget(newObjectList);
@@ -72,19 +79,22 @@ void CInpad::distributor() {
     render();
 }
 
-void CInpad::render () {
-    if (targetType) {
-        for (CInpadButton* target : vlist)
-            if  (target->type == true)
-                target->show();
-            else target->hide();
+void CInpad::render() {
+    search("", false);
+}
+
+void CInpad::search (const QString& string, const bool flag) {
+    static std::string ref;
+    if (flag) ref = string.toStdString();
+    for (auto* target : vlist) {
+        if (target->type == targetType && target->get_name().find(ref) != std::string::npos)
+            target->show();
+        else target->hide();
     }
-    else {
-        for (CInpadButton* target : vlist)
-            if  (target->type == false)
-                target->show();
-            else target->hide();
-    }
+}
+
+void CInpad::search_slot (const QString& string) {
+    search(string, true);
 }
 
 bool CInpad::not_exists (const std::vector<std::string>& existsElements, const std::string& str) {
