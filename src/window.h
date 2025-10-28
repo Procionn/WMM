@@ -21,6 +21,7 @@
 #include "window/mainWidgets.h"
 #include "window/CMenuBar.h"
 #include "settings/settings.h"
+#include "dialog_window/CNewObjectDialog.h"
 
 #include <QMainWindow>
 

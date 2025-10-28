@@ -17,8 +17,6 @@
 #ifndef MAINWIDGETS_H
 #define MAINWIDGETS_H
 
-#include "../dialog_window/CNewObjectDialog.h"
-#include "../patterns/CScrollWindow.h"
 #include "../window/modlist/cobjectscontainer.h"
 #include "CObjectsButton.h"
 #include "../dnd.h"
@@ -28,7 +26,6 @@
 #include <filesystem>
 #include <vector>
 #include <QVBoxLayout>
-#include <QSplitter>
 
 class CObjectList : public QWidget
 {

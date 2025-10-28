@@ -18,7 +18,6 @@
 
 #include "../window/modlist/cobject.h"
 #include <QLabel>
-#include <QTimer>
 #include <wmml.h>
 
 CContentList::CContentList () {
