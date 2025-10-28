@@ -45,12 +45,17 @@ public:
 
 private:
     void scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler);
+    void search(const QString&, const bool);
+
 signals:
     void objectChoosed(CObjectsButton* pointer, bool type);
     void remove(CObjectsButton* pointer);
 
 public slots:
     void CreteObject(const std::string& name);
+
+private slots:
+    void search_slot(const QString&);
 };
 
 

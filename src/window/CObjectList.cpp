@@ -19,6 +19,7 @@
 #include "../patterns/ERRORdialog.h"
 #include "../core.h"
 #include <QTimer>
+#include <QLineEdit>
 
 CObjectList::CObjectList () {
     setMaximumWidth(1000);
@@ -29,6 +30,8 @@ CObjectList::CObjectList () {
     privateObjectList->addLayout(objectButtonBox);
     CLinkTumbler* Collection = new CLinkTumbler(Core::lang["LANG_BUTTON_COLLECTIONS"]);
     CLinkTumbler* Preset     = new CLinkTumbler(Core::lang["LANG_BUTTON_PRESETS"], Collection);
+    QLineEdit* searchTab     = new QLineEdit;
+    privateObjectList->addWidget(searchTab);
     objectButtonBox->addWidget(Collection);
     objectButtonBox->addWidget(Preset);
     Collection->isTarget(true);
@@ -54,6 +57,7 @@ CObjectList::CObjectList () {
         TypeTarget = true;
         render();
     });
+    connect(searchTab, &QLineEdit::textEdited, this, &CObjectList::search_slot);
     updateList();
     render();
 }
@@ -108,15 +112,20 @@ void CObjectList::updateList () {
 }
 
 void CObjectList::render() {
-    if (TypeTarget) {
-        for (CObjectsButton* target : list)
-            if  (target->type == true) target->show();
-            else target->hide();
+    search("", false);
+}
+
+void CObjectList::search (const QString& string, const bool flag) {
+    static std::string ref;
+    if (flag) ref = string.toStdString();
+    for (CObjectsButton* target : list) {
+        if (target->type == TypeTarget && target->name.find(ref) != std::string::npos)
+            target->show();
+        else target->hide();
     }
-    else {
-        for (CObjectsButton* target : list)
-            if  (target->type == false) target->show();
-            else target->hide();
-    }
+}
+
+void CObjectList::search_slot (const QString& string) {
+    search(string, true);
 }
 
