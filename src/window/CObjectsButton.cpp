@@ -18,6 +18,7 @@
 
 #include "../core.h"
 #include "../methods.h"
+#include "../CONSTANTS.h"
 
 CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget* parent) : CLinkTumbler(name){
     this->name = name;
@@ -47,6 +48,9 @@ void CObjectsButton::context (const QPoint &pos) {
 
 void CObjectsButton::DELETE() {
     if (type) std::filesystem::remove(stc::cwmm::ram_preset(name));
-    else      std::filesystem::remove(stc::cwmm::ram_collection(name));
+    else {
+        std::filesystem::remove(stc::cwmm::ram_collection(name));
+        stc::fs::remove_all(std::filesystem::path(COLLECTIONS + Core::CONFIG_GAME) / name);
+    }
     emit remove(this);
 }
