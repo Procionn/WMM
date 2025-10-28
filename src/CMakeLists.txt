@@ -93,6 +93,7 @@ set(PROJECT_SOURCES
     window/modlist/cobjectscontainer.h  window/modlist/cobjectscontainer.cpp
     window/modlist/cobject.h            window/modlist/cobject.cpp
     window/CMenuBar.h                   window/CMenuBar.cpp
+    window/CSubInfoFrame.h              window/CSubInfoFrame.cpp
     window/mainWidgets.h                window/CObjectList.cpp
                                         window/CContentList.cpp
 

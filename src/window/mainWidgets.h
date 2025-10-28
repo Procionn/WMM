@@ -22,6 +22,7 @@
 #include "../window/modlist/cobjectscontainer.h"
 #include "CObjectsButton.h"
 #include "../dnd.h"
+#include "CSubInfoFrame.h"
 
 #include <string>
 #include <filesystem>
@@ -66,11 +67,10 @@ class CContentList : public QWidget
 {
     Q_OBJECT
 public:
-    QSplitter* spl1;
-    QSplitter* spl2;
     CObjectsContainer* contentList;
     QWidget* contentWidget;
     CDND* dnd;
+    CSubInfoFrame* siFrame;
 
     std::string sPath;
     std::string targetName;

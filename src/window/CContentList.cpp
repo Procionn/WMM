@@ -25,28 +25,7 @@ CContentList::CContentList () {
     setMinimumWidth(200);
     QVBoxLayout* BaseContainer = new QVBoxLayout();
     setLayout(BaseContainer);
-
-    QFrame* siFrame = new QFrame; // subinfo Frame
-    QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
-    BaseContainer->addWidget(siFrame);
-    siFrame->setStyleSheet("background-color: #444b50; border-radius: 10px;");
-
-    spl1 = new QSplitter;
-    spl2 = new QSplitter;
-    QLabel* lblName     = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_NAME"]));
-    QLabel* lblVersion  = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_VERSION"]));
-    QLabel* lblType     = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_TYPE"]));
-    QLabel* lblSwitcher = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_SWITCHER"]));
-
-    splitterBox->addWidget(spl1);
-    splitterBox->addWidget(spl2);
-    splitterBox->addWidget(lblSwitcher);
-    lblName->resize(400, 0);
-    spl1->addWidget(lblName);
-    spl1->addWidget(spl2);
-    spl2->addWidget(lblVersion);
-    spl2->addWidget(lblType);
-
+    siFrame = new CSubInfoFrame(BaseContainer);
     contentList = new CObjectsContainer;
     BaseContainer->addWidget(contentList);
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
@@ -65,34 +44,15 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     for (uint64_t index = 0; file.read(v); ++index) {
         CObject* buttonWidget = new CObject(static_cast<void*>(&v), counter, index);
         contentList->add(buttonWidget);
+        buttonWidget->spl1->setSizes(siFrame->spl1->sizes());
+        buttonWidget->spl2->setSizes(siFrame->spl2->sizes());
 
-
-        // Crutch. It will need to be fixed
-        auto splz = [](QSplitter* spl, double constant) -> double {
-            double sz1 = spl->size().width();
-            double sz2 = spl->size().height();
-            return sz1 / (sz2 / constant);
-        };
-
-        static double sz31 = splz(spl1, 13);
-        static double sz32 = splz(spl2, 10.5);
-
-        QTimer::singleShot(0, buttonWidget, [=]() {
-            buttonWidget->spl1->moveSplitter(sz31, 1);
-            buttonWidget->spl2->moveSplitter(sz32, 1);
-        });
-
-
-        connect(spl1, &QSplitter::splitterMoved, [&](int pos){sz31 = pos;});
-        connect(spl2, &QSplitter::splitterMoved, [&](int pos){sz32 = pos;});
-        ////////////////////////////
-
-        connect(spl1, &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
-        connect(spl2, &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
-        connect(buttonWidget, &CObject::ON,     this, &CContentList::changeStatusOn);
-        connect(buttonWidget, &CObject::OFF,    this, &CContentList::changeStatusOff);
-        connect(buttonWidget, &CObject::remove, contentList, &CObjectsContainer::delete_target);
-        connect(contentList,  &CObjectsContainer::removed, this, &CContentList::deleting);
+        connect(siFrame->spl1,  &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
+        connect(siFrame->spl2,  &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
+        connect(buttonWidget,   &CObject::ON,     this, &CContentList::changeStatusOn);
+        connect(buttonWidget,   &CObject::OFF,    this, &CContentList::changeStatusOff);
+        connect(buttonWidget,   &CObject::remove, contentList, &CObjectsContainer::delete_target);
+        connect(contentList,    &CObjectsContainer::removed, this, &CContentList::deleting);
     }
 }
 
