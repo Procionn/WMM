@@ -73,7 +73,7 @@ void CMenuBar::linking_clicked () {
         }
         else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
 }
 
 
@@ -90,5 +90,5 @@ void CMenuBar::reassembly_clicked () {
         }
         else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
 }
