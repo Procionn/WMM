@@ -33,11 +33,13 @@ public:
     void turnOn() override;
     bool is_target();
     std::string get_name();
+    void set_style(const bool);
+    bool get_style();
 protected:
-    std::string untoggledColor1 = " background-color: #2e2e2e;";
-    std::string untoggledColor2 = " background-color: #404040;";
-    std::string toggledColor1   = " background-color: #444b52;";
-    std::string toggledColor2   = " background-color: #535b63;";
+    std::string untoggledColor2 = " background-color: #2e2e2e;";
+    std::string untoggledColor1 = " background-color: #404040;";
+    std::string toggledColor2   = " background-color: #444b52;";
+    std::string toggledColor1   = " background-color: #535b63;";
     bool count_type;
 };
 

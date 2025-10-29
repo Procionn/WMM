@@ -59,6 +59,7 @@ private:
     void distributor();
     bool not_exists(const std::vector<std::string>& existsElements, const std::string& str);
     void search(const QString&, const bool);
+    void coloring();
 
 private slots:
     void search_slot(const QString&);

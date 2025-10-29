@@ -25,14 +25,11 @@ CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& c
     setFrameShape(QFrame::WinPanel);
     setFrameShadow(QFrame::Raised);
     setMinimumHeight(35);
-    if (counter) {
+    if (counter)
         setStyleSheet(QString::fromStdString(untoggledColor1));
-        counter = false;
-    }
-    else {
+    else
         setStyleSheet(QString::fromStdString(untoggledColor2));
-        counter = true;
-    }
+
     count_type = counter;
     hide();
 }
@@ -42,9 +39,9 @@ void CInpadButton::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
         if (count_type)
-            setStyleSheet(QString::fromStdString(untoggledColor2));
-        else
             setStyleSheet(QString::fromStdString(untoggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2));
     }
 }
 
@@ -52,9 +49,9 @@ void CInpadButton::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
-            setStyleSheet(QString::fromStdString(toggledColor2));
-        else
             setStyleSheet(QString::fromStdString(toggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2));
     }
 }
 
@@ -64,4 +61,16 @@ bool CInpadButton::is_target () {
 
 std::string CInpadButton::get_name () {
     return name;
+}
+
+void CInpadButton::set_style (const bool type) {
+    if (type)
+        setStyleSheet(QString::fromStdString(untoggledColor1));
+    else
+        setStyleSheet(QString::fromStdString(untoggledColor2));
+    count_type = type;
+}
+
+bool CInpadButton::get_style () {
+    return count_type;
 }
