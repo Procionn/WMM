@@ -40,7 +40,7 @@ public:
     std::string version;
     bool type;
     uint64_t id;
-    uint64_t index;
+    const uint64_t index;
 
 protected:
     std::string untoggledColor2 = " background-color: #2e2e2e;";

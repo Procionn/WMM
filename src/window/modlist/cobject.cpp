@@ -17,7 +17,8 @@
 #include "cobject.h"
 #include <wmml.h>
 
-CObject::CObject(const void* v, bool& counter, const uint64_t& index) {
+CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
+    index(index){
     const auto* c = static_cast<const std::vector<wmml::variant>*>(v);
     Box = new QHBoxLayout(this);
 
@@ -37,7 +38,6 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) {
     switcher->setTheme("orange");
     if (std::get<bool>(c->at(4)))   switcher->isTarget(true);
     else                            switcher->isTarget(false);
-    this->index = index;
 
     switcher->setMinimumWidth(70);
     switcher->setMinimumHeight(20);
