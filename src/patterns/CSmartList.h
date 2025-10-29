@@ -22,7 +22,6 @@
 
 #include <vector>
 #include <QMouseEvent>
-#include "../methods.h"
 
 template <class T>
 class CSmartList : public TemplateList
