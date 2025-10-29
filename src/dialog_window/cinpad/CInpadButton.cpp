@@ -15,12 +15,14 @@
  *
  */
 #include "CInpadButton.h"
+#include <QVBoxLayout>
+#include <QLabel>
 
-CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& counter) {
-    this->type = type;
-    name = setName;
+CInpadButton::CInpadButton(const std::string& setName, const bool& type, bool& counter) :
+    type(type), name(setName) {
+
     QVBoxLayout* list = new QVBoxLayout(this);
-    label = new QLabel(QString::fromStdString(setName));
+    QLabel* label = new QLabel(QString::fromStdString(setName));
     list->addWidget(label);
     setFrameShape(QFrame::WinPanel);
     setFrameShadow(QFrame::Raised);

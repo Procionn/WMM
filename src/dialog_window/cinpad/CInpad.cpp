@@ -158,7 +158,6 @@ void CInpad::presets_directory_scaner(const std::vector<std::string>& existsElem
             if (not_exists(existsElements, newButton)) {
                 newButton = stc::string::get_name(newButton);
                 CInpadButton* button = new CInpadButton(newButton, true, count_type);
-                // newObjectList->add(button);
                 vlist.emplace_back(button);
             }
         }
@@ -171,7 +170,6 @@ void CInpad::mods_scaner(const std::vector<std::string>& existsElements) {
         std::string buttonName = ModManager::get().mod_data_converter(entry.modId);
         if (not_exists(existsElements, buttonName)) {
             CInpadButton* button = new CInpadButton(buttonName, false, count_type);
-            // newObjectList->add(button);
             vlist.emplace_back(button);
         }
     }
