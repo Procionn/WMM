@@ -63,24 +63,28 @@ private slots:
 class CContentList : public QWidget
 {
     Q_OBJECT
-public:
-    CObjectsContainer* contentList;
-    QWidget* contentWidget;
-    CDND* dnd;
-    CSubInfoFrame* siFrame;
+    int filter;
 
+    CObjectsContainer* contentList;
+    CSubInfoFrame* siFrame;
     std::string sPath;
     std::string targetName;
+public:
+
+    CDND* dnd;
     bool targetType;
 
     CContentList();
+
 public slots:
     void updateList(CObjectsButton* pointer, bool type);
     void clear();
+
 private slots:
     void changeStatusOn(CObject* toggledElements);
     void changeStatusOff(CObject* toggledElements);
     void deleting(CObject* pointer);
+    void sort(const int = INT_MAX);
 };
 
 

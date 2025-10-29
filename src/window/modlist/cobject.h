@@ -34,20 +34,23 @@ class CSplitter;
 class CObject : public CSmartObject
 {
     Q_OBJECT
+
 public:
     std::string name;
     std::string version;
     bool type;
     uint64_t id;
     uint64_t index;
+
 protected:
-    std::string untoggledColor1 = " background-color: #2e2e2e;";
-    std::string untoggledColor2 = " background-color: #404040;";
-    std::string toggledColor1   = " background-color: #3f464d;";
-    std::string toggledColor2   = " background-color: #535b63;";
+    std::string untoggledColor2 = " background-color: #2e2e2e;";
+    std::string untoggledColor1 = " background-color: #404040;";
+    std::string toggledColor2   = " background-color: #3f464d;";
+    std::string toggledColor1   = " background-color: #535b63;";
     // std::string border          = " border-radius: 10px;";
     std::string border          = "";
     bool count_type;
+
 public:
     QHBoxLayout* Box;
     QLabel* Lname;
@@ -56,17 +59,23 @@ public:
     CSplitter* spl1;
     CSplitter* spl2;
     CSwitchButton* switcher;
+
 public:
     CObject(const void* v, bool& counter, const uint64_t& index);
+    void set_style(const bool type);
+    bool get_style();
+
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);
     void remove(CObject* pointer);
+
 public slots:
     void turnOff() override;
     void turnOn() override;
     void context(const QPoint& pos) override;
     void DELETE();
+
 private slots:
     void INFO();
 };

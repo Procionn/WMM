@@ -22,12 +22,14 @@
 
 CContentList::CContentList () {
     setMinimumWidth(200);
+    filter = CObjectsContainer::NAME_T;
     QVBoxLayout* BaseContainer = new QVBoxLayout();
     setLayout(BaseContainer);
     siFrame = new CSubInfoFrame(BaseContainer);
     contentList = new CObjectsContainer;
     BaseContainer->addWidget(contentList);
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
+    connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
 }
 
 
@@ -45,6 +47,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         contentList->add(buttonWidget);
         buttonWidget->spl1->setSizes(siFrame->spl1->sizes());
         buttonWidget->spl2->setSizes(siFrame->spl2->sizes());
+        buttonWidget->show();
 
         connect(siFrame->spl1,  &QSplitter::splitterMoved, buttonWidget->spl1, &CSplitter::moveSplitter);
         connect(siFrame->spl2,  &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
@@ -53,6 +56,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(buttonWidget,   &CObject::remove, contentList, &CObjectsContainer::delete_target);
         connect(contentList,    &CObjectsContainer::removed, this, &CContentList::deleting);
     }
+    sort();
 }
 
 void CContentList::clear () {
@@ -74,5 +78,14 @@ void CContentList::deleting (CObject* pointer) {
         file.remove_object(pointer->index);
         delete pointer;
         last = pointer;
+    }
+}
+
+void CContentList::sort (const int filter) {
+    if (filter == INT_MAX)
+        contentList->sort(this->filter);
+    else {
+        contentList->sort(filter);
+        this->filter = filter;
     }
 }

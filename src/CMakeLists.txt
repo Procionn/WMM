@@ -107,6 +107,7 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    window/CSortedFrame.h window/CSortedFrame.cpp
 )
 
 target_compile_definitions(SETTINGS PRIVATE

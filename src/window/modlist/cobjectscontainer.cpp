@@ -56,3 +56,65 @@ void CObjectsContainer::delete_target(CObject* target) {
     childList = std::move(newVector);
     emit removed(target);
 }
+
+
+#define sorting(symbol, comp_type)  \
+std::sort(childList.begin(), childList.end(), [](CObject* a, CObject* b) {  \
+    return a->comp_type symbol b->comp_type;    \
+})
+
+void CObjectsContainer::sort (const int filter) {
+    switch (filter) {
+    case NAME_T:
+        sorting(>, name);
+        break;
+    case NAME_F:
+        sorting(<, name);
+        break;
+    case VERSION_T:
+        sorting(>, version);
+        break;
+    case VERSION_F:
+        sorting(<, version);
+        break;
+    case TYPE_T:
+        sorting(>, type);
+        break;
+    case TYPE_F:
+        sorting(<, type);
+        break;
+    case CONDITION_T:
+        sorting(>, switcher->selected);
+        break;
+    case CONDITION_F:
+        sorting(<, switcher->selected);
+        break;
+    default:
+        stc::cerr("undefined filter");
+        return;
+    }
+    for (QLayoutItem* item; (item = list->takeAt(0)) != nullptr; delete item)
+        if (item->widget())
+            list->removeWidget(item->widget());
+    for (auto* entry : childList)
+        list->addWidget(entry);
+    coloring();
+}
+
+
+
+void CObjectsContainer::coloring () {
+    CObject* last = nullptr;
+    for (auto* entry : childList) {
+        if (entry->isVisible()) {
+            if (!last) {
+                entry->set_style(true);
+                last = entry;
+            }
+            else {
+                entry->set_style(!(last->get_style()));
+                last = entry;
+            }
+        }
+    }
+}

@@ -20,19 +20,34 @@
 #include "cobject.h"
 #include "../../patterns/CSmartList.h"
 
-#include <QWidget>
-
 class CObjectsContainer final : public CSmartList<CObject>
 {
     Q_OBJECT
+
 public:
     CObjectsContainer();
+
+    enum filter {
+        NAME_T,
+        NAME_F,
+        VERSION_T,
+        VERSION_F,
+        TYPE_T,
+        TYPE_F,
+        CONDITION_T,
+        CONDITION_F
+    };
+
 public slots:
     void delete_target(CObject*);
+    void sort(const int filter);
 
 private slots:
     void deletionSignals();
     void RMB(const QPoint& pos, CObject* target) override;
+
+private:
+    void coloring();
 
 signals:
     void removed(CObject*);

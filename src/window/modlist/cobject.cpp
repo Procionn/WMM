@@ -55,14 +55,6 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) {
 
     connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
     connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
-    if (counter) {
-        setStyleSheet(QString::fromStdString(untoggledColor1 + border));
-        counter = false;
-    }
-    else {
-        setStyleSheet(QString::fromStdString(untoggledColor2 + border));
-        counter = true;
-    }
     count_type = counter;
 }
 
@@ -90,9 +82,9 @@ void CObject::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
         if (count_type)
-            setStyleSheet(QString::fromStdString(untoggledColor2 + border));
-        else
             setStyleSheet(QString::fromStdString(untoggledColor1 + border));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2 + border));
     }
 }
 
@@ -100,10 +92,22 @@ void CObject::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
-            setStyleSheet(QString::fromStdString(toggledColor2 + border));
-        else
             setStyleSheet(QString::fromStdString(toggledColor1 + border));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2 + border));
     }
+}
+
+void CObject::set_style (const bool type) {
+    if (type)
+        setStyleSheet(QString::fromStdString(untoggledColor1));
+    else
+        setStyleSheet(QString::fromStdString(untoggledColor2));
+    count_type = type;
+}
+
+bool CObject::get_style () {
+    return count_type;
 }
 
 

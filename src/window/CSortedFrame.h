@@ -14,30 +14,34 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef CSUBINFOFRAME_H
-#define CSUBINFOFRAME_H
+#ifndef CSORTEDFRAME_H
+#define CSORTEDFRAME_H
 
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <vector>
-class CSortedFrame;
+#include <QLabel>
 
-class CSubInfoFrame : public QHBoxLayout
+class CSortedFrame : public QLabel
 {
     Q_OBJECT
-    std::vector<CSortedFrame*> list;
+    char state = 0;
+    static inline const std::string v = "v";
+    static inline const std::string n = "^";
+    static inline const std::string spacing = "  ";
+    const std::string name;
 
 public:
-    QSplitter* spl1;
-    QSplitter* spl2;
+    CSortedFrame(const std::string&);
 
-    CSubInfoFrame(QVBoxLayout* parent = nullptr);
+protected:
+    void mousePressEvent(QMouseEvent*) override;
+    void set_up();
+    void set_down();
+
+public slots:
+    void reset();
 
 signals:
-    void filter_changed(const int);
-
-protected slots:
-    void reset(CSortedFrame*);
+    void up();
+    void down();
 };
 
-#endif // CSUBINFOFRAME_H
+#endif // CSORTEDFRAME_H
