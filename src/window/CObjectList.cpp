@@ -83,7 +83,6 @@ void CObjectList::scan_directory (const std::filesystem::path& directory, const 
             std::string newButton = stc::string::get_name(object.path().string());
             CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
             button->type = type;
-            objectList->addWidget(button);
             connect(button, &QPushButton::clicked, this, [=]{
                 emit objectChoosed(button, TypeTarget);
                 targetName = newButton;
@@ -107,8 +106,13 @@ void CObjectList::updateList () {
         delete entry;
     list.clear();
 
-    scan_directory(stc::cwmm::ram_preset(),     true, lastTumbler);
-    scan_directory(stc::cwmm::ram_collection(), false, lastTumbler);
+    scan_directory(stc::cwmm::ram_preset(),     true,   lastTumbler);
+    scan_directory(stc::cwmm::ram_collection(), false,  lastTumbler);
+    std::sort(list.begin(), list.end(), [](CObjectsButton* a, CObjectsButton* b) {
+        return a->text() < b->text();
+    });
+    for (auto* entry : list)
+        objectList->addWidget(entry);
 }
 
 void CObjectList::render() {
