@@ -41,6 +41,7 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
 
     switcher->setMinimumWidth(70);
     switcher->setMinimumHeight(20);
+    setMinimumHeight(50);
 
     Lname->resize(400, 0);
     setFrameShape(QFrame::Box);
