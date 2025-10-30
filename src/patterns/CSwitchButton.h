@@ -22,10 +22,13 @@
 class CSwitchButton : public CToggledButton
 {
     Q_OBJECT
+
 public:
-    CSwitchButton(QWidget* parent = nullptr);
+    CSwitchButton();
+
 private slots:
     void ChangeOfState();
+
 signals:
     void toggled(CSwitchButton* toggledButton);
     void untoggled(CSwitchButton* toggledButton);

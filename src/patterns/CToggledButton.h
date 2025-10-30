@@ -23,26 +23,30 @@
 class CToggledButton : public QPushButton
 {
     Q_OBJECT
+
 public:
-    std::string name = "";
+    const std::string name;
     bool selected;
 
-    CToggledButton(std::string setName = "", bool type = false);
-    CToggledButton(QWidget* parent = nullptr, std::string setName = "", bool type = false);
+    CToggledButton(const std::string& setName = "", bool type = false);
     void SetLeftAlignment(bool type);
-    void setTheme(std::string type);
-    void setColor(std::string toggled, std::string untoggled);
+    void setTheme(const std::string& type);
+    void setColor(const std::string& toggled, const std::string& untoggled);
     void isTarget(bool type);
+
 private:
-    std::string TBC1 = "=> ";
-    std::string TBC2 = " <=";
+    static const inline std::string TBC1 = "=> ";
+    static const inline std::string TBC2 = " <=";
+
 protected:
     bool leftAlignment = false;
-    std::string leftAlign = "text-align: left; padding-left: 10px;";
+    static const inline std::string leftAlign = "text-align: left; padding-left: 10px;";
     std::string untoggledColor = " background-color: #31363b;";
     std::string toggledColor = " background-color: #444b52;";
+
 protected slots:
     virtual void ChangeOfState();
+
 signals:
     void toggled(CToggledButton* toggledButton, std::string name);
     void untoggled(CToggledButton* toggledButton, std::string name);

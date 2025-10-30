@@ -20,13 +20,13 @@
 
 RenameDialog::RenameDialog(std::string& renamedFile, const std::string& messageString) {
     QVBoxLayout* layout = new QVBoxLayout(list);
-    message = new QLabel(QString::fromStdString(messageString));
-    line = new QLineEdit(QString::fromStdString(renamedFile));
+    QLabel* message = new QLabel(QString::fromStdString(messageString));
+    QLineEdit* line = new QLineEdit(QString::fromStdString(renamedFile));
 
     layout->addWidget(message);
     layout->addWidget(line);
 
-    connect(this, &CFastDialog::applyClicked, [&]{
+    connect(this, &CFastDialog::applyClicked, [this, line, &renamedFile]{
         renamedFile = line->text().toStdString();
         delete this;
     });
@@ -40,7 +40,7 @@ RenameDialog::RenameDialog(std::string& renamedFile, const std::string& messageS
 
 std::string file_renaming(const std::string& renamedFile, std::string errorMessage) {
     std::string filename = renamedFile;
-    if (errorMessage == "")
+    if (errorMessage.empty())
         errorMessage = Core::lang["LANG_LABEL_RENAME_MESSAGE"];
 
     RenameDialog* dialog = new RenameDialog(filename, errorMessage);

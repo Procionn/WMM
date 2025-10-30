@@ -25,11 +25,11 @@
 class RenameDialog : public CFastDialog
 {
 protected:
-    QLabel* message;
+    // QLabel* message;
 public:
     RenameDialog(std::string& renamedFile, const std::string& messageString);
 
-    QLineEdit* line;
+    // QLineEdit* line;
 };
 
 

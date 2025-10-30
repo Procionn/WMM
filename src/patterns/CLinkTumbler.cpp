@@ -16,8 +16,7 @@
  */
 #include "CLinkTumbler.h"
 
-CLinkTumbler::CLinkTumbler(std::string name, CLinkTumbler* linked, QWidget* parent) : CToggledButton(parent, name){
-    this->name = name;
+CLinkTumbler::CLinkTumbler(const std::string& name, CLinkTumbler* linked) : CToggledButton(name){
     if (linked != nullptr) {
         link = linked;
         connect(this, &CLinkTumbler::clicked, linked, &CLinkTumbler::reset);

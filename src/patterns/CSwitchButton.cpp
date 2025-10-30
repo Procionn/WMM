@@ -16,7 +16,7 @@
  */
 #include "CSwitchButton.h"
 
-CSwitchButton::CSwitchButton(QWidget* parent) : CToggledButton(parent){setText("OFF");}
+CSwitchButton::CSwitchButton() {setText("OFF");}
 
 void CSwitchButton::ChangeOfState() {
     if (selected) {

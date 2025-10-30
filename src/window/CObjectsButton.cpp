@@ -20,8 +20,7 @@
 #include "../methods.h"
 #include "../CONSTANTS.h"
 
-CObjectsButton::CObjectsButton(std::string name, CObjectsButton* linked, QWidget* parent) : CLinkTumbler(name){
-    this->name = name;
+CObjectsButton::CObjectsButton(const std::string& name, CObjectsButton* linked) : CLinkTumbler(name){
     if (linked != nullptr) {
         link = linked;
         connect(this, &CObjectsButton::clicked, linked, &CObjectsButton::reset);

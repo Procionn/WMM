@@ -25,18 +25,18 @@ CObjectsContainer::CObjectsContainer() {
     setWidget(scrolledWidget);
     scrolledWidget->setLayout(list);
     list->setSpacing(0);
-    // setStyleSheet("background-color: #444b50; border-radius: 10px;");
 }
 
 void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
     contextMenu->exec(this->mapToGlobal(pos));
 }
 
 void CObjectsContainer::deletionSignals () {
     std::vector<CObject*> newVector;
+    newVector.reserve(childList.size());
     for (CObject* target : childList) {
         if (target->toggl_condition)
             target->DELETE();
