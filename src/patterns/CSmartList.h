@@ -28,7 +28,7 @@ class CSmartList : public TemplateList
 {
 protected:
     std::vector<T*> childList;
-    T* lastTarget;
+    T* lastTarget = nullptr;
 public:
     CSmartList() {
         static_assert(std::is_base_of<CSmartObject, T>::value, "The parameter must be inherited from CSmartObject.");
