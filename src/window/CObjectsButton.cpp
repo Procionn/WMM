@@ -49,7 +49,9 @@ void CObjectsButton::DELETE() {
     if (type) std::filesystem::remove(stc::cwmm::ram_preset(name));
     else {
         std::filesystem::remove(stc::cwmm::ram_collection(name));
-        stc::fs::remove_all(std::filesystem::path(COLLECTIONS + Core::CONFIG_GAME) / name);
+        auto path = std::filesystem::path(COLLECTIONS + Core::CONFIG_GAME) / name;
+        if (std::filesystem::exists(path))
+            stc::fs::remove_all(path);
     }
     emit remove(this);
 }
