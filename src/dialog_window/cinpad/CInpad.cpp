@@ -21,6 +21,7 @@
 #include <QMenuBar>
 #include <wmml.h>
 #include <QLineEdit>
+#include <regex>
 
 CInpad::CInpad(bool& type) {
     callType = &type;
@@ -87,7 +88,8 @@ void CInpad::search (const QString& string, const bool flag) {
     static std::string ref;
     if (flag) ref = string.toStdString();
     for (auto* target : vlist) {
-        if (target->type == targetType && target->get_name().find(ref) != std::string::npos)
+        if (target->type == targetType && std::regex_search(
+                target->get_name(), std::regex(ref, std::regex_constants::icase)))
             target->show();
         else target->hide();
     }

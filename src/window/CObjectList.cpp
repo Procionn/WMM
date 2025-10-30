@@ -20,6 +20,7 @@
 #include "../patterns/CScrollWindow.h"
 #include "../core.h"
 #include <QLineEdit>
+#include <regex>
 
 CObjectList::CObjectList () {
     setMaximumWidth(1000);
@@ -123,7 +124,8 @@ void CObjectList::search (const QString& string, const bool flag) {
     static std::string ref;
     if (flag) ref = string.toStdString();
     for (CObjectsButton* target : list) {
-        if (target->type == TypeTarget && target->name.find(ref) != std::string::npos)
+        if (target->type == TypeTarget && std::regex_search(
+                target->name, std::regex(ref, std::regex_constants::icase)))
             target->show();
         else target->hide();
     }
