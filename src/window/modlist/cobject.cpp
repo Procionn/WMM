@@ -127,7 +127,11 @@ CVersion::CVersion (const std::string& version, CObject* parent) :
 
 void CVersion::context (const QPoint& pos) {
     QMenu* contextMenu = new QMenu(this);
-    for (const auto& entry : ModManager::get().all_versions_list(parent->id)) {
+    const auto container = ModManager::get().all_versions_list(parent->id);
+    std::string_view entry;
+    int i = container.size();
+    for (--i; i >= 0; --i) {
+        entry = container.at(i);
         QAction* action = new QAction(entry.data());
         contextMenu->addAction(action);
         connect(action, &QAction::triggered, this, [entry, this]{
