@@ -17,17 +17,15 @@
 #ifndef MAINWIDGETS_H
 #define MAINWIDGETS_H
 
-#include "../dialog_window/CNewObjectDialog.h"
-#include "../patterns/CScrollWindow.h"
 #include "../window/modlist/cobjectscontainer.h"
 #include "CObjectsButton.h"
 #include "../dnd.h"
+#include "CSubInfoFrame.h"
 
 #include <string>
 #include <filesystem>
 #include <vector>
 #include <QVBoxLayout>
-#include <QSplitter>
 
 class CObjectList : public QWidget
 {
@@ -45,12 +43,17 @@ public:
 
 private:
     void scan_directory (const std::filesystem::path& directory, const bool type, CObjectsButton*& lastTumbler);
+    void search(const QString&, const bool);
+
 signals:
     void objectChoosed(CObjectsButton* pointer, bool type);
     void remove(CObjectsButton* pointer);
 
 public slots:
     void CreteObject(const std::string& name);
+
+private slots:
+    void search_slot(const QString&);
 };
 
 
@@ -60,25 +63,28 @@ public slots:
 class CContentList : public QWidget
 {
     Q_OBJECT
-public:
-    QSplitter* spl1;
-    QSplitter* spl2;
-    CObjectsContainer* contentList;
-    QWidget* contentWidget;
-    CDND* dnd;
+    int filter;
 
+    CObjectsContainer* contentList;
+    CSubInfoFrame* siFrame;
     std::string sPath;
     std::string targetName;
+public:
+
+    CDND* dnd;
     bool targetType;
 
     CContentList();
+
 public slots:
     void updateList(CObjectsButton* pointer, bool type);
     void clear();
+
 private slots:
     void changeStatusOn(CObject* toggledElements);
     void changeStatusOff(CObject* toggledElements);
     void deleting(CObject* pointer);
+    void sort(const int = INT_MAX);
 };
 
 

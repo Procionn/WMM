@@ -22,9 +22,11 @@
 class CLinkTumbler : public CToggledButton
 {
     Q_OBJECT
-public:
     CLinkTumbler* link = nullptr;
-    CLinkTumbler(std::string name = "", CLinkTumbler* linked = nullptr, QWidget* parent = nullptr);
+
+public:
+    CLinkTumbler(const std::string& name = "", CLinkTumbler* linked = nullptr);
+
 protected slots:
     void ChangeOfState();
     void reset();

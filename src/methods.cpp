@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <QDesktopServices>
 #include <QUrl>
+#include <wmml.h>
 #ifdef _WIN32
     #include <windows.h>
 #endif

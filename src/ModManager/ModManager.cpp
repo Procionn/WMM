@@ -23,6 +23,7 @@
 #include <filesystem>
 #include <regex>
 #include <archive_entry.h>
+#include <wmml.h>
 
 // Save file struct:
 //

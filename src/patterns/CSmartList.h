@@ -28,7 +28,7 @@ class CSmartList : public TemplateList
 {
 protected:
     std::vector<T*> childList;
-    T* lastTarget;
+    T* lastTarget = nullptr;
 public:
     CSmartList() {
         static_assert(std::is_base_of<CSmartObject, T>::value, "The parameter must be inherited from CSmartObject.");
@@ -68,7 +68,8 @@ private:
                 }
             }
             for (int i = min; i <= max; ++i)
-                childList[i]->turnOn();
+                if(childList[i]->isVisible())
+                    childList[i]->turnOn();
         }
         else {
             target->ChangeOfState();
@@ -96,12 +97,6 @@ private slots:
                 LBM_SHIFT(static_cast<T*>(target));
             else reset();
         }
-#if 0
-        for (T* t : childList)
-            std::cout << std::left << std::setw(30) << t->name  << " " << t->toggl_condition << std::endl;
-        for (int i = 0; i != 3; ++i)
-            std::cout << std::endl;
-#endif
     }
 
 

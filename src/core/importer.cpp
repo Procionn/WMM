@@ -24,6 +24,7 @@
 #include "../core.h"
 #include "../CONSTANTS.h"
 #include <hpp-archive.h>
+#include <wmml.h>
 
 
 import::import (const std::string& path) : archivePath(path) {
@@ -101,26 +102,15 @@ void import::unarchivate_main_objects () {
 
 
 void import::renaming_fix () {
-    //////////////////////////////////////////////////////////////////////////////////////////
-    // This function will only exist here until the wmml library is modified
-    // to fix a bug that makes it impossible to edit recorded lines.
-    std::string filePath = stc::cwmm::ram_collection(mainCollectionFile);
-    std::vector<std::vector<wmml::variant>> list;
-    {
-        wmml oldFile(filePath);
-        list.reserve(oldFile.height());
-
-        for (std::vector<wmml::variant> v(GRID_WIDTH); oldFile.read(v);)
-            list.emplace_back(v);
-    }
-    std::filesystem::remove(filePath);
-    wmml newFile(filePath, GRID_WIDTH);
-
-    for (auto& entry : list) {
-        if (!std::get<bool>(entry[2]))
-            entry[0] = renamedList[std::get<std::string>(entry[0])];
-        newFile.write(entry);
-    }
+    wmml file(stc::cwmm::ram_collection(mainCollectionFile));
+    std::vector<wmml::variant> v(GRID_WIDTH);
+    std::vector<std::pair<int, std::string>> data;
+    data.reserve(file.height());
+    for(int i = 0; file.read(v); ++i)
+        if (!std::get<bool>(v[2]))
+            data.emplace_back(i, std::get<std::string>(v[0]));
+    for (const auto& entry : data)
+        file.overwriting_sector(std::get<int>(entry), 0, renamedList[std::get<std::string>(entry)]);
 }
 
 

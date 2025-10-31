@@ -14,24 +14,30 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef CSWITCHBUTTON_H
-#define CSWITCHBUTTON_H
+#ifndef CSUBINFOFRAME_H
+#define CSUBINFOFRAME_H
 
-#include "CToggledButton.h"
+#include <QHBoxLayout>
+#include <QSplitter>
+#include <vector>
+class CSortedFrame;
 
-class CSwitchButton : public CToggledButton
+class CSubInfoFrame : public QHBoxLayout
 {
     Q_OBJECT
+    std::vector<CSortedFrame*> list;
 
 public:
-    CSwitchButton();
+    QSplitter* spl1;
+    QSplitter* spl2;
 
-private slots:
-    void ChangeOfState();
+    CSubInfoFrame(QVBoxLayout* parent = nullptr);
 
 signals:
-    void toggled(CSwitchButton* toggledButton);
-    void untoggled(CSwitchButton* toggledButton);
+    void filter_changed(const int);
+
+protected slots:
+    void reset(CSortedFrame*);
 };
 
-#endif // CSWITCHBUTTON_H
+#endif // CSUBINFOFRAME_H

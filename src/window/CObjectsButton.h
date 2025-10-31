@@ -27,13 +27,16 @@
 class CObjectsButton : public CLinkTumbler
 {
     Q_OBJECT
+    CObjectsButton* link = nullptr;
+
 public:
     bool type;
-    CObjectsButton* link = nullptr;
-    CObjectsButton(std::string name = "", CObjectsButton* linked = nullptr, QWidget* parent = nullptr);
+    CObjectsButton(const std::string& name = "", CObjectsButton* linked = nullptr);
+
 private slots:
     void context(const QPoint &pos);
     void DELETE();
+
 signals:
     void remove(CObjectsButton* button);
 };

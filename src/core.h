@@ -23,7 +23,8 @@
 #include <filesystem>
 #include <cassert>
 #include <map>
-#include <wmml.h>
+class wmml;
+
 
 
 class CBaseConfig
@@ -99,7 +100,7 @@ protected:
 
 private:
     const int wmml_size = 3;
-    void write(wmml& input, std::string str);
+    void write(wmml* input, std::string str);
 };
 
 
@@ -126,7 +127,7 @@ protected:
         std::string name;
         bool status = true;
 
-        wmmb(std::vector<wmml::variant>& v)  noexcept;
+        wmmb(void* v)  noexcept;
         bool operator==(const wmmb& last) const noexcept;
     };
     std::vector<Core::wmmb> parser(const std::filesystem::path& file,

@@ -14,24 +14,34 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef CSWITCHBUTTON_H
-#define CSWITCHBUTTON_H
+#ifndef CSORTEDFRAME_H
+#define CSORTEDFRAME_H
 
-#include "CToggledButton.h"
+#include <QLabel>
 
-class CSwitchButton : public CToggledButton
+class CSortedFrame : public QLabel
 {
     Q_OBJECT
+    char state = 0;
+    static inline const std::string v = "v";
+    static inline const std::string n = "^";
+    static inline const std::string spacing = "  ";
+    const std::string name;
 
 public:
-    CSwitchButton();
+    CSortedFrame(const std::string&);
 
-private slots:
-    void ChangeOfState();
+protected:
+    void mousePressEvent(QMouseEvent*) override;
+    void set_up();
+    void set_down();
+
+public slots:
+    void reset();
 
 signals:
-    void toggled(CSwitchButton* toggledButton);
-    void untoggled(CSwitchButton* toggledButton);
+    void up();
+    void down();
 };
 
-#endif // CSWITCHBUTTON_H
+#endif // CSORTEDFRAME_H

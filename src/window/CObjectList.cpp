@@ -17,8 +17,10 @@
 #include "mainWidgets.h"
 
 #include "../patterns/ERRORdialog.h"
+#include "../patterns/CScrollWindow.h"
 #include "../core.h"
-#include <QTimer>
+#include <QLineEdit>
+#include <regex>
 
 CObjectList::CObjectList () {
     setMaximumWidth(1000);
@@ -29,6 +31,8 @@ CObjectList::CObjectList () {
     privateObjectList->addLayout(objectButtonBox);
     CLinkTumbler* Collection = new CLinkTumbler(Core::lang["LANG_BUTTON_COLLECTIONS"]);
     CLinkTumbler* Preset     = new CLinkTumbler(Core::lang["LANG_BUTTON_PRESETS"], Collection);
+    QLineEdit* searchTab     = new QLineEdit;
+    privateObjectList->addWidget(searchTab);
     objectButtonBox->addWidget(Collection);
     objectButtonBox->addWidget(Preset);
     Collection->isTarget(true);
@@ -54,6 +58,7 @@ CObjectList::CObjectList () {
         TypeTarget = true;
         render();
     });
+    connect(searchTab, &QLineEdit::textEdited, this, &CObjectList::search_slot);
     updateList();
     render();
 }
@@ -79,7 +84,6 @@ void CObjectList::scan_directory (const std::filesystem::path& directory, const 
             std::string newButton = stc::string::get_name(object.path().string());
             CObjectsButton* button = new CObjectsButton(newButton, lastTumbler);
             button->type = type;
-            objectList->addWidget(button);
             connect(button, &QPushButton::clicked, this, [=]{
                 emit objectChoosed(button, TypeTarget);
                 targetName = newButton;
@@ -103,20 +107,31 @@ void CObjectList::updateList () {
         delete entry;
     list.clear();
 
-    scan_directory(stc::cwmm::ram_preset(),     true, lastTumbler);
-    scan_directory(stc::cwmm::ram_collection(), false, lastTumbler);
+    scan_directory(stc::cwmm::ram_preset(),     true,   lastTumbler);
+    scan_directory(stc::cwmm::ram_collection(), false,  lastTumbler);
+    std::sort(list.begin(), list.end(), [](CObjectsButton* a, CObjectsButton* b) {
+        return a->text() < b->text();
+    });
+    for (auto* entry : list)
+        objectList->addWidget(entry);
 }
 
 void CObjectList::render() {
-    if (TypeTarget) {
-        for (CObjectsButton* target : list)
-            if  (target->type == true) target->show();
-            else target->hide();
+    search("", false);
+}
+
+void CObjectList::search (const QString& string, const bool flag) {
+    static std::string ref;
+    if (flag) ref = string.toStdString();
+    for (CObjectsButton* target : list) {
+        if (target->type == TypeTarget && std::regex_search(
+                target->name, std::regex(ref, std::regex_constants::icase)))
+            target->show();
+        else target->hide();
     }
-    else {
-        for (CObjectsButton* target : list)
-            if  (target->type == false) target->show();
-            else target->hide();
-    }
+}
+
+void CObjectList::search_slot (const QString& string) {
+    search(string, true);
 }
 

@@ -15,30 +15,33 @@
  *
  */
 #include "cobject.h"
+#include <wmml.h>
 
-CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const uint64_t& index) {
+CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
+    index(index){
+    const auto* c = static_cast<const std::vector<wmml::variant>*>(v);
     Box = new QHBoxLayout(this);
 
 
-    Lname = new QLabel(QString::fromStdString(std::get<std::string>(v[0])));
-    Lversion = new QLabel(QString::fromStdString(std::get<std::string>(v[1])));
-    if (std::get<bool>(v[2]))
+    Lname = new QLabel(QString::fromStdString(std::get<std::string>(c->at(0))));
+    Lversion = new QLabel(QString::fromStdString(std::get<std::string>(c->at(1))));
+    if (std::get<bool>(c->at(2)))
          Ltype = new QLabel("Mod");
     else Ltype = new QLabel("Collection");
     switcher = new CSwitchButton;
 
 
-    name = std::get<std::string>(v[0]);
-    version = std::get<std::string>(v[1]);
-    type = std::get<bool>(v[2]);
-    id = std::get<uint64_t>(v[3]);
+    name = std::get<std::string>(c->at(0));
+    version = std::get<std::string>(c->at(1));
+    type = std::get<bool>(c->at(2));
+    id = std::get<uint64_t>(c->at(3));
     switcher->setTheme("orange");
-    if (std::get<bool>(v[4])) switcher->isTarget(true);
-    else             switcher->isTarget(false);
-    this->index = index;
+    if (std::get<bool>(c->at(4)))   switcher->isTarget(true);
+    else                            switcher->isTarget(false);
 
     switcher->setMinimumWidth(70);
     switcher->setMinimumHeight(20);
+    setMinimumHeight(50);
 
     Lname->resize(400, 0);
     setFrameShape(QFrame::Box);
@@ -53,14 +56,6 @@ CObject::CObject(const std::vector<wmml::variant>& v, bool& counter, const uint6
 
     connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
     connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
-    if (counter) {
-        setStyleSheet(QString::fromStdString(untoggledColor1 + border));
-        counter = false;
-    }
-    else {
-        setStyleSheet(QString::fromStdString(untoggledColor2 + border));
-        counter = true;
-    }
     count_type = counter;
 }
 
@@ -88,9 +83,9 @@ void CObject::turnOff () {
     if (toggl_condition) {
         toggl_condition = false;
         if (count_type)
-            setStyleSheet(QString::fromStdString(untoggledColor2 + border));
-        else
             setStyleSheet(QString::fromStdString(untoggledColor1 + border));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2 + border));
     }
 }
 
@@ -98,10 +93,22 @@ void CObject::turnOn () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
-            setStyleSheet(QString::fromStdString(toggledColor2 + border));
-        else
             setStyleSheet(QString::fromStdString(toggledColor1 + border));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2 + border));
     }
+}
+
+void CObject::set_style (const bool type) {
+    if (type)
+        setStyleSheet(QString::fromStdString(untoggledColor1));
+    else
+        setStyleSheet(QString::fromStdString(untoggledColor2));
+    count_type = type;
+}
+
+bool CObject::get_style () {
+    return count_type;
 }
 
 
