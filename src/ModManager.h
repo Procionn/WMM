@@ -97,6 +97,7 @@ public:
     void add(const uint64_t& modId, std::string& modVersion,
              const std::string& modName, const std::string&);
     const std::vector<Mod>& all_mods_list();
+    const std::vector<std::string_view> all_versions_list(const uint64_t& modId);
 };
 
 
@@ -131,13 +132,13 @@ public:
     void remove(const std::string& name, const std::string& version);
 
     std::string get_path(const uint64_t id);
-    std::string get_path(const uint64_t id, const std::string& version);
+    std::string get_path(const uint64_t id,     const std::string& version);
     std::string get_log_path(const uint64_t id, const std::string& version);
     std::string get_path(const std::string& name);
-    std::string get_path(const std::string& name, const std::string& version);
+    std::string get_path(const std::string& name,     const std::string& version);
     std::string get_log_path(const std::string& name, const std::string& version);
 
-    uint64_t mod_data_converter(const std::string& modName);
+    uint64_t    mod_data_converter(const std::string& modName);
     std::string mod_data_converter(const uint64_t modId);
 
     std::string mod_recommended_version(const uint64_t modId);

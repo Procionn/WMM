@@ -210,6 +210,18 @@ const std::vector<Mod>& ModList::all_mods_list() {
 }
 
 
+const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& modId) {
+    auto* mod = bsearch(modId);
+    assert(mod->versions);
+    std::vector<std::string_view> versionList;
+    versionList.reserve(mod->versions->size());
+    // for (const auto& entry : mod->versions)
+    for (const auto& entry : *mod->versions)
+        versionList.emplace_back(entry.modVersion);
+    return versionList;
+}
+
+
 std::string ModList::mod_archive_unificate (const std::string& path, const uint64_t& modId, Mod* ptr,
                                             const std::string& modVersion, const std::string& modName) {
     auto version = unificator::start(static_cast<void*>(ptr->versions), modName, modVersion, modId);
