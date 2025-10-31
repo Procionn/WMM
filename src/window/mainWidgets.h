@@ -85,6 +85,7 @@ private slots:
     void changeStatusOff(CObject* toggledElements);
     void deleting(CObject* pointer);
     void sort(const int = INT_MAX);
+    void change_version (const std::string_view&, const uint64_t);
 };
 
 

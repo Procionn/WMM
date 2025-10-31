@@ -21,6 +21,7 @@
 #include "../../methods.h"
 #include "../../patterns/CSwitchButton.h"
 #include "../../patterns/CSmartObject.h"
+#include "../../patterns/CFastDialog.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -30,8 +31,9 @@
 #include <string>
 
 class CSplitter;
+class CVersion;
 
-class CObject : public CSmartObject
+class CObject final : public CSmartObject
 {
     Q_OBJECT
 
@@ -54,7 +56,7 @@ protected:
 public:
     QHBoxLayout* Box;
     QLabel* Lname;
-    QLabel* Lversion;
+    CVersion* Lversion;
     QLabel* Ltype;
     CSplitter* spl1;
     CSplitter* spl2;
@@ -78,6 +80,25 @@ public slots:
 
 private slots:
     void INFO();
+};
+
+
+
+
+
+class CVersion final : public QLabel
+{
+    Q_OBJECT
+    CObject* parent;
+
+public:
+    CVersion(const std::string& version, CObject* parent);
+
+protected slots:
+    void context(const QPoint& pos);
+
+signals:
+    void version_changed(const std::string_view&, const uint64_t);
 };
 
 

@@ -55,8 +55,14 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(buttonWidget,   &CObject::OFF,    this, &CContentList::changeStatusOff);
         connect(buttonWidget,   &CObject::remove, contentList, &CObjectsContainer::delete_target);
         connect(contentList,    &CObjectsContainer::removed, this, &CContentList::deleting);
+        connect(buttonWidget->Lversion, &CVersion::version_changed, this, &CContentList::change_version);
     }
     sort();
+}
+
+void CContentList::change_version (const std::string_view& version, const uint64_t index) {
+    wmml file(sPath);
+    file.overwriting_sector(index, 1, std::string(version));
 }
 
 void CContentList::clear () {
