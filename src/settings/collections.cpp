@@ -103,10 +103,10 @@ void collections::update_list () {
 
 void collections::update_collection_info (CToggledButton* target) {
     if (target) {
-        Core::CollectionInfo* info = new Core::CollectionInfo(target->name);
-        mods->setText(QString::number(info->mods));
-        presets->setText(QString::number(info->presets));
-        allMods->setText(QString::number(info->allMods));
+        Core::CollectionInfo info(target->name);
+        mods->setText(QString::number(info.mods));
+        presets->setText(QString::number(info.presets));
+        allMods->setText(QString::number(info.allMods));
         this->target = target;
     }
     else {
