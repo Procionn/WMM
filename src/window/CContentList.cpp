@@ -30,6 +30,7 @@ CContentList::CContentList () {
     searchWidget = new CSearchWidget;
     BaseContainer->addWidget(contentList);
     BaseContainer->addWidget(searchWidget);
+    BaseContainer->setSpacing(0);
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
     connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
     connect(searchWidget, &CSearchWidget::search_updated, contentList, &CObjectsContainer::search);

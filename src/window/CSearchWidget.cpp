@@ -27,6 +27,11 @@ CSearchWidget::CSearchWidget () {
     lay->addWidget(searchTab);
     lay->addWidget(closeButton);
     searchTab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    setFrameStyle(QFrame::Box | QFrame::Raised);
+    setLineWidth(2);
+    setMidLineWidth(2);
+    setStyleSheet("background-color: #2f3438;");
+    searchTab->setStyleSheet("background-color: #202326");
     QFrame::hide();
 
     connect(searchTab,   &QLineEdit::textEdited, [this](const QString& str){emit search_updated(str.toStdString());});
