@@ -27,9 +27,12 @@ CContentList::CContentList () {
     setLayout(BaseContainer);
     siFrame = new CSubInfoFrame(BaseContainer);
     contentList = new CObjectsContainer;
+    searchWidget = new CSearchWidget;
     BaseContainer->addWidget(contentList);
+    BaseContainer->addWidget(searchWidget);
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
     connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
+    connect(searchWidget, &CSearchWidget::search_updated, contentList, &CObjectsContainer::search);
 }
 
 
@@ -95,3 +98,12 @@ void CContentList::sort (const int filter) {
         this->filter = filter;
     }
 }
+
+void CContentList::show_search_widget () {
+    searchWidget->show();
+}
+
+void CContentList::hide_search_widget () {
+    searchWidget->hide();
+}
+

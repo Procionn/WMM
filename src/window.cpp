@@ -21,15 +21,18 @@
 #include <string>
 #include <QApplication>
 #include <QSplitter>
+#include <QShortcut>
 // #include <QDockWidget>
 
 Window::Window () {
-    CMenuBar* menu = new CMenuBar(this);
+    CMenuBar* menu          = new CMenuBar(this);
     QSplitter* BaseSplitter = new QSplitter();
-    ObjectList = new CObjectList;
-    ContentWidget = new CContentList();
-    inpad = new CInpad(ObjectList->TypeTarget);
-    settingsWindow = new CSettings;
+    ObjectList              = new CObjectList;
+    ContentWidget           = new CContentList();
+    inpad                   = new CInpad(ObjectList->TypeTarget);
+    settingsWindow          = new CSettings;
+    QShortcut* ctrlF        = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_F), this);
+    QShortcut* esc          = new QShortcut(QKeySequence(Qt::Key_Escape), this);
 
     setMenuBar(menu);
     setCentralWidget(BaseSplitter);
@@ -53,6 +56,8 @@ Window::Window () {
     connect(inpad,              &CFastDialog::canselClicked, this,          &Window::inpad_reset);
     connect(ContentWidget->dnd, &CDND::launch,               this,          &Window::inpad_reset);
     connect(inpad,              &CInpad::applyClicked,       this,          &Window::applyClicking);
+    connect(ctrlF,              &QShortcut::activated,       ContentWidget, &CContentList::show_search_widget);
+    connect(esc,                &QShortcut::activated,       ContentWidget, &CContentList::hide_search_widget);
 }
 
 void Window::NewObjectDialog() {

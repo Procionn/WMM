@@ -94,6 +94,8 @@ set(PROJECT_SOURCES
     window/modlist/cobject.h            window/modlist/cobject.cpp
     window/CMenuBar.h                   window/CMenuBar.cpp
     window/CSubInfoFrame.h              window/CSubInfoFrame.cpp
+    window/CSortedFrame.h               window/CSortedFrame.cpp
+    window/CSearchWidget.h              window/CSearchWidget.cpp
     window/mainWidgets.h                window/CObjectList.cpp
                                         window/CContentList.cpp
 
@@ -107,7 +109,6 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    window/CSortedFrame.h window/CSortedFrame.cpp
 )
 
 target_compile_definitions(SETTINGS PRIVATE
