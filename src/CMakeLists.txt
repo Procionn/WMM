@@ -55,6 +55,7 @@ add_library(SETTINGS STATIC
     settings/setsource.h                settings/setsource.cpp
     settings/setextensions.h            settings/setextensions.cpp
     settings/collections.h              settings/collections.cpp
+    settings/ModStorage.h               settings/ModStorage.cpp
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
