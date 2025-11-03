@@ -15,6 +15,7 @@
  *
  */
 #include "cobject.h"
+#include "../../ModManager.h"
 #include <wmml.h>
 
 CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
@@ -24,7 +25,7 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
 
 
     Lname = new QLabel(QString::fromStdString(std::get<std::string>(c->at(0))));
-    Lversion = new QLabel(QString::fromStdString(std::get<std::string>(c->at(1))));
+    Lversion = new CVersion(std::get<std::string>(c->at(1)), this);
     if (std::get<bool>(c->at(2)))
          Ltype = new QLabel("Mod");
     else Ltype = new QLabel("Collection");
@@ -60,12 +61,12 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
 }
 
 
-void CObject::context (const QPoint &pos) {
+void CObject::context (const QPoint& pos) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObject::DELETE);
     if (type) {
-        QAction *action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
+        QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
         connect(action2, &QAction::triggered, this, &CObject::INFO);
     }
     contextMenu->exec(this->mapToGlobal(pos));
@@ -110,6 +111,40 @@ void CObject::set_style (const bool type) {
 bool CObject::get_style () {
     return count_type;
 }
+
+
+
+
+
+CVersion::CVersion (const std::string& version, CObject* parent) :
+    parent(parent), QLabel(QString::fromStdString(version)) {
+    setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &CVersion::context);
+}
+
+
+
+void CVersion::context (const QPoint& pos) {
+    QMenu* contextMenu = new QMenu(this);
+    const auto container = ModManager::get().all_versions_list(parent->id);
+    std::string_view entry;
+    int i = container.size();
+    for (--i; i >= 0; --i) {
+        entry = container.at(i);
+        QAction* action = new QAction(entry.data());
+        contextMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [entry, this]{
+            if (entry == parent->version)
+                return;
+            setText(entry.data());
+            parent->version = entry;
+            emit version_changed(entry, parent->index);
+        });
+    }
+    contextMenu->exec(mapToGlobal(pos));
+}
+
 
 
 

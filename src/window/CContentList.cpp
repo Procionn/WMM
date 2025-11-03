@@ -27,9 +27,13 @@ CContentList::CContentList () {
     setLayout(BaseContainer);
     siFrame = new CSubInfoFrame(BaseContainer);
     contentList = new CObjectsContainer;
+    searchWidget = new CSearchWidget;
     BaseContainer->addWidget(contentList);
+    BaseContainer->addWidget(searchWidget);
+    BaseContainer->setSpacing(0);
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
     connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
+    connect(searchWidget, &CSearchWidget::search_updated, contentList, &CObjectsContainer::search);
 }
 
 
@@ -55,8 +59,14 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(buttonWidget,   &CObject::OFF,    this, &CContentList::changeStatusOff);
         connect(buttonWidget,   &CObject::remove, contentList, &CObjectsContainer::delete_target);
         connect(contentList,    &CObjectsContainer::removed, this, &CContentList::deleting);
+        connect(buttonWidget->Lversion, &CVersion::version_changed, this, &CContentList::change_version);
     }
     sort();
+}
+
+void CContentList::change_version (const std::string_view& version, const uint64_t index) {
+    wmml file(sPath);
+    file.overwriting_sector(index, 1, std::string(version));
 }
 
 void CContentList::clear () {
@@ -89,3 +99,12 @@ void CContentList::sort (const int filter) {
         this->filter = filter;
     }
 }
+
+void CContentList::show_search_widget () {
+    searchWidget->show();
+}
+
+void CContentList::hide_search_widget () {
+    searchWidget->hide();
+}
+

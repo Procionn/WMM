@@ -21,6 +21,7 @@
 #include "CObjectsButton.h"
 #include "../dnd.h"
 #include "CSubInfoFrame.h"
+#include "CSearchWidget.h"
 
 #include <string>
 #include <filesystem>
@@ -67,6 +68,7 @@ class CContentList : public QWidget
 
     CObjectsContainer* contentList;
     CSubInfoFrame* siFrame;
+    CSearchWidget* searchWidget;
     std::string sPath;
     std::string targetName;
 public:
@@ -79,12 +81,15 @@ public:
 public slots:
     void updateList(CObjectsButton* pointer, bool type);
     void clear();
+    void show_search_widget();
+    void hide_search_widget();
 
 private slots:
     void changeStatusOn(CObject* toggledElements);
     void changeStatusOff(CObject* toggledElements);
     void deleting(CObject* pointer);
     void sort(const int = INT_MAX);
+    void change_version (const std::string_view&, const uint64_t);
 };
 
 

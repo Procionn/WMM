@@ -41,6 +41,7 @@ public:
 public slots:
     void delete_target(CObject*);
     void sort(const int filter);
+    void search(const std::string&);
 
 private slots:
     void deletionSignals();

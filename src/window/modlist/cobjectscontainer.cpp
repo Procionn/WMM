@@ -15,6 +15,7 @@
  *
  */
 #include "cobjectscontainer.h"
+#include <regex>
 
 CObjectsContainer::CObjectsContainer() {
     list = new QVBoxLayout;
@@ -117,4 +118,16 @@ void CObjectsContainer::coloring () {
             }
         }
     }
+}
+
+
+
+void CObjectsContainer::search (const std::string& ref) {
+    for (auto* target : childList) {
+        if (std::regex_search(target->name, std::regex(ref, std::regex_constants::icase)))
+            target->show();
+        else target->hide();
+    }
+    coloring();
+
 }
