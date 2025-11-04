@@ -26,13 +26,15 @@ class CToggledButton : public QPushButton
 
 public:
     const std::string name;
-    bool selected;
+    bool selected = false;
 
-    CToggledButton(const std::string& setName = "", bool type = false);
+    CToggledButton(const std::string& setName = "");
     void SetLeftAlignment(bool type);
     void setTheme(const std::string& type);
     void setColor(const std::string& toggled, const std::string& untoggled);
     void isTarget(bool type);
+    void set_target();
+    void set_untarget();
 
 private:
     static const inline std::string TBC1 = "=> ";

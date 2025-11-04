@@ -16,19 +16,23 @@
  */
 #include "CSwitchButton.h"
 
-CSwitchButton::CSwitchButton() {setText("OFF");}
+CSwitchButton::CSwitchButton(const std::string& firstName, const std::string& secondName, const bool& colored)
+    : firstName(QString::fromStdString(firstName)), secondName(QString::fromStdString(secondName)),
+      colored(colored), CToggledButton(firstName) {}
 
 void CSwitchButton::ChangeOfState() {
     if (selected) {
-        emit untoggled(this);
-        this->setText("OFF");
         selected = false;
-        setStyleSheet(QString::fromStdString(untoggledColor));
+        this->setText(firstName);
+        if (colored)
+            setStyleSheet(QString::fromStdString(untoggledColor));
+        emit untoggled(this);
     }
     else {
-        emit toggled(this);
-        this->setText("ON");
         selected = true;
-        setStyleSheet(QString::fromStdString(toggledColor));
+        this->setText(secondName);
+        if (colored)
+            setStyleSheet(QString::fromStdString(toggledColor));
+        emit toggled(this);
     }
 }
