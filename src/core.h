@@ -30,7 +30,8 @@ class wmml;
 class CBaseConfig
 {
 protected:
-    bool configRead(std::istream& input, std::string& firstReturned, std::string& lastReturned);
+    bool configRead(std::ifstream& input, std::string& firstReturned, std::string& lastReturned);
+    virtual ~CBaseConfig() = default;
 };
 
 
@@ -53,15 +54,18 @@ protected:
 
 class CConfigs : public virtual CBaseConfig
 {
+    std::ofstream config;
 protected:
     CConfigs();
 
 public:
-    inline static std::string CONFIG_LANGUAGES;
-    inline static std::string CONFIG_GAME;
+    inline static std::map<std::string, std::string> configs;
+#define CONFIG_LANGUAGES        configs["WMM_CONFIG_LANGUAGES"]
+#define CONFIG_GAME             configs["WMM_CONFIG_GAME"]
 
     void config_reader();
     void overwriting_config_data();
+    void set_default(const std::string& key, const std::string& value);
 };
 
 
