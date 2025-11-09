@@ -107,8 +107,8 @@ public:
 class ModManager final : public ModList
 {
     friend class ModList;
+    const std::string archiveExpansion = ".MOD";
     bool copy = true; // false to move new mods in directory
-    std::string archiveExpansion = ".MOD";
 
     std::tuple<std::string, uint64_t, std::string> regex(const std::string& path);
     std::string path();
@@ -117,9 +117,12 @@ class ModManager final : public ModList
     ~ModManager() = default;
 
 public:
+
     static ModManager& get();
     void update();
     void flush(); // enforces changes made to the database file
+    bool get_copy();
+    void set_copy(const bool&);
 
     void load(const std::string& path);
 

@@ -18,6 +18,7 @@
 #include "../core.h"
 #include "../CONSTANTS.h"
 #include "../methods.h"
+#include "settings.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -41,7 +42,18 @@ setlang::setlang () {
     hbox->addWidget(button);
     list->addWidget(community);
 
-    connect(button, &QPushButton::clicked, [=]{chooseLang(button);});
+    connect(CSettings::get(), &CSettings::save, [this]{
+        if (target) {
+            CConfigs::CONFIG_LANGUAGES = LANG + target->name + EXPANSION3;
+            Core::get().overwriting_config_data();
+            Core::get().update_lang();
+            delete target;
+            target = nullptr;
+            FatalError* dialog = new FatalError(Core::lang["LANG_LABEL_NEW_LANG"]);
+        }
+    });
+
+    connect(button, &QPushButton::clicked, [this, button]{chooseLang(button);});
 }
 
 
@@ -54,16 +66,22 @@ void setlang::chooseLang (QPushButton* parent) {
     list->setAlignment(Qt::AlignTop);
 
     CLinkTumbler* lastBTN = nullptr;
+    std::string lang;
     for (const auto& entry : std::filesystem::directory_iterator(LANG)) {
-        std::string lang = entry.path().generic_string().substr(0, entry.path().generic_string().size() - INI_MAIN_PART);
+        lang = entry.path().generic_string().substr(0, entry.path().generic_string().size() - INI_MAIN_PART);
         size_t part = lang.find_last_of('/');
         lang = lang.substr(part + 1);
         CLinkTumbler* button = new CLinkTumbler(lang, lastBTN);
         lastBTN = button;
         list->addWidget(button);
-        connect(button, &CLinkTumbler::toggled, [=]{target = button;});
-        connect(chooser->apply, &QPushButton::clicked, [=]{parent->setText(QString::fromStdString(target->name));
-                                                           chooser->reject();
-                                                          });
+        connect(button, &CLinkTumbler::toggled, [this, button]{
+            target = button;
+        });
+        connect(chooser->apply, &QPushButton::clicked, [parent, this, chooser, list]{
+            parent->setText(QString::fromStdString(target->name));
+            list->removeWidget(target);
+            target->setParent(nullptr);
+            delete chooser;
+        });
     }
 }

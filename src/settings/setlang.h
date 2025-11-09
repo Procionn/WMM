@@ -27,10 +27,13 @@
 class setlang : public QWidget
 {
     Q_OBJECT
+
 public:
     CLinkTumbler* target = nullptr;
+
 public:
     setlang();
+
 private slots:
     void chooseLang(QPushButton* parent);
 };

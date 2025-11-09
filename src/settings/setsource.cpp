@@ -21,6 +21,9 @@
 #include <QLabel>
 #include "../methods.h"
 #include "../patterns/WaitingWindow.h"
+#include "../ModManager.h"
+#include "../patterns/CSwitchButton.h"
+#include "settings.h"
 
 setsource::setsource() {
     QHBoxLayout* list = new QHBoxLayout;
@@ -35,14 +38,20 @@ setsource::setsource() {
     QLabel* backup              = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_BACKUP"]));
     QLabel* clear               = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_CLEAR"]));
     QLabel* recovery            = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_RECOVERY"]));
+    QLabel* modLoadType         = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MOD_TYPE"]));
     QPushButton* dirBTN         = new QPushButton(QString::fromStdString(""));
     QPushButton* gameBTN        = new QPushButton(QString::fromStdString(Core::CONFIG_GAME));
     QPushButton* backupBTN      = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_BACKUP"]));
     QPushButton* clearBTN       = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_CLEAR"]));
     QPushButton* recoveryBTN    = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_RECOVERY"]));
+    CSwitchButton* modLoadTypeBTN = new CSwitchButton(Core::lang["LANG_BUTTON_MOD_TYPE_COPY"],
+                                                      Core::lang["LANG_BUTTON_MOD_TYPE_MOVE"], false);
 
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Raised);
+    copyMode = ModManager::get().get_copy();
+    if (!copyMode)
+        modLoadTypeBTN->set_target();
 
     list->addWidget(firstwidget);
     list->addWidget(line);
@@ -61,28 +70,52 @@ setsource::setsource() {
     firstlist->addWidget(backup);
     firstlist->addWidget(clear);
     firstlist->addWidget(recovery);
+    firstlist->addWidget(modLoadType);
     dir->setMinimumHeight(35);
     game->setMinimumHeight(35);
     backup->setMinimumHeight(35);
     clear->setMinimumHeight(35);
     recovery->setMinimumHeight(35);
+    modLoadType->setMinimumHeight(35);
     dirBTN->setMinimumHeight(35);
     gameBTN->setMinimumHeight(35);
     backupBTN->setMinimumHeight(35);
     clearBTN->setMinimumHeight(35);
     recoveryBTN->setMinimumHeight(35);
+    modLoadTypeBTN->setMinimumHeight(35);
     lastlist->addWidget(dirBTN);
     lastlist->addWidget(gameBTN);
     lastlist->addWidget(backupBTN);
     lastlist->addWidget(clearBTN);
     lastlist->addWidget(recoveryBTN);
+    lastlist->addWidget(modLoadTypeBTN);
 
     dirBTN->setText(QString::fromStdString(Core::CONFIG_GAME_PATH));
-    connect(dirBTN, &QPushButton::clicked, [=]{chooseExe(dirBTN);});
-    connect(backupBTN, &QPushButton::clicked, [=]{createBackup();});
-    connect(gameBTN, &QPushButton::clicked, [=]{chooseGame(gameBTN);});
-    connect(clearBTN, &QPushButton::clicked, [=]{Wait(Core::get().symlink_deliting(););});
-    connect(recoveryBTN, &QPushButton::clicked, [=]{Wait(Core::get().game_recovery(););});
+
+    connect(CSettings::get(), &CSettings::save, [this]{
+        if (!buffer.isEmpty()) {
+            Core::get().save_game_path(buffer.toStdString());
+            buffer.clear();
+        }
+    });
+    connect(CSettings::get(), &CSettings::save, [this]{
+        if (target) {
+            Core::CONFIG_GAME = target->name;
+            Core::get().overwriting_config_data();
+            target = nullptr;
+            Core::get().update_data_from_file();
+            ModManager::get().update();
+        }
+    });
+    connect(CSettings::get(), &CSettings::save, [this]{
+        ModManager::get().set_copy(copyMode);
+    });
+    connect(dirBTN,         &QPushButton::clicked, [dirBTN, this]{chooseExe(dirBTN);});
+    connect(backupBTN,      &QPushButton::clicked, [this]{createBackup();});
+    connect(gameBTN,        &QPushButton::clicked, [gameBTN, this]{chooseGame(gameBTN);});
+    connect(clearBTN,       &QPushButton::clicked, [this]{Wait(Core::get().symlink_deliting(););});
+    connect(recoveryBTN,    &QPushButton::clicked, [this]{Wait(Core::get().game_recovery(););});
+    connect(modLoadTypeBTN, &QPushButton::clicked,  [this]{copyMode = !copyMode;});
 }
 
 
@@ -99,11 +132,12 @@ void setsource::chooseGame (QPushButton* parent) {
         CLinkTumbler* button = new CLinkTumbler(stc::string::get_name(entry.path().string()), lastBTN);
         lastBTN = button;
         content->addWidget(button);
-        connect(button, &CLinkTumbler::toggled, [=]{tmptarget = button;});
-        connect(dialog->apply, &QPushButton::clicked, [=]{
-            target = tmptarget;
+        connect(button, &CLinkTumbler::toggled, [this, button]{target = button;});
+        connect(dialog->apply, &QPushButton::clicked, [this, button, dialog, parent, content]{
             parent->setText(QString::fromStdString(button->name));
-            dialog->reject();
+            content->removeWidget(target);
+            target->setParent(nullptr);
+            delete dialog;
         });
     }
 }

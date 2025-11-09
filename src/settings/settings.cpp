@@ -27,6 +27,7 @@
 
 
 CSettings::CSettings () {
+    object = this;
     setMinimumHeight(200);
     setMinimumWidth(400);
     resize(1000, 600);
@@ -44,8 +45,8 @@ CSettings::CSettings () {
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    connect(cansel, &QPushButton::clicked, this, [=]{this->reject();});
-    connect(accept, &QPushButton::clicked, this, &CSettings::save);
+    connect(cansel, &QPushButton::clicked, [this]{this->reject();});
+    connect(accept, &QPushButton::clicked, [this]{emit save();});
     connect(sobjects->sorce,        &CLinkTumbler::toggled, settings_modules_list, &SList::sorce);
     connect(sobjects->lang,         &CLinkTumbler::toggled, settings_modules_list, &SList::lang);
     connect(sobjects->support,      &CLinkTumbler::toggled, settings_modules_list, &SList::support);
@@ -62,25 +63,10 @@ CSettings::CSettings () {
     splitter->addWidget(settings_modules_list);
 }
 
-void CSettings::save () {
-    if (settings_modules_list->settings_source->target) {
-        Core::CONFIG_GAME = settings_modules_list->settings_source->target->name;
-        Core::get().overwriting_config_data();
-        settings_modules_list->settings_source->target = nullptr;
-        Core::get().update_data_from_file();
-        ModManager::get().update();
-    }
-    if (!settings_modules_list->settings_source->buffer.isEmpty()) {
-        Core::get().save_game_path(settings_modules_list->settings_source->buffer.toStdString());
-        settings_modules_list->settings_source->buffer.clear();
-    }
-    if (settings_modules_list->settings_lang->target) {
-        CConfigs::CONFIG_LANGUAGES = LANG + settings_modules_list->settings_lang->target->name + EXPANSION3;
-        Core::get().overwriting_config_data();
-        Core::get().update_lang();
-        FatalError* dialog = new FatalError(Core::lang["LANG_LABEL_NEW_LANG"]);
-        settings_modules_list->settings_lang->target = nullptr;
-    }
+
+
+CSettings* CSettings::get () {
+    return object;
 }
 
 

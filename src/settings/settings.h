@@ -74,12 +74,17 @@ public slots:
 class CSettings : public QDialog
 {
     Q_OBJECT
+    std::vector<std::function<void()>> tasks;
+    static inline CSettings* object;
+
 public:
+    CSettings();
     SObjects* sobjects;
     SList* settings_modules_list;
     
-    CSettings();
-private slots:
+    static CSettings* get();
+
+signals:
     void save();
 };
 

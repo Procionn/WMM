@@ -28,15 +28,16 @@
 class setsource : public QWidget
 {
     Q_OBJECT
-private:
-    CLinkTumbler* tmptarget = nullptr;
-public:
+
+    bool copyMode;
     QVBoxLayout* firstlist;
     QVBoxLayout* lastlist;
     QString buffer;
     CLinkTumbler* target = nullptr;
+
 public:
     setsource();
+
 private slots:
     void chooseGame(QPushButton* parent);
     void chooseExe(QPushButton* dirBTN);
