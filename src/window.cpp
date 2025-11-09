@@ -132,4 +132,5 @@ void Window::closeEvent (QCloseEvent* event) {
 
 Window::~Window () {
     delete settingsWindow;
+    delete inpad;
 }
