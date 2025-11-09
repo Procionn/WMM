@@ -66,10 +66,18 @@ std::string CInpadButton::get_name () {
 }
 
 void CInpadButton::set_style (const bool type) {
-    if (type)
-        setStyleSheet(QString::fromStdString(untoggledColor1));
-    else
-        setStyleSheet(QString::fromStdString(untoggledColor2));
+    if (toggl_condition) {
+        if (type)
+            setStyleSheet(QString::fromStdString(toggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(toggledColor2));
+    }
+    else {
+        if (type)
+            setStyleSheet(QString::fromStdString(untoggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(untoggledColor2));
+    }
     count_type = type;
 }
 

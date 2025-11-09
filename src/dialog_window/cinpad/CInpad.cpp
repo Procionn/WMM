@@ -46,7 +46,7 @@ CInpad::CInpad(bool& type) {
 
     presets = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_PRESETS"]));
     menu->addAction(presets);
-    connect(presets, &QAction::triggered, this, [=]{
+    connect(presets, &QAction::triggered, [this]{
         menu->setTitle(QString::fromStdString(Core::lang["LANG_BUTTON_PRESETS"]));
         targetType = true;
         distributor();
@@ -54,7 +54,7 @@ CInpad::CInpad(bool& type) {
 
     QAction* mods = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_MODS"]));
     menu->addAction(mods);
-    connect(mods, &QAction::triggered, this, [=]{
+    connect(mods, &QAction::triggered, [this]{
         menu->setTitle(QString::fromStdString(Core::lang["LANG_BUTTON_MODS"]));
         targetType = false;
         distributor();
