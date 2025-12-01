@@ -25,7 +25,6 @@
 #include <QSplitter>
 #include <QFileDialog>
 
-
 CSettings::CSettings () {
     object = this;
     setMinimumHeight(200);
@@ -47,10 +46,15 @@ CSettings::CSettings () {
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     connect(cansel, &QPushButton::clicked, [this]{this->reject();});
     connect(accept, &QPushButton::clicked, [this]{emit save();});
-    connect(sobjects->sorce,        &CLinkTumbler::toggled, settings_modules_list, &SList::sorce);
-    connect(sobjects->lang,         &CLinkTumbler::toggled, settings_modules_list, &SList::lang);
-    connect(sobjects->support,      &CLinkTumbler::toggled, settings_modules_list, &SList::support);
-    connect(sobjects->collections,  &CLinkTumbler::toggled, settings_modules_list, &SList::collection);
+
+#define X(button, class_, object, lang_str) \
+    connect(sobjects->button, &CLinkTumbler::toggled, [this]{  \
+        settings_modules_list->show(qobject_cast<QWidget*>(settings_modules_list->object));   \
+    });
+    SETTING_SPAGES()
+#undef X
+
+
     sobjects->sorce->isTarget(true);
     
     dialogLayout->addLayout(dialogButtonBox);
@@ -75,34 +79,21 @@ CSettings* CSettings::get () {
 
 SObjects::SObjects () {
     list = new QVBoxLayout;
-    addScrollable(this, list);
-    sorce = new CLinkTumbler(Core::lang["LANG_BUTTON_SORCE"]);
-    lang = new CLinkTumbler(Core::lang["LANG_BUTTON_LANG"], sorce);
-    support = new CLinkTumbler(Core::lang["LANG_BUTTON_SUPPORT"], lang);
-    extensions = new CLinkTumbler(Core::lang["LANG_BUTTON_EXTENSIONS"], support);
-    collections = new CLinkTumbler(Core::lang["LANG_BUTTON_IMPORT/EXPORT"], extensions);
-    
     list->setAlignment(Qt::AlignTop);
-    sorce->SetLeftAlignment(true);
-    lang->SetLeftAlignment(true);
-    support->SetLeftAlignment(true);
-    extensions->SetLeftAlignment(true);
-    collections->SetLeftAlignment(true);
-    ///////////////////////////////////
-    // support->hide();
-    extensions->hide();
-    ///////////////////////////////////
-    sorce->setMinimumHeight(35);
-    lang->setMinimumHeight(35);
-    support->setMinimumHeight(35);
-    extensions->setMinimumHeight(35);
-    collections->setMinimumHeight(35);
+    addScrollable(this, list);
+    CLinkTumbler* last = nullptr;
+
+#define X(button, class_, object, lang_str) \
+    button = new CLinkTumbler(Core::lang[lang_str], last); \
+    button->SetLeftAlignment(true);   \
+    button->setMinimumHeight(35);     \
+    list->addWidget(button);  \
+    last = button;
+
+    SETTING_SPAGES()
+#undef X
     
-    list->addWidget(sorce);
-    list->addWidget(lang);
-    list->addWidget(extensions);
-    list->addWidget(collections);
-    list->addWidget(support);
+    extensions->hide();
 }
 
 
@@ -111,54 +102,23 @@ SObjects::SObjects () {
 
 SList::SList () {
     QVBoxLayout* list   = new QVBoxLayout(this);
-    settings_source     = new setsource;
-    settings_lang       = new setlang;
-    settings_support    = new setsupport;
-    settings_extension  = new setextensions;
-    settings_collections= new collections;
-    list->addWidget(settings_source);
-    list->addWidget(settings_lang);
-    list->addWidget(settings_support);
-    list->addWidget(settings_extension);
-    list->addWidget(settings_collections);
-}
 
-void SList::sorce () {
+#define X(button, class_, object, lang_str) \
+    object = new class_; \
+    list->addWidget(object);    \
+    pages.emplace_back(object); \
+    object->hide();
+
+    SETTING_SPAGES()
+#undef X
     settings_source->show();
-    settings_lang->hide();
-    settings_support->hide();
-    settings_extension->hide();
-    settings_collections->hide();
 }
 
-void SList::lang () {
-    settings_source->hide();
-    settings_lang->show();
-    settings_support->hide();
-    settings_extension->hide();
-    settings_collections->hide();
-}
-
-void SList::support () {
-    settings_source->hide();
-    settings_lang->hide();
-    settings_support->show();
-    settings_extension->hide();
-    settings_collections->hide();
-}
-
-void SList::extensions () {
-    settings_source->hide();
-    settings_lang->hide();
-    settings_support->hide();
-    settings_extension->show();
-    settings_collections->hide();
-}
-
-void SList::collection () {
-    settings_source->hide();
-    settings_lang->hide();
-    settings_support->hide();
-    settings_extension->hide();
-    settings_collections->show();
+void SList::show(QWidget* displayed) {
+    for (auto* entry : pages) {
+        if (entry == displayed)
+            entry->show();
+        else
+            entry->hide();
+    }
 }
