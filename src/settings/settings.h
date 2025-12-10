@@ -35,7 +35,8 @@
     X(lang,        setlang,        settings_lang,        "LANG_BUTTON_LANG")            \
     X(support,     setsupport,     settings_support,     "LANG_BUTTON_SUPPORT")         \
     X(extensions,  setextensions,  settings_extension,   "LANG_BUTTON_EXTENSION")       \
-    X(collections, collections,    settings_collections, "LANG_BUTTON_IMPORT/EXPORT")
+    X(collections, collections,    settings_collections, "LANG_BUTTON_IMPORT/EXPORT")   \
+    X(modStorage,  ModStorage,     settings_storage,     "LANG_BUTTON_MODSTORAGE")
 
 class SObjects : public QWidget
 {

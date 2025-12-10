@@ -14,13 +14,17 @@
  *  See the LICENSE file for more details.
  *
  */
-#include "ModStorage.h"
+#ifndef MODSTORAGELIST_H
+#define MODSTORAGELIST_H
 
-#include <QVBoxLayout>
-#include "ModStorage/ModStorageList.h"
+#include "../../patterns/CSmartList.h"
+#include "ModStorageObject.h"
 
-ModStorage::ModStorage() {
-    QVBoxLayout* mainLay = new QVBoxLayout(this);
-    ModStorageList* objectLay = new ModStorageList;
-    mainLay->addWidget(objectLay);
-}
+
+class ModStorageList final : public CSmartList<ModObject>
+{
+public:
+    ModStorageList();
+};
+
+#endif // MODSTORAGELIST_H

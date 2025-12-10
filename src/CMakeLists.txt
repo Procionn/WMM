@@ -49,13 +49,16 @@ add_library(CORE STATIC
     dialog_window/unificator.cpp        dialog_window/unificator.h
 )
 add_library(SETTINGS STATIC
-    settings/settings.h                 settings/settings.cpp
-    settings/setlang.h                  settings/setlang.cpp
-    settings/setsupport.h               settings/setsupport.cpp
-    settings/setsource.h                settings/setsource.cpp
-    settings/setextensions.h            settings/setextensions.cpp
-    settings/collections.h              settings/collections.cpp
-    settings/ModStorage.h               settings/ModStorage.cpp
+    settings/settings.h                     settings/settings.cpp
+    settings/setlang.h                      settings/setlang.cpp
+    settings/setsupport.h                   settings/setsupport.cpp
+    settings/setsource.h                    settings/setsource.cpp
+    settings/setextensions.h                settings/setextensions.cpp
+    settings/collections.h                  settings/collections.cpp
+    settings/ModStorage.h                   settings/ModStorage.cpp
+    settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
+    settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
+    settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
@@ -63,11 +66,12 @@ add_library(PATTERNS STATIC
     patterns/CSmartList.h
     patterns/CSmartObject.h             patterns/CSmartObject.cpp
     patterns/templatelist.h             patterns/templatelist.cpp
+    patterns/CBaseSmartObject.h         patterns/CBaseSmartObject.cpp
     patterns/CLinkTumbler.h             patterns/CLinkTumbler.cpp
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
-    patterns/CScrollWindow.h
     patterns/RenameDialog.h             patterns/RrenameDialog.cpp
+    patterns/CScrollWindow.h
     patterns/WaitingWindow.h
 )
 target_link_libraries(CORE PRIVATE

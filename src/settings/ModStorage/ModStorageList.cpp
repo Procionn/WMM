@@ -14,13 +14,13 @@
  *  See the LICENSE file for more details.
  *
  */
-#include "ModStorage.h"
+#include "ModStorageList.h"
 
-#include <QVBoxLayout>
-#include "ModStorage/ModStorageList.h"
+#include "../../ModManager.h"
 
-ModStorage::ModStorage() {
-    QVBoxLayout* mainLay = new QVBoxLayout(this);
-    ModStorageList* objectLay = new ModStorageList;
-    mainLay->addWidget(objectLay);
+
+ModStorageList::ModStorageList() {
+    for (const Mod& mod : ModManager::get().all_mods_list()) {
+        add(new ModObject(&mod));
+    }
 }
