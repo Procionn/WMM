@@ -16,7 +16,7 @@
  */
 #include "templatelist.h"
 
-TemplateList::TemplateList(QWidget* parent) : QScrollArea(parent){
+TemplateList::TemplateList (QWidget* parent) : QScrollArea(parent){
     list = new QVBoxLayout;
     QWidget* scrolledWidget = new QWidget;
 
@@ -37,10 +37,6 @@ void TemplateList::connecting (CSmartObject* linkable) {
     });
 }
 
-void TemplateList::controller (QMouseEvent* event, CSmartObject* target) {
-
-}
-
-void TemplateList::rightClickController (const QPoint& pos, CSmartObject* target) {
-
+void TemplateList::updated () {
+    emit update();
 }

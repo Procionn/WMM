@@ -27,6 +27,7 @@ protected:
     virtual void INFO() = 0;
 
     bool count_type = true;
+    bool infoEnabled = true;
     static const inline std::string dataString = " background-color: ";
     static const inline std::string untoggledColor2 = "#2e2e2e;";
     static const inline std::string untoggledColor1 = "#404040;";

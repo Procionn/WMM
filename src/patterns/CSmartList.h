@@ -30,7 +30,7 @@ protected:
     std::vector<T*> childList;
     T* lastTarget = nullptr;
 public:
-    CSmartList() {
+    CSmartList(QWidget* parent = nullptr) : TemplateList(parent) {
         static_assert(std::is_base_of<CSmartObject, T>::value, "The parameter must be inherited from CSmartObject.");
     }
 

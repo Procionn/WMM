@@ -27,8 +27,10 @@ void CBaseSmartObject::context (const QPoint& pos) {
     QMenu* contextMenu = new QMenu(this);
     QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, [this]{DELETE();});
-    QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
-    connect(action2, &QAction::triggered, [this]{INFO();});
+    if (infoEnabled) {
+        QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
+        connect(action2, &QAction::triggered, [this]{INFO();});
+    }
     contextMenu->exec(this->mapToGlobal(pos));
 }
 
