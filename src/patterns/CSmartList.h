@@ -96,6 +96,7 @@ private slots:
             else if (event->modifiers() == Qt::ShiftModifier)
                 LBM_SHIFT(static_cast<T*>(target));
             else reset();
+            updated();
         }
     }
 
