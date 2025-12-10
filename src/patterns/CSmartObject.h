@@ -22,8 +22,10 @@
 class CSmartObject : public QFrame
 {
     Q_OBJECT
+
 public:
     bool toggl_condition = false;
+
 public:
     CSmartObject(QWidget *parent = nullptr);
     void ChangeOfState();
@@ -36,6 +38,7 @@ public:
 
 protected:
     void mousePressEvent (QMouseEvent* event);
+
 signals:
     void clicked(QMouseEvent* event, CSmartObject* target);
     void rightClick(const QPoint& pos, CSmartObject* target);
