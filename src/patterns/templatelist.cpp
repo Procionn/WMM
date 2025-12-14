@@ -40,3 +40,7 @@ void TemplateList::connecting (CSmartObject* linkable) {
 void TemplateList::updated () {
     emit update();
 }
+
+void TemplateList::reseted () {
+    emit reseting();
+}

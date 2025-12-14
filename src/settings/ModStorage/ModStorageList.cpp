@@ -21,6 +21,14 @@
 
 ModStorageList::ModStorageList() {
     for (const Mod& mod : ModManager::get().all_mods_list()) {
-        add(new ModObject(&mod));
+        ModObject* modObject;
+        add(modObject = new ModObject(&mod));
+        connect(this, &ModStorageList::reseting, modObject, &ModObject::child_turnOff);
+        connect(modObject, &ModObject::fromChildSwitched, this, &ModStorageList::last_target_update);
     }
+}
+
+
+void ModStorageList::last_target_update (ModObject* new_target) {
+    lastTarget = new_target;
 }

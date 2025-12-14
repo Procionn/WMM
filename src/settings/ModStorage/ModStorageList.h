@@ -25,6 +25,9 @@ class ModStorageList final : public CSmartList<ModObject>
 {
 public:
     ModStorageList();
+
+private slots:
+    void last_target_update(ModObject*);
 };
 
 #endif // MODSTORAGELIST_H

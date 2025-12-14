@@ -35,12 +35,14 @@ public:
 protected:
     void connecting(CSmartObject* linkable);
     void updated();
+    void reseted();
 
     virtual void controller(QMouseEvent* event, CSmartObject* target) = 0;
     virtual void rightClickController(const QPoint& pos, CSmartObject* target) = 0;
 
 signals:
     void update();
+    void reseting();
 };
 
 #endif // TEMPLATELIST_H

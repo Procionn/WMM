@@ -43,14 +43,16 @@ ModObject::ModObject (const Mod* base) : data(base), versions(nullptr), CBaseSma
         }
         else {
             baseLay->addWidget(versions = new QWidget);
-            ModVersionList* list = new ModVersionList();
+            versions->setStyleSheet("background-color: #363638");
+            list = new ModVersionList();
             QVBoxLayout* l = new QVBoxLayout(versions);
             l->addWidget(list);
             for (const auto& entry : ModManager::get().all_versions_list(data->modId)) {
                 list->add(new ModVersionObject(entry.data(), this));
             }
-            connect(list, &ModVersionList::allOn, this, &ModObject::turnOn);
-            connect(list, &ModVersionList::noAllOn, this, &ModObject::turnOff);
+            connect(list, &ModVersionList::allOn, this, &ModObject::none_triggered_on);
+            connect(list, &ModVersionList::noAllOn, this, &ModObject::none_triggered_off);
+            connect(list, &ModVersionList::allOn, [this]{emit fromChildSwitched(this);});
             connect(this, &ModObject::childs_set_on, list, &ModVersionList::set_on);
             connect(this, &ModObject::childs_set_off, list, &ModVersionList::set_off);
         }
@@ -76,17 +78,21 @@ void ModObject::INFO() {
 }
 
 void ModObject::turnOff () {
-    if (toggl_condition) {
-        toggl_condition = false;
-        if (count_type)
-            setStyleSheet(QString::fromStdString(dataString + untoggledColor1));
-        else
-            setStyleSheet(QString::fromStdString(dataString + untoggledColor2));
-    }
+    none_triggered_off();
     emit childs_set_off();
 }
 
 void ModObject::turnOn () {
+    none_triggered_on();
+    emit childs_set_on();
+}
+
+void ModObject::child_turnOff () {
+    if (list)
+        list->set_off();
+}
+
+void ModObject::none_triggered_on () {
     if (!toggl_condition) {
         toggl_condition = true;
         if (count_type)
@@ -94,5 +100,14 @@ void ModObject::turnOn () {
         else
             setStyleSheet(QString::fromStdString(dataString + toggledColor2));
     }
-    emit childs_set_on();
+}
+
+void ModObject::none_triggered_off () {
+    if (toggl_condition) {
+        toggl_condition = false;
+        if (count_type)
+            setStyleSheet(QString::fromStdString(dataString + untoggledColor1));
+        else
+            setStyleSheet(QString::fromStdString(dataString + untoggledColor2));
+    }
 }

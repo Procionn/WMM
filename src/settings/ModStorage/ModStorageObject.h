@@ -21,6 +21,7 @@
 #include <stdint.h>
 
 class Mod;
+class ModVersionList;
 
 class ModObject final : public CBaseSmartObject
 {
@@ -28,10 +29,12 @@ class ModObject final : public CBaseSmartObject
     QWidget* main;
     QWidget* versions;
     const Mod* data;
+    ModVersionList* list = nullptr;
     static const inline std::string untoggledColor2 = "#2e2e2e;";
 
 public:
     ModObject(const Mod*);
+    // virtual void ChangeOfState() override;
     virtual void turnOff() override;
     virtual void turnOn() override;
 
@@ -39,7 +42,13 @@ private:
     void DELETE() override;
     void INFO() override;
 
+public slots:
+    void child_turnOff();
+    void none_triggered_on();
+    void none_triggered_off();
+
 signals:
+    void fromChildSwitched(ModObject*);
     void remove(ModObject*);
     void childs_set_off();
     void childs_set_on();

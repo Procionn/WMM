@@ -24,6 +24,7 @@ ModVersionObject::ModVersionObject (const QString& version, ModObject* parentWid
     QHBoxLayout* lay = new QHBoxLayout(this);
     lay->addWidget(new QLabel(version));
     setFrameStyle(QFrame::Box | QFrame::Sunken);
+    setStyleSheet("background-color: #2e2e2e");
 }
 
 
@@ -41,17 +42,13 @@ ModVersionList::ModVersionList (QWidget* parent) : CSmartList(parent) {
 
 
 void ModVersionList::child_status () {
-    bool flag = true;
     for (const auto* entry : childList) {
         if (!entry->toggl_condition) {
-            flag = false;
-            break;
+            emit noAllOn();
+            return;
         }
     }
-    if (flag)
-        emit allOn();
-    else
-        emit noAllOn();
+    emit allOn();
 }
 
 

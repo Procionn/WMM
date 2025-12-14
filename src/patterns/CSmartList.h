@@ -84,8 +84,9 @@ private slots:
     void reset () {
         for (auto target : childList) {
             target->turnOff();
-            lastTarget = nullptr;
         }
+        lastTarget = nullptr;
+        reseted();
     }
 
 
