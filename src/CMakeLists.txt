@@ -47,6 +47,7 @@ add_library(CORE STATIC
     ModManager/objects.cpp
 
     dialog_window/unificator.cpp        dialog_window/unificator.h
+    core/IGameConfig.cpp                core/IGameConfig.h
 )
 add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp

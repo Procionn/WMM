@@ -23,6 +23,7 @@
 #include <filesystem>
 #include <cassert>
 #include <map>
+#include "core/IGameConfig.h"
 class wmml;
 
 
@@ -68,8 +69,10 @@ public:
 
 
 
-class CGameConfig : public virtual CBaseConfig
+class CBaseGameConfig : public virtual CBaseConfig
 {
+    friend class NixGameConfig;
+    friend class WinGameConfig;
     static constexpr const char* config_string[4]{
         "ModCoreDirectoryStage",
         "OnlyModDirectory",
@@ -90,17 +93,52 @@ public:
     void save_game_path(const std::string& path);
     void game_dir_backup();
     void game_recovery();
+
     void restorer();
-    void symlink_deliting();
-    void symlink_creating(const std::string& targetCollection);
+    virtual void symlink_deliting() = 0;
+    virtual void symlink_creating(const std::string& targetCollection) = 0;
 
 protected:
-    CGameConfig ();
-    void dir_comparison(const std::filesystem::path& file);
+    CBaseGameConfig ();
+    virtual void dir_comparison(const std::filesystem::path& file) = 0;
 
 private:
     const int wmml_size = 3;
     void write(wmml* input, std::string str);
+};
+
+
+
+
+
+class CGameConfig : public CBaseGameConfig
+{
+    IGameConfig* object;
+
+protected:
+    CGameConfig() {
+        /* object = new Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
+                     ? WinGameConfig : NixGameConfig; */
+#ifdef WIN64
+    object = new WinGameConfig;
+#else
+    object = new NixGameConfig;
+#endif
+    }
+    ~CGameConfig() {
+        delete object;
+    }
+    void dir_comparison (const std::filesystem::path& file) override {
+        object->dir_comparison(file);
+    }
+
+public:
+    void symlink_deliting() override {
+        object->symlink_deliting();
+    }
+    void symlink_creating(const std::string& targetCollection) override {
+        object->symlink_creating(targetCollection);
+    }
 };
 
 
