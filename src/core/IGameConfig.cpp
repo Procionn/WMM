@@ -43,15 +43,25 @@ namespace {
 
     QString get_token () {
         static QByteArray token;
-        if (token.isEmpty()) {
+        if (!token.isEmpty()) {
             QByteArray bytes(16, Qt::Uninitialized);
             QRandomGenerator::system()->generate(
-                bytes.begin(),
-                bytes.end()
-            );
+                bytes.begin(), bytes.end());
             token = bytes.toHex();
         }
         return token;
+    }
+
+
+    QString get_pipe () {
+        static QString pipe;
+        if (!pipe.isEmpty()) {
+            QByteArray bytes(16, Qt::Uninitialized);
+            QRandomGenerator::system()->generate(
+                bytes.begin(), bytes.end());
+            pipe = bytes.toHex();
+        }
+        return pipe;
     }
 
 
@@ -62,7 +72,7 @@ namespace {
             SHELLEXECUTEINFOW sei{sizeof(sei)};
             sei.lpVerb = L"runas";
             sei.lpFile = L"WMM.root.exe";
-            QString parameters = QString("--pipe=%1 --token=%2").arg(pipe, get_token());
+            QString parameters = QString("--pipe=%1 --token=%2").arg(get_pipe(), get_token());
             sei.lpParameters = LPCWSTR(parameters.utf16());
             sei.nShow = SW_HIDE;
             ShellExecuteExW(&sei);
@@ -113,14 +123,15 @@ void WinGameConfig::dir_comparison (const std::filesystem::path& file) {
     IpcHeader ipc;
     ipc.comand = ComandList::dir_cmp;
     QByteArray data;
-    QDataStream ds(&data, QIODevice::WriteOnly);
-    ds << QString::fromStdString(file.string());
-    ds << QString::fromStdString(Core::get().core_dir_name);
-    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    QDataStream dataView(&data, QIODevice::WriteOnly);
+    dataView << QString::fromStdString(file.string());
+    dataView << QString::fromStdString(Core::get().core_dir_name);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
     QStringList list;
     for (auto entry : Core::get().MGD)
         list.append(QString::fromStdString(entry));
-    ds << list;
+    dataView << list;
     send_command(data, &ipc);
 }
 
@@ -130,8 +141,14 @@ void WinGameConfig::symlink_deliting () {
     IpcHeader ipc;
     ipc.comand = ComandList::symlnk_del;
     QByteArray data;
-    QDataStream ds(&data, QIODevice::WriteOnly);
-    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    QDataStream dataView(&data, QIODevice::WriteOnly);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    dataView << QString::fromStdString(Core::get().core_dir_name);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
+    QStringList list;
+    for (auto entry : Core::get().MGD)
+        list.append(QString::fromStdString(entry));
+    dataView << list;
     send_command(data, &ipc);
 }
 
@@ -142,9 +159,10 @@ void WinGameConfig::symlink_creating (const std::string& targetCollection) {
     IpcHeader ipc;
     ipc.comand = ComandList::symlnk_create;
     QByteArray data;
-    QDataStream ds(&data, QIODevice::WriteOnly);
-    ds << QString::fromStdString(targetCollection);
-    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    QDataStream dataView(&data, QIODevice::WriteOnly);
+    dataView << QString::fromStdString(targetCollection);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
     send_command(data, &ipc);
 }
 

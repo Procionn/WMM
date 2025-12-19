@@ -128,11 +128,14 @@ target_link_libraries(Wirus PRIVATE
 )
 if(WIN32)
     add_executable(WinRoot
-      winrootmain.cpp
-      winrootbackend.cpp winrootbackend.h
+      winmodule/winrootmain.cpp
+      core/InterprocessData.h
+      winmodule/winrootbackend.h winmodule/winrootbackend.cpp
+      methods.cpp                methods.h
     )
-    target_link_libraries(WinRoot
+    target_link_libraries(WinRoot PRIVATE
       Qt${QT_VERSION_MAJOR}::Network
+      Qt${QT_VERSION_MAJOR}::Widgets
       wmml_static
     )
     set_target_properties(Wirus PROPERTIES

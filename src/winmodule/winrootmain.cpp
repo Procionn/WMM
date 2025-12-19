@@ -14,23 +14,23 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef INTERPROCESSDATA_H
-#define INTERPROCESSDATA_H
-#include <stdint.h>
-
-enum class ComandList {
-    kill = 0,
-    dir_cmp,
-    symlnk_del,
-    symlnk_create
-};
+#include "winrootbackend.h"
 
 
-struct IpcHeader {
-    static inline uint32_t hash = 0xDEAFBEDE;
-    uint32_t dataSize;
-    ComandList comand;
-    static inline uint16_t version = 1;
-};
+int main (int argc, char** argv) {
+    QCoreApplication app(argc, argv);
+    QString pipe, token;
 
-#endif // INTERPROCESSDATA_H
+    for (const QString& arg : app.arguments()) {
+        if (arg.startsWith("--pipe="))
+            pipe = arg.mid(7);
+        else if (arg.startsWith("--token="))
+            token = arg.mid(8);
+    }
+
+    if (pipe.isEmpty() || token.isEmpty())
+        return 1;
+    winrootbackend server(pipe, token);
+
+    return app.exec();
+}
