@@ -21,6 +21,10 @@
 #include <QLocalSocket>
 #include <QTimer>
 #include <wmml.h>
+#ifdef WIN64
+    #include <windows.h>
+    #include <sys/stat.h>
+#endif
 
 namespace fs = std::filesystem;
 
