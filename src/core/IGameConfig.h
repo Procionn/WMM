@@ -35,6 +35,7 @@ public:
 class WinGameConfig : public IGameConfig
 {
 public:
+    ~WinGameConfig();
     virtual void dir_comparison (const std::filesystem::path& file) override;
     virtual void symlink_deliting() override;
     virtual void symlink_creating(const std::string& targetCollection) override;

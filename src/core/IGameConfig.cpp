@@ -18,27 +18,134 @@
 #include <wmml.h>
 #include <vector>
 #include <QCoreApplication>
-#ifdef _WIN32
+#include <QRandomGenerator>
+#include <QLocalSocket>
+#ifdef WIN64
     #include <windows.h>
     #include <sys/stat.h>
 #endif
 #include "../core.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
+#include "InterprocessData.h"
+
 namespace fs = std::filesystem;
 
-void WinGameConfig::dir_comparison (const std::filesystem::path& file) {
+namespace {
+    void platform_test () {
+#ifdef WIN64
+        stc::cerr("sending a command to admin process");
+#else
+        std::runtime_error("This programm module is not supported on this platform!");
+#endif
+    }
 
+
+    QString get_token () {
+        static QByteArray token;
+        if (token.isEmpty()) {
+            QByteArray bytes(16, Qt::Uninitialized);
+            QRandomGenerator::system()->generate(
+                bytes.begin(),
+                bytes.end()
+            );
+            token = bytes.toHex();
+        }
+        return token;
+    }
+
+
+    QLocalSocket* get_admin_process () {
+        static QLocalSocket process;
+#ifdef WIN64
+        if (process.state() != QLocalSocket::ConnectedState) {
+            SHELLEXECUTEINFOW sei{sizeof(sei)};
+            sei.lpVerb = L"runas";
+            sei.lpFile = L"WMM.root.exe";
+            QString parameters = QString("--pipe=%1 --token=%2").arg(pipe, get_token());
+            sei.lpParameters = LPCWSTR(parameters.utf16());
+            sei.nShow = SW_HIDE;
+            ShellExecuteExW(&sei);
+
+            QString server = "WMM";
+            process.connectToServer(server);
+            if (!process.waitForConnected(3000))
+                std::runtime_error("Couldn't start admin process");
+        }
+#else
+        std::runtime_error("This programm module is not supported on this platform!");
+#endif
+        return &process;
+    }
+
+
+    void send_command (QByteArray& data, IpcHeader* ipc) {
+        auto rootProcess = get_admin_process();
+
+        QByteArray metaInfo;
+        QDataStream out(&metaInfo, QIODevice::WriteOnly);
+        out << get_token();
+        out << data;
+
+        ipc->dataSize = metaInfo.size();
+
+        QByteArray pack;
+        pack.append(reinterpret_cast<char*>(ipc), sizeof(IpcHeader));
+        pack.append(metaInfo);
+
+        rootProcess->write(pack);
+        rootProcess->flush();
+    }
+}
+
+
+WinGameConfig::~WinGameConfig () {
+    platform_test();
+    IpcHeader ipc;
+    ipc.comand = ComandList::kill;
+    QByteArray data;
+    send_command(data, &ipc);
+}
+
+
+void WinGameConfig::dir_comparison (const std::filesystem::path& file) {
+    platform_test();
+    IpcHeader ipc;
+    ipc.comand = ComandList::dir_cmp;
+    QByteArray data;
+    QDataStream ds(&data, QIODevice::WriteOnly);
+    ds << QString::fromStdString(file.string());
+    ds << QString::fromStdString(Core::get().core_dir_name);
+    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    QStringList list;
+    for (auto entry : Core::get().MGD)
+        list.append(QString::fromStdString(entry));
+    ds << list;
+    send_command(data, &ipc);
 }
 
 
 void WinGameConfig::symlink_deliting () {
-
+    platform_test();
+    IpcHeader ipc;
+    ipc.comand = ComandList::symlnk_del;
+    QByteArray data;
+    QDataStream ds(&data, QIODevice::WriteOnly);
+    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    send_command(data, &ipc);
 }
 
 
 void WinGameConfig::symlink_creating (const std::string& targetCollection) {
-
+    platform_test();
+    Core::get().restorer();
+    IpcHeader ipc;
+    ipc.comand = ComandList::symlnk_create;
+    QByteArray data;
+    QDataStream ds(&data, QIODevice::WriteOnly);
+    ds << QString::fromStdString(targetCollection);
+    ds << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
+    send_command(data, &ipc);
 }
 
 

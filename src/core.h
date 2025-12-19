@@ -117,8 +117,13 @@ class CGameConfig : public CBaseGameConfig
 
 protected:
     CGameConfig() {
-        /* object = new Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
-                     ? WinGameConfig : NixGameConfig; */
+/* #ifdef WIN64
+        Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "true");
+#else
+        Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "false");
+#endif
+        object = new (Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
+                     ? WinGameConfig : NixGameConfig); */
 #ifdef WIN64
     object = new WinGameConfig;
 #else

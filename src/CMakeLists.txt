@@ -1,4 +1,4 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
 
 if (WIN32)
     set(LIB "${CMAKE_SOURCE_DIR}/src/lib")
@@ -48,6 +48,7 @@ add_library(CORE STATIC
 
     dialog_window/unificator.cpp        dialog_window/unificator.h
     core/IGameConfig.cpp                core/IGameConfig.h
+    core/InterprocessData.h
 )
 add_library(SETTINGS STATIC
     settings/settings.h                 settings/settings.cpp
@@ -72,6 +73,7 @@ add_library(PATTERNS STATIC
 )
 target_link_libraries(CORE PRIVATE
   Qt${QT_VERSION_MAJOR}::Widgets
+  Qt${QT_VERSION_MAJOR}::Network
   HPP_ARCHIVE
   wmml_static
 )
@@ -125,6 +127,14 @@ target_link_libraries(Wirus PRIVATE
     SETTINGS
 )
 if(WIN32)
+    add_executable(WinRoot
+      winrootmain.cpp
+      winrootbackend.cpp winrootbackend.h
+    )
+    target_link_libraries(WinRoot
+      Qt${QT_VERSION_MAJOR}::Network
+      wmml_static
+    )
     set_target_properties(Wirus PROPERTIES
         ${BUNDLE_ID_OPTION}
         WIN32_EXECUTABLE TRUE
