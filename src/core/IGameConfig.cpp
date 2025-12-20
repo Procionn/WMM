@@ -98,7 +98,7 @@ namespace {
         }
 
         std::runtime_error("This programm module is not supported on this platform!");
-#endif
+#else
         std::runtime_error("This programm module is not supported on this platform!");
 #endif
         return &process;
