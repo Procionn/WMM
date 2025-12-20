@@ -43,7 +43,7 @@ namespace {
 
     QString get_token () {
         static QByteArray token;
-        if (!token.isEmpty()) {
+        if (token.isEmpty()) {
             QByteArray bytes(16, Qt::Uninitialized);
             QRandomGenerator::system()->generate(
                 bytes.begin(), bytes.end());
@@ -55,7 +55,7 @@ namespace {
 
     QString get_pipe () {
         static QString pipe;
-        if (!pipe.isEmpty()) {
+        if (pipe.isEmpty()) {
             QByteArray bytes(16, Qt::Uninitialized);
             QRandomGenerator::system()->generate(
                 bytes.begin(), bytes.end());
@@ -77,8 +77,7 @@ namespace {
             sei.nShow = SW_HIDE;
             ShellExecuteExW(&sei);
 
-            QString server = "WMM";
-            process.connectToServer(server);
+            process.connectToServer(get_pipe());
             if (!process.waitForConnected(3000))
                 std::runtime_error("Couldn't start admin process");
         }

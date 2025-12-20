@@ -21,10 +21,9 @@
 #include <QLocalSocket>
 #include <QTimer>
 #include <wmml.h>
-#ifdef WIN64
-    #include <windows.h>
-    #include <sys/stat.h>
-#endif
+#include <windows.h>
+#include <sys/stat.h>
+
 
 namespace fs = std::filesystem;
 
@@ -140,7 +139,6 @@ void winrootbackend::dir_comparison (const fs::path& file, const std::string& co
                 collectionFile = (COLLECTIONS + CONFIG_GAME + "/" +
                                   std::get<std::string>(v[0])) / relative;
                 if (!fs::exists(pathToBackupFile)) {
-#ifdef _WIN32
                     auto is_symlink = [](const std::filesystem::path& p) -> bool {
                         DWORD attrs = GetFileAttributesA(p.string().c_str());
                         return (attrs != INVALID_FILE_ATTRIBUTES) &&
@@ -159,12 +157,6 @@ void winrootbackend::dir_comparison (const fs::path& file, const std::string& co
                         fs::remove(collectionFile);
                     fs::rename(stc::string::replace(entry.path(), '\\', '/'),
                                stc::string::replace(collectionFile, '\\', '/'));
-#elif defined(__linux__)
-                    if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path()))
-                        continue;
-                    fs::create_directories(collectionFile.parent_path());
-                    fs::rename(entry.path(), collectionFile);
-#endif
                 }
             }
         }
@@ -192,7 +184,6 @@ void winrootbackend::symlink_deliting (QByteArray& data) {
     if (fs::exists(testFile))
         dir_comparison(testFile, core_dir_name, CONFIG_GAME_PATH, CONFIG_GAME, list);
     try {
-#ifdef _WIN32
         auto is_symlink = [](const std::filesystem::path& p) -> bool {
             DWORD attrs = GetFileAttributesA(p.string().c_str());
             return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
@@ -203,17 +194,6 @@ void winrootbackend::symlink_deliting (QByteArray& data) {
                 DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
             }
         }
-#elif defined(__linux__)
-        for (const auto& entry : fs::recursive_directory_iterator(CONFIG_GAME_PATH)) {
-            const auto& status = entry.symlink_status();
-            if (fs::is_symlink(status)) {
-#ifndef NDEBUG
-                std::cout << "is symlink -> " << entry.path() << std::endl;
-#endif
-                fs::remove(entry);
-            }
-        }
-#endif
     }
     catch (const std::exception& e) {
         stc::cerr(std::string("Error: ") + e.what());
