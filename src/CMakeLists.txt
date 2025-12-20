@@ -157,6 +157,13 @@ if(WIN32)
                 ${CMAKE_SOURCE_DIR}/winRes/logo.ico
     )
     target_sources(Wirus PRIVATE resources.o)
+    add_custom_command(
+        OUTPUT root.o
+        COMMAND ${CMAKE_RC_COMPILER} ${CMAKE_SOURCE_DIR}/winRes/root.rc -O coff -o root.o
+        DEPENDS ${CMAKE_SOURCE_DIR}/winRes/root.rc
+                ${CMAKE_SOURCE_DIR}/winRes/root.manifest
+    )
+    target_sources(WinRoot PRIVATE root.o)
 elseif(UNIX)
     target_include_directories(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBARCHIVE_LIBRARIES})

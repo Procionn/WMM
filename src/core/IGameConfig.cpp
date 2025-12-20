@@ -69,19 +69,36 @@ namespace {
         static QLocalSocket process;
 #ifdef WIN64
         if (process.state() != QLocalSocket::ConnectedState) {
-            SHELLEXECUTEINFOW sei{sizeof(sei)};
-            sei.lpVerb = L"runas";
-            sei.lpFile = L"WMM.root.exe";
-            QString parameters = QString("--pipe=%1 --token=%2").arg(get_pipe(), get_token());
-            sei.lpParameters = LPCWSTR(parameters.utf16());
-            sei.nShow = SW_HIDE;
-            ShellExecuteExW(&sei);
+            STARTUPINFOW si{sizeof(si)};
+            PROCESS_INFORMATION pi;
+            std::wstring cmd = std::wstring(L"\"WinRoot.exe\" --pipe=") + get_pipe().toStdWString() + L" --token=" + get_token().toStdWString();
+            if (!CreateProcessW(nullptr, cmd.data(), nullptr, nullptr,
+                                FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi)) {
+
+                LPSTR messageBuffer = nullptr;
+                FormatMessageA(
+                    FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                        FORMAT_MESSAGE_FROM_SYSTEM,
+                    nullptr,
+                    GetLastError(),
+                    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                    (LPSTR)&messageBuffer,
+                    0,
+                    nullptr
+                    );
+                stc::cerr("permission to run the root process was not obtained: ");
+                stc::cerr(messageBuffer);
+                LocalFree(messageBuffer);
+                std::runtime_error("Error starting root process");
+            }
 
             process.connectToServer(get_pipe());
-            if (!process.waitForConnected(3000))
+            if (!process.waitForConnected(30000))
                 std::runtime_error("Couldn't start admin process");
         }
-#else
+
+        std::runtime_error("This programm module is not supported on this platform!");
+#endif
         std::runtime_error("This programm module is not supported on this platform!");
 #endif
         return &process;
