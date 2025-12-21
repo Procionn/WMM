@@ -111,3 +111,7 @@ void ModObject::none_triggered_off () {
             setStyleSheet(QString::fromStdString(dataString + untoggledColor2));
     }
 }
+
+std::string ModObject::get_name () {
+    return ModManager::get().mod_data_converter(data->modId);
+}

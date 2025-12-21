@@ -26,6 +26,9 @@ class ModStorageList final : public CSmartList<ModObject>
 public:
     ModStorageList();
 
+public slots:
+    void search(const QString& ref);
+
 private slots:
     void last_target_update(ModObject*);
 };

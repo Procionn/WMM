@@ -16,7 +16,9 @@
  */
 #include "ModStorageList.h"
 
+#include <regex>
 #include "../../ModManager.h"
+#include "../../methods.h"
 
 
 ModStorageList::ModStorageList() {
@@ -31,4 +33,13 @@ ModStorageList::ModStorageList() {
 
 void ModStorageList::last_target_update (ModObject* new_target) {
     lastTarget = new_target;
+}
+
+
+void ModStorageList::search(const QString& ref) {
+    for (auto* target : childList) {
+        if (std::regex_search(target->get_name(), std::regex(ref.toStdString(), std::regex_constants::icase)))
+            target->show();
+        else target->hide();
+    }
 }

@@ -17,10 +17,15 @@
 #include "ModStorage.h"
 
 #include <QVBoxLayout>
+#include <QLineEdit>
 #include "ModStorage/ModStorageList.h"
 
 ModStorage::ModStorage() {
     QVBoxLayout* mainLay = new QVBoxLayout(this);
+    QLineEdit* searchTab = new QLineEdit;
     ModStorageList* objectLay = new ModStorageList;
+    mainLay->addWidget(searchTab);
     mainLay->addWidget(objectLay);
+
+    connect(searchTab, &QLineEdit::textEdited, objectLay, &ModStorageList::search);
 }

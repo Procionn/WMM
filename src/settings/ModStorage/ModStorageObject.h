@@ -34,9 +34,9 @@ class ModObject final : public CBaseSmartObject
 
 public:
     ModObject(const Mod*);
-    // virtual void ChangeOfState() override;
     virtual void turnOff() override;
     virtual void turnOn() override;
+    std::string get_name();
 
 private:
     void DELETE() override;
