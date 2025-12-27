@@ -47,7 +47,7 @@ struct Mod
     std::vector<ModInfo>* versions = nullptr;
     uint64_t modId;
 
-    std::string recommended_version();
+    std::string recommended_version() const;
 };
 
 

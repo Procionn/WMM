@@ -54,7 +54,7 @@ Mod::~Mod () {
     delete versions;
 }
 
-std::string Mod::recommended_version () {
+std::string Mod::recommended_version () const {
     assert(versions);
     return versions->back().modVersion;
 }

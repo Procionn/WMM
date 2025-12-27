@@ -185,6 +185,18 @@ void ModManager::remove (const std::string& name, const std::string& version) {
 }
 
 
+void ModManager::remove (const uint64_t id) {
+    ML_remove(id);
+    for (auto& entry : all_versions_list(id))
+        std::filesystem::remove(get_path(id, entry.data()));
+}
+
+
+void ModManager::remove (const std::string& name) {
+    remove(mod_data_converter(name));
+}
+
+
 uint64_t ModManager::mod_data_converter (const std::string& modName) {
     return dictionary[modName];
 }
