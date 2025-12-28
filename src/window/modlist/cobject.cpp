@@ -126,6 +126,7 @@ CVersion::CVersion (const std::string& version, CObject* parent) :
 
 
 void CVersion::context (const QPoint& pos) {
+    if (!parent->type) return;
     QMenu* contextMenu = new QMenu(this);
     const auto container = ModManager::get().all_versions_list(parent->id);
     std::string_view entry;
