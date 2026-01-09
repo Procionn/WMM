@@ -23,58 +23,61 @@
 #include "../patterns/WaitingWindow.h"
 
 namespace {
-    int modinfo_cmp (const void* a, const void* b) {
-        const ModInfo* arg1 = static_cast<const ModInfo*>(a);
-        const ModInfo* arg2 = static_cast<const ModInfo*>(b);
-        return arg1->modVersion.compare(arg2->modVersion);
+    bool modinfo_cmp(const ModInfo& a, const ModInfo& b) {
+        return a.modVersion < b.modVersion;
     }
 
-    int mod_cmp (const void* a, const void* b) {
-        const Mod* arg1 = static_cast<const Mod*>(a);
-        const Mod* arg2 = static_cast<const Mod*>(b);
-        return arg1->modId > arg2->modId ?  1 :
-               arg1->modId < arg2->modId ? -1 : 0;
+    bool mod_cmp(const Mod* a, const Mod* b) {
+        return a->modId < b->modId;
     }
 }
 
 
 
 ModList::~ModList () {
+    for (Mod* mod : list)
+        delete mod;
     delete dataSaveFile;
 }
 
 
 Mod* ModList::bsearch (const uint64_t& modId) {
-    auto key = Mod(modId);
-    return static_cast<Mod*>(std::bsearch(&key,
-                                           list.data(),
-                                           list.size(),
-                                           sizeof(Mod),
-                                           &mod_cmp));
+    auto it = std::lower_bound(list.begin(), list.end(), modId,
+        [](const Mod* mod, uint64_t id) {return mod->modId < id;});
+    if (it != list.end() && (*it)->modId == modId)
+        return *it;
+    return nullptr;
 }
 
 
 ModInfo* ModList::bsearch (Mod* ptr, const std::string& modVersion) {
-    auto key = ModInfo(modVersion, 0);
-    return static_cast<ModInfo*>(std::bsearch(&key,
-                                               ptr->versions->data(),
-                                               ptr->versions->size(),
-                                               sizeof(ModInfo),
-                                               &modinfo_cmp));
+    if (!ptr || !ptr->versions)
+        std::runtime_error("ptr or ptr->versions is not valid");
+    auto it = std::lower_bound(
+        ptr->versions->begin(), ptr->versions->end(), modVersion,
+        [](const ModInfo& info, const std::string& version)
+        {return info.modVersion < version;});
+    if (it != ptr->versions->end() && it->modVersion == modVersion)
+        return &(*it);
+    return nullptr;
 }
 
 
 void ModList::import_saved_data () {
     if (Core::CONFIG_GAME == "None")
         return;
+    for (Mod* mod : list)
+        delete mod;
     if (!list.empty())
         list.clear();
     if (std::filesystem::exists(saveFile)) {
         dataSaveFile = new wmml(saveFile);
         std::vector<wmml::variant> v(gridSize);
         list.reserve(dataSaveFile->height());
-        while(dataSaveFile->read(v))
+        while(dataSaveFile->read(v)) {
             add_in_ram(static_cast<void*>(&v));
+            ++localId;
+        }
         delete dataSaveFile;
         dataSaveFile = new wmml(saveFile);
     }
@@ -111,13 +114,12 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
             throw Core::lang["LANG_LABEL_MOD_EXISTS"];
         else {
             ptr->versions->emplace_back(modVersion, localId);
-            std::qsort(ptr->versions->data(), ptr->versions->size(),
-                       sizeof(ModInfo), &modinfo_cmp);
+            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
         }
     }
     else {
-        list.emplace_back(modVersion, modId, localId);
-        std::qsort(list.data(), list.size(), sizeof(Mod), &mod_cmp);
+        list.push_back(new Mod(modVersion, modId, localId));
+        std::sort(list.begin(), list.end(), mod_cmp);
     }
     dictionary[modName] = modId;
     reverceDictionary[modId] = modName;
@@ -138,13 +140,12 @@ void ModList::add_in_ram(const uint64_t& modId, std::string& modVersion,
             throw Core::lang["LANG_LABEL_MOD_EXISTS"];
         else {
             ptr->versions->emplace_back(modVersion, localId);
-            std::qsort(ptr->versions->data(), ptr->versions->size(),
-                       sizeof(ModInfo), &modinfo_cmp);
+            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
         }
     }
     else {
-        list.emplace_back(modVersion, modId, localId);
-        std::qsort(list.data(), list.size(), sizeof(Mod), &mod_cmp);
+        list.push_back(new Mod(modVersion, modId, localId));
+        std::sort(list.begin(), list.end(), mod_cmp);
     }
     if (!modified) {
         dictionary[modName] = modId;
@@ -170,18 +171,35 @@ void ModList::add_in_ram (const void* v) {
 }
 
 
+void ModList::ML_rom_remove (const uint64_t& localid) {
+    dataSaveFile->remove_object(localid);
+    for (const Mod* mod : list) {
+        for(ModInfo& entry : *mod->versions) {
+            if (entry.localId > localid)
+                --entry.localId;
+        }
+    }
+    --localId;
+}
+
+
 void ModList::ML_remove (const uint64_t& modId, const std::string& modVersion) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr) {
             auto index = version_ptr - ptr->versions->data(); // счёт от нуля
-            dataSaveFile->remove_object(ptr->versions->data()[index].localId);
+            ML_rom_remove(ptr->versions->data()[index].localId);
             ptr->versions->erase(ptr->versions->begin() + index);
             if (ptr->versions->empty()) {
                 // в таком случае нужно уничтожить весь Mod объект
-                auto second_index = ptr - list.data();
-                list.erase(list.begin() + second_index);
+                auto iterator = std::find(list.begin(), list.end(), ptr);
+                if (iterator != list.end()) {
+                    list.erase(iterator);
+                    delete ptr;
+                }
+                else
+                    std::runtime_error(std::string("an object with an id ") + std::to_string(modId) + " not found");
             }
         }
         else
@@ -195,17 +213,24 @@ void ModList::ML_remove (const uint64_t& modId, const std::string& modVersion) {
 void ModList::ML_remove (const uint64_t& modId) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
-        for (const ModInfo& entry : *ptr->versions)
-            dataSaveFile->remove_object(entry.localId);
-        auto second_index = ptr - list.data();
-        list.erase(list.begin() + second_index);
+        auto iterator = std::find(list.begin(), list.end(), ptr);
+        if (iterator == list.end())
+            std::runtime_error(std::string("an object with an id ") + std::to_string(modId) + " not found");
+        list.erase(iterator);
+
+        int i = 0;
+        for (const ModInfo& entry : *ptr->versions) {
+            ML_rom_remove(entry.localId - i);
+            ++i;
+        }
+        delete ptr;
     }
     else
         throw ("Target mod is not exists");
 }
 
 
-const std::vector<Mod>& ModList::all_mods_list() {
+const std::vector<Mod*>& ModList::all_mods_list() {
    return list;
 }
 
@@ -215,7 +240,6 @@ const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& 
     assert(mod->versions);
     std::vector<std::string_view> versionList;
     versionList.reserve(mod->versions->size());
-    // for (const auto& entry : mod->versions)
     for (const auto& entry : *mod->versions)
         versionList.emplace_back(entry.modVersion);
     return versionList;

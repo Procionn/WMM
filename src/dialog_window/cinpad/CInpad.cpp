@@ -169,7 +169,7 @@ void CInpad::presets_directory_scaner(const std::vector<std::string>& existsElem
 
 void CInpad::mods_scaner(const std::vector<std::string>& existsElements) {
     for (const auto& entry : ModManager::get().all_mods_list()) {
-        std::string buttonName = ModManager::get().mod_data_converter(entry.modId);
+        std::string buttonName = ModManager::get().mod_data_converter(entry->modId);
         if (not_exists(existsElements, buttonName)) {
             CInpadButton* button = new CInpadButton(buttonName, false, count_type);
             vlist.emplace_back(button);

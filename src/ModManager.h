@@ -56,7 +56,7 @@ struct Mod
 
 class ModList
 {
-    std::vector<Mod> list;
+    std::vector<Mod*> list;
     uint64_t localId = 0;
     static constexpr const unsigned char gridSize = 3;
 
@@ -87,6 +87,7 @@ protected:
                     const std::string& modName);
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
     void ML_remove(const uint64_t& modId);
+    void ML_rom_remove(const uint64_t& localId);
     std::string mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr,
                                       const std::string& version, const std::string& name);
     void import_saved_data();
@@ -96,7 +97,7 @@ public:
              const std::string&& modName);
     void add(const uint64_t& modId, std::string& modVersion,
              const std::string& modName, const std::string&);
-    const std::vector<Mod>& all_mods_list();
+    const std::vector<Mod*>& all_mods_list();
     const std::vector<std::string_view> all_versions_list(const uint64_t& modId);
 };
 

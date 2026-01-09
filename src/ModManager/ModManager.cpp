@@ -186,9 +186,13 @@ void ModManager::remove (const std::string& name, const std::string& version) {
 
 
 void ModManager::remove (const uint64_t id) {
-    ML_remove(id);
-    for (auto& entry : all_versions_list(id))
-        std::filesystem::remove(get_path(id, entry.data()));
+    try {
+        stc::fs::remove_all(get_path(id));
+        ML_remove(id);
+    }
+    catch (const std::exception& err) {
+        stc::cerr(err.what());
+    }
 }
 
 
