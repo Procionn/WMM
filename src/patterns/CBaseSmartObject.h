@@ -23,8 +23,8 @@ class CBaseSmartObject : public CSmartObject
 {
 protected:
     CBaseSmartObject(const bool type, QWidget* parent = nullptr);
-    virtual void DELETE() = 0;
     virtual void INFO() = 0;
+    virtual void DELETE() = 0;
 
     bool count_type = true;
     bool infoEnabled = true;

@@ -1,6 +1,7 @@
 *.o
 *.ru
 *.user
+commit
 
 
 /cmake
