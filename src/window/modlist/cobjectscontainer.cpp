@@ -49,12 +49,10 @@ void CObjectsContainer::deletionSignals () {
 
 
 void CObjectsContainer::delete_target(CObject* target) {
-    std::vector<CObject*> newVector;
-    for (CObject* indexed : childList)
-        if (indexed != target)
-            newVector.emplace_back(indexed);
-    childList.clear();
-    childList = std::move(newVector);
+    auto iterator = std::find(childList.begin(), childList.end(), target);
+    if (iterator == childList.end())
+        std::runtime_error(std::string("the object ") + target->name + " was not found");
+    childList.erase(iterator);
     emit removed(target);
 }
 
