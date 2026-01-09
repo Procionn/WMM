@@ -30,9 +30,9 @@ class ModVersionObject final : public CBaseSmartObject
 
 public:
     ModVersionObject(const QString& version, ModObject* parentWidget);
+    void DELETE() override;
 
 private:
-    void DELETE() override;
     void INFO() override {}
 
 signals:
@@ -59,6 +59,8 @@ public slots:
 
 private slots:
     void child_status();
+    void RMB(const QPoint&, ModVersionObject*) override;
+    void deletionSignals();
 
 signals:
     void allOn();

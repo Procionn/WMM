@@ -17,17 +17,52 @@
 #include "ModStorageList.h"
 
 #include <regex>
+#include <QMenuBar>
+#include <QAction>
+#include "../../core.h"
 #include "../../ModManager.h"
 #include "../../methods.h"
 
 
 ModStorageList::ModStorageList() {
-    for (const Mod& mod : ModManager::get().all_mods_list()) {
-        ModObject* modObject;
-        add(modObject = new ModObject(&mod));
+    ModObject* modObject;
+    for (const Mod* mod : ModManager::get().all_mods_list()) {
+        modObject = new ModObject(mod);
+        add(modObject);
         connect(this, &ModStorageList::reseting, modObject, &ModObject::child_turnOff);
         connect(modObject, &ModObject::fromChildSwitched, this, &ModStorageList::last_target_update);
+        connect(modObject, &ModObject::remove, this, &ModStorageList::delete_target);
     }
+}
+
+
+void ModStorageList::RMB (const QPoint&, ModObject*) {
+    QMenu* contextMenu = new QMenu(this);
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    connect(action1, &QAction::triggered, this, &ModStorageList::deletionSignals);
+    contextMenu->exec(QCursor::pos());
+}
+
+void ModStorageList::deletionSignals () {
+    std::vector<ModObject*> newVector;
+    newVector.reserve(childList.size());
+
+    for (auto* target : childList) {
+        if (target->toggl_condition)
+            newVector.emplace_back(target);
+    }
+
+    for (auto* target : newVector)
+        target->DELETE();
+}
+
+
+void ModStorageList::delete_target(ModObject* target) {
+    auto iterator = std::find(childList.begin(), childList.end(), target);
+    if (iterator == childList.end())
+        std::runtime_error(std::string("the object ") + target->get_name() + " was not found");
+    childList.erase(iterator);
+    delete target;
 }
 
 

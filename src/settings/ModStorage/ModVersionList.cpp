@@ -16,7 +16,10 @@
  */
 #include "ModVersionList.h"
 #include <QLabel>
+#include <QMenuBar>
+#include <QAction>
 #include "../../methods.h"
+#include "../../core.h"
 
 ModVersionObject::ModVersionObject (const QString& version, ModObject* parentWidget)
     : CBaseSmartObject(false) {
@@ -38,6 +41,26 @@ ModVersionList::ModVersionList (QWidget* parent) : CSmartList(parent) {
     connect(this, &TemplateList::update, this, &ModVersionList::child_status);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+
+void ModVersionList::RMB (const QPoint&, ModVersionObject*) {
+    QMenu* contextMenu = new QMenu(this);
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    connect(action1, &QAction::triggered, this, &ModVersionList::deletionSignals);
+    contextMenu->exec(QCursor::pos());
+}
+
+void ModVersionList::deletionSignals () {
+    std::vector<ModVersionObject*> newVector;
+    newVector.reserve(childList.size());
+    for (auto* target : childList) {
+        if (target->toggl_condition)
+            target->DELETE();
+        else newVector.emplace_back(target);
+    }
+    childList.clear();
+    childList = std::move(newVector);
 }
 
 

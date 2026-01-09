@@ -36,10 +36,10 @@ public:
     ModObject(const Mod*);
     virtual void turnOff() override;
     virtual void turnOn() override;
+    virtual void DELETE() override;
     std::string get_name();
 
 private:
-    void DELETE() override;
     void INFO() override;
 
 public slots:

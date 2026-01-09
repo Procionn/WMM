@@ -70,6 +70,9 @@ ModObject::ModObject (const Mod* base) : data(base), versions(nullptr), CBaseSma
 
 
 void ModObject::DELETE() {
+    ModManager* module = &ModManager::get();
+    if (module->exists(data->modId, (data->recommended_version())))
+        module->remove(data->modId);
     emit remove(this);
 }
 

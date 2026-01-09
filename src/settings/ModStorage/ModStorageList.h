@@ -23,6 +23,8 @@
 
 class ModStorageList final : public CSmartList<ModObject>
 {
+    void deletionSignals();
+
 public:
     ModStorageList();
 
@@ -31,6 +33,8 @@ public slots:
 
 private slots:
     void last_target_update(ModObject*);
+    void delete_target(ModObject*);
+    void RMB(const QPoint& pos, ModObject* target) override;
 };
 
 #endif // MODSTORAGELIST_H
