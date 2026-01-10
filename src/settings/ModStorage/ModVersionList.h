@@ -19,18 +19,21 @@
 
 #include "../../patterns/CSmartList.h"
 #include "../../patterns/CBaseSmartObject.h"
-
+#include <iostream>
 class ModObject;
 
 class ModVersionObject final : public CBaseSmartObject
 {
     Q_OBJECT
-    ModObject* parent;
     static const inline std::string untoggledColor2 = "#3b3b3b";
+    const std::string_view name;
 
 public:
-    ModVersionObject(const QString& version, ModObject* parentWidget);
+    ModObject* parent;
+
+    ModVersionObject(const std::string_view version, ModObject* parentWidget);
     void DELETE() override;
+    std::string_view get_name();
 
 private:
     void INFO() override {}
@@ -56,11 +59,12 @@ public:
 public slots:
     void set_on();
     void set_off();
+    void delete_target(ModVersionObject* target);
 
 private slots:
     void child_status();
     void RMB(const QPoint&, ModVersionObject*) override;
-    void deletionSignals();
+    void deletion_signals();
 
 signals:
     void allOn();

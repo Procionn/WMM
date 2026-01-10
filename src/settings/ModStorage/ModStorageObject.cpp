@@ -46,9 +46,12 @@ ModObject::ModObject (const Mod* base) : data(base), versions(nullptr), CBaseSma
             versions->setStyleSheet("background-color: #363638");
             list = new ModVersionList();
             QVBoxLayout* l = new QVBoxLayout(versions);
+            ModVersionObject* obj = nullptr;
             l->addWidget(list);
             for (const auto& entry : ModManager::get().all_versions_list(data->modId)) {
-                list->add(new ModVersionObject(entry.data(), this));
+                obj = new ModVersionObject(entry, this);
+                list->add(obj);
+                connect(obj, &ModVersionObject::remove, this, &ModObject::delete_child);
             }
             connect(list, &ModVersionList::allOn, this, &ModObject::none_triggered_on);
             connect(list, &ModVersionList::noAllOn, this, &ModObject::none_triggered_off);
@@ -68,6 +71,15 @@ ModObject::ModObject (const Mod* base) : data(base), versions(nullptr), CBaseSma
 }
 
 
+
+void ModObject::delete_child(ModVersionObject* target) {
+    if (data->versions->size()==1)
+        DELETE();
+    else {
+        list->delete_target(target);
+        ModManager::get().remove(data->modId, target->get_name().data());
+    }
+}
 
 void ModObject::DELETE() {
     ModManager* module = &ModManager::get();

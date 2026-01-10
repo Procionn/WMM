@@ -22,6 +22,7 @@
 
 class Mod;
 class ModVersionList;
+class ModVersionObject;
 
 class ModObject final : public CBaseSmartObject
 {
@@ -46,6 +47,7 @@ public slots:
     void child_turnOff();
     void none_triggered_on();
     void none_triggered_off();
+    void delete_child(ModVersionObject*);
 
 signals:
     void fromChildSwitched(ModObject*);

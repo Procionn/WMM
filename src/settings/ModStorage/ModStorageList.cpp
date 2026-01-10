@@ -39,11 +39,11 @@ ModStorageList::ModStorageList() {
 void ModStorageList::RMB (const QPoint&, ModObject*) {
     QMenu* contextMenu = new QMenu(this);
     QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
-    connect(action1, &QAction::triggered, this, &ModStorageList::deletionSignals);
+    connect(action1, &QAction::triggered, this, &ModStorageList::deletion_signals);
     contextMenu->exec(QCursor::pos());
 }
 
-void ModStorageList::deletionSignals () {
+void ModStorageList::deletion_signals () {
     std::vector<ModObject*> newVector;
     newVector.reserve(childList.size());
 
