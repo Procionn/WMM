@@ -25,6 +25,15 @@
 
 
 ModStorageList::ModStorageList() {
+    scaner();
+}
+
+void ModStorageList::update () {
+    clear();
+    scaner();
+}
+
+void ModStorageList::scaner () {
     ModObject* modObject;
     for (const Mod* mod : ModManager::get().all_mods_list()) {
         modObject = new ModObject(mod);
@@ -34,6 +43,7 @@ ModStorageList::ModStorageList() {
         connect(modObject, &ModObject::remove, this, &ModStorageList::delete_target);
     }
 }
+
 
 
 void ModStorageList::RMB (const QPoint&, ModObject*) {

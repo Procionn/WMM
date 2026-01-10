@@ -23,9 +23,14 @@
 ModStorage::ModStorage() {
     QVBoxLayout* mainLay = new QVBoxLayout(this);
     QLineEdit* searchTab = new QLineEdit;
-    ModStorageList* objectLay = new ModStorageList;
+    objectLay = new ModStorageList;
     mainLay->addWidget(searchTab);
     mainLay->addWidget(objectLay);
 
     connect(searchTab, &QLineEdit::textEdited, objectLay, &ModStorageList::search);
+}
+
+
+void ModStorage::update () {
+    objectLay->update();
 }

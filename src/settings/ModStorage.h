@@ -19,11 +19,15 @@
 
 #include <QWidget>
 
+class ModStorageList;
 class ModStorage : public QWidget
 {
     Q_OBJECT
+    ModStorageList* objectLay;
+
 public:
     ModStorage();
+    void update();
 
 signals:
 };

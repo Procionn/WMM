@@ -23,8 +23,11 @@
 
 class ModStorageList final : public CSmartList<ModObject>
 {
+    void scaner();
+
 public:
     ModStorageList();
+    void update();
 
 public slots:
     void search(const QString& ref);

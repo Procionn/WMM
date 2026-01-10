@@ -19,6 +19,7 @@
 #include "../window/modlist/cobject.h"
 #include <QLabel>
 #include <wmml.h>
+#include "../settings/settings.h"
 
 CContentList::CContentList () {
     setMinimumWidth(200);
@@ -34,6 +35,7 @@ CContentList::CContentList () {
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
     connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
     connect(searchWidget, &CSearchWidget::search_updated, contentList, &CObjectsContainer::search);
+    connect(dnd, &CDND::launch, []{CSettings::get()->settings_modules_list->settings_storage->update();});
 }
 
 

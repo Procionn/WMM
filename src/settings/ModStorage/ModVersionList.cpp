@@ -20,7 +20,6 @@
 #include <QAction>
 #include "../../methods.h"
 #include "../../core.h"
-#include "ModStorageObject.h"
 
 ModVersionObject::ModVersionObject (const std::string_view version, ModObject* parentWidget)
     : CBaseSmartObject(false), parent(parentWidget), name(version) {
