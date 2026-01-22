@@ -22,7 +22,7 @@ CSmartObject::CSmartObject(QWidget *parent) : QFrame(parent) {
             [this](const QPoint& pos){emit rightClick(pos, this);});
 }
 
-bool CSmartObject::is_target() {
+bool CSmartObject::is_target() const {
     return toggl_condition;
 }
 

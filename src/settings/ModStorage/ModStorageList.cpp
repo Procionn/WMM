@@ -58,7 +58,7 @@ void ModStorageList::deletion_signals () {
     newVector.reserve(childList.size());
 
     for (auto* target : childList) {
-        if (target->toggl_condition)
+        if (target->is_target())
             newVector.emplace_back(target);
     }
 

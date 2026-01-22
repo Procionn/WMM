@@ -91,8 +91,6 @@ void CObject::local_priority() {
         PRIORITY(newValue);
         emit flushing_request();
     });
-    // connect(window, &CProperties::complited, this, &CObject::PRIORITY);
-    // emit flushing_request();
 }
 
 void CObject::PRIORITY(signed char newValue) {

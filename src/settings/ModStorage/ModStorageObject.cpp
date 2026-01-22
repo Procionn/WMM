@@ -108,7 +108,7 @@ void ModObject::child_turnOff () {
 }
 
 void ModObject::none_triggered_on () {
-    if (!toggl_condition) {
+    if (!is_target()) {
         toggl_condition = true;
         if (count_type)
             setStyleSheet(QString::fromStdString(dataString + toggledColor1));
@@ -118,7 +118,7 @@ void ModObject::none_triggered_on () {
 }
 
 void ModObject::none_triggered_off () {
-    if (toggl_condition) {
+    if (is_target()) {
         toggl_condition = false;
         if (count_type)
             setStyleSheet(QString::fromStdString(dataString + untoggledColor1));

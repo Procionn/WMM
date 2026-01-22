@@ -61,7 +61,7 @@ void ModVersionList::deletion_signals () {
     newVector.reserve(childList.size()/2);
 
     for (auto* target : childList) {
-        if (target->toggl_condition)
+        if (target->is_target())
             newVector.emplace_back(target);
     }
 
@@ -82,7 +82,7 @@ void ModVersionList::delete_target(ModVersionObject* target) {
 
 void ModVersionList::child_status () {
     for (const auto* entry : childList) {
-        if (!entry->toggl_condition) {
+        if (!entry->is_target()) {
             emit noAllOn();
             return;
         }
