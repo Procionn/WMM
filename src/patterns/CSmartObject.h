@@ -29,6 +29,7 @@ public:
 public:
     CSmartObject(QWidget *parent = nullptr);
     virtual void ChangeOfState();
+    bool is_target();
 
 // ////////////////////////////////////////////// You can override these 3 methods if you need to.
     virtual void context(const QPoint& pos);   // The "context" method, in my case, was used to open

@@ -131,11 +131,11 @@ void CInpad::reader () {
         targetFiledDirectory = stc::cwmm::ram_collection((*target)->name);
 
     wmml file(targetFiledDirectory);
-    std::vector<wmml::variant> v(file.width());
+    std::vector<wmml::variant> v(GRID_WIDTH);
     std::vector<std::string> existsElements;
     existsElements.reserve(file.height());
 
-    for (int arraySize = 0; file.read(v); arraySize++)
+    while (file.read(v))
         if (std::get<bool>(v[2]))
             existsElements.emplace_back(std::get<std::string>(v[0]));
         else
@@ -183,17 +183,17 @@ void CInpad::application(const std::string& targetName, const bool targetType) {
     if (targetType) fileName = stc::cwmm::ram_preset(targetName);
     else            fileName = stc::cwmm::ram_collection(targetName);
     wmml file(fileName);
-    std::vector<wmml::variant> v(file.width());
+    std::vector<wmml::variant> v(GRID_WIDTH);
     for (CInpadButton* target : vlist) {
         if (target->is_target()) {
             std::string name = target->get_name();
             if  (target->type == true) {
-                v = {name, "", false, (uint64_t)(0), true};
+                v = {name, "", false, (uint64_t)(0), true, (signed char)(0)};
                 file.write(v);
             }
             else {
                 uint64_t id = ModManager::get().mod_data_converter(name);
-                v = {name, ModManager::get().mod_recommended_version(id), true, id, true};
+                v = {name, ModManager::get().mod_recommended_version(id), true, id, true, (signed char)(0)};
                 file.write(v);
             }
         }

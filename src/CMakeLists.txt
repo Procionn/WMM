@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(HPP_ARCHIVE)
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG v1.4.0
+  GIT_TAG 5367decfaa97cf0ba3de9bde0e5bd15b7d6df211
 )
 FetchContent_MakeAvailable(wmml)
 
@@ -114,6 +114,7 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    dialog_window/CProperties.h dialog_window/CProperties.cpp
 )
 
 target_compile_definitions(SETTINGS PRIVATE

@@ -16,6 +16,7 @@
  */
 #include "cobject.h"
 #include "../../ModManager.h"
+#include "../../dialog_window/CProperties.h"
 #include <wmml.h>
 
 CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
@@ -36,6 +37,7 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
     version = std::get<std::string>(c->at(1));
     type = std::get<bool>(c->at(2));
     id = std::get<uint64_t>(c->at(3));
+    priority = std::get<signed char>(c->at(5));
     switcher->setTheme("orange");
     if (std::get<bool>(c->at(4)))   switcher->isTarget(true);
     else                            switcher->isTarget(false);
@@ -55,20 +57,23 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
     spl2->addWidget(Ltype);
     Box->addWidget(switcher);
 
-    connect(switcher, &CSwitchButton::toggled,   this, [=]{emit ON(this);});
-    connect(switcher, &CSwitchButton::untoggled, this, [=]{emit OFF(this);});
+    connect(switcher, &CSwitchButton::toggled,  [this]{emit ON(this);});
+    connect(switcher, &CSwitchButton::untoggled,[this]{emit OFF(this);});
     count_type = counter;
 }
 
 
 void CObject::context (const QPoint& pos) {
     QMenu* contextMenu = new QMenu(this);
+    contextMenu->setStyleSheet("border: 1px solid black");
     QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObject::DELETE);
     if (type) {
         QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
         connect(action2, &QAction::triggered, this, &CObject::INFO);
     }
+    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_PROPERTIES"]));
+    connect(action3, &QAction::triggered, this, &CObject::local_priority);
     contextMenu->exec(this->mapToGlobal(pos));
 }
 
@@ -78,6 +83,31 @@ void CObject::DELETE() {
 
 void CObject::INFO() {
     stc::net::openURL(stc::cwmm::modsURL(std::to_string(id)));
+}
+
+void CObject::local_priority() {
+    CProperties* window = new CProperties(priority);
+    connect(window, &CProperties::complited, [this](signed char newValue){
+        PRIORITY(newValue);
+        emit flushing_request();
+    });
+    // connect(window, &CProperties::complited, this, &CObject::PRIORITY);
+    // emit flushing_request();
+}
+
+void CObject::PRIORITY(signed char newValue) {
+    set_priority(newValue);
+}
+
+char CObject::get_priority() {
+    return priority;
+}
+
+void CObject::set_priority(signed char value) {
+    if (priority != value) {
+        priority = value;
+        emit priority_changed(this, value);
+    }
 }
 
 void CObject::turnOff () {

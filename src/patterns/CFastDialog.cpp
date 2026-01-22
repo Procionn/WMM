@@ -34,8 +34,8 @@ CFastDialog::CFastDialog () {
     DialogButtonBox->addWidget(apply);
     DialogButtonBox->addWidget(cansel);
     apply->setDefault(true);
-    connect(apply,  &QPushButton::clicked, [=]{emit applyClicked();});
-    connect(cansel, &QPushButton::clicked, [=]{
+    connect(apply,  &QPushButton::clicked, [this]{emit applyClicked();});
+    connect(cansel, &QPushButton::clicked, [this]{
         reject();
         emit canselClicked();
         if (autodeleting)

@@ -130,6 +130,7 @@ protected:
         std::string version;
         std::string name;
         bool status = true;
+        signed char priority = 0;
 
         wmmb(void* v)  noexcept;
         bool operator==(const wmmb& last) const noexcept;
@@ -137,7 +138,7 @@ protected:
     std::vector<Core::wmmb> parser(const std::filesystem::path& file,
                                    std::vector<std::string>* presets = nullptr,
                                    bool except = true);
-    void compiller      (const std::vector<wmmb>& list,
+    void compiller      (std::vector<wmmb>& list,
                          const std::filesystem::path& directory);
     void optimizations  (std::vector<wmmb>& mainList,
                          std::vector<wmmb>& oldstruct);

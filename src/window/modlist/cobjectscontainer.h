@@ -46,12 +46,15 @@ public slots:
 private slots:
     void deletionSignals();
     void RMB(const QPoint& pos, CObject* target) override;
+    void change_priority(signed char newValue);
+    void change_priority_window();
 
 private:
     void coloring();
 
 signals:
     void removed(CObject*);
+    void flushing_request();
 };
 
 #endif // COBJECTSCONTAINER_H

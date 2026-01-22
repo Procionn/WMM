@@ -15,6 +15,7 @@
  *
  */
 #include "cobjectscontainer.h"
+#include "../../dialog_window/CProperties.h"
 #include <regex>
 
 CObjectsContainer::CObjectsContainer() {
@@ -28,18 +29,36 @@ CObjectsContainer::CObjectsContainer() {
     list->setSpacing(0);
 }
 
+
 void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
     QMenu* contextMenu = new QMenu(this);
     QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
+    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_PROPERTIES"]));
+    connect(action3, &QAction::triggered, this, &CObjectsContainer::change_priority_window);
     contextMenu->exec(QCursor::pos());
+}
+
+void CObjectsContainer::change_priority_window() {
+    CProperties* window = new CProperties(0);
+    connect(window, &CProperties::complited, [this](signed char newValue){
+        change_priority(newValue);
+        emit flushing_request();
+    });
+}
+
+void CObjectsContainer::change_priority(signed char newValue) {
+    for (CObject* target : childList) {
+        if (target->is_target())
+            target->PRIORITY(newValue);
+    }
 }
 
 void CObjectsContainer::deletionSignals () {
     std::vector<CObject*> newVector;
     newVector.reserve(childList.size());
     for (CObject* target : childList) {
-        if (target->toggl_condition)
+        if (target->is_target())
             target->DELETE();
         else newVector.emplace_back(target);
     }
