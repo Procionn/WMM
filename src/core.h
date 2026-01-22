@@ -120,34 +120,13 @@ class CGameConfig : public CBaseGameConfig
     IGameConfig* object;
 
 protected:
-    CGameConfig() {
-/* #ifdef WIN64
-        Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "true");
-#else
-        Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "false");
-#endif
-        object = new (Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
-                     ? WinGameConfig : NixGameConfig); */
-#ifdef WIN64
-    object = new WinGameConfig;
-#else
-    object = new NixGameConfig;
-#endif
-    }
-    ~CGameConfig() {
-        delete object;
-    }
-    void dir_comparison (const std::filesystem::path& file) override {
-        object->dir_comparison(file);
-    }
+    CGameConfig();
+    ~CGameConfig();
+    void dir_comparison (const std::filesystem::path& file) override;
 
 public:
-    void symlink_deliting() override {
-        object->symlink_deliting();
-    }
-    void symlink_creating(const std::string& targetCollection) override {
-        object->symlink_creating(targetCollection);
-    }
+    void symlink_deliting() override;
+    void symlink_creating(const std::string& targetCollection) override;
 };
 
 

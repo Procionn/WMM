@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <filesystem>
 #include <wmml.h>
+#include <iostream>
 
 namespace cli {
 
