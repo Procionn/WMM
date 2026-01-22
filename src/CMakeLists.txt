@@ -163,7 +163,6 @@ if(WIN32)
         OUTPUT resources.o
         COMMAND ${CMAKE_RC_COMPILER} ${CMAKE_SOURCE_DIR}/winRes/resources.rc -O coff -o resources.o
         DEPENDS ${CMAKE_SOURCE_DIR}/winRes/resources.rc
-                ${CMAKE_SOURCE_DIR}/winRes/rule.manifest
                 ${CMAKE_SOURCE_DIR}/winRes/logo.ico
     )
     target_sources(Wirus PRIVATE resources.o)
