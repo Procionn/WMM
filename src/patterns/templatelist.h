@@ -25,15 +25,24 @@
 class TemplateList : public QScrollArea
 {
     Q_OBJECT
+
 protected:
     QVBoxLayout* list;
+
 public:
     TemplateList(QWidget* parent = nullptr);
+
 protected:
     void connecting(CSmartObject* linkable);
+    void updated();
+    void reseted();
 
-    virtual void controller(QMouseEvent* event, CSmartObject* target);
-    virtual void rightClickController(const QPoint& pos, CSmartObject* target);
+    virtual void controller(QMouseEvent* event, CSmartObject* target) = 0;
+    virtual void rightClickController(const QPoint& pos, CSmartObject* target) = 0;
+
+signals:
+    void update();
+    void reseting();
 };
 
 #endif // TEMPLATELIST_H

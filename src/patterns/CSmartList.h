@@ -30,7 +30,7 @@ protected:
     std::vector<T*> childList;
     T* lastTarget = nullptr;
 public:
-    CSmartList() {
+    CSmartList(QWidget* parent = nullptr) : TemplateList(parent) {
         static_assert(std::is_base_of<CSmartObject, T>::value, "The parameter must be inherited from CSmartObject.");
     }
 
@@ -84,8 +84,9 @@ private slots:
     void reset () {
         for (auto target : childList) {
             target->turnOff();
-            lastTarget = nullptr;
         }
+        lastTarget = nullptr;
+        reseted();
     }
 
 
@@ -96,6 +97,7 @@ private slots:
             else if (event->modifiers() == Qt::ShiftModifier)
                 LBM_SHIFT(static_cast<T*>(target));
             else reset();
+            updated();
         }
     }
 

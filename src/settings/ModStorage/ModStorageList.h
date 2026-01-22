@@ -14,34 +14,29 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef SETSOURCE_H
-#define SETSOURCE_H
+#ifndef MODSTORAGELIST_H
+#define MODSTORAGELIST_H
 
-#include "../patterns/CScrollWindow.h"
-#include "../patterns/ERRORdialog.h"
-#include "../patterns/CLinkTumbler.h"
-#include "../CONSTANTS.h"
-#include "../core.h"
+#include "../../patterns/CSmartList.h"
+#include "ModStorageObject.h"
 
-#include <QWidget>
 
-class setsource : public QWidget
+class ModStorageList final : public CSmartList<ModObject>
 {
-    Q_OBJECT
-
-    bool copyMode;
-    QVBoxLayout* firstlist;
-    QVBoxLayout* lastlist;
-    QString buffer;
-    CLinkTumbler* target = nullptr;
+    void scaner();
 
 public:
-    setsource();
+    ModStorageList();
+    void update();
+
+public slots:
+    void search(const QString& ref);
 
 private slots:
-    void chooseGame(QPushButton* parent);
-    void chooseExe(QPushButton* dirBTN);
-    void createBackup();
+    void deletion_signals();
+    void last_target_update(ModObject*);
+    void delete_target(ModObject*);
+    void RMB(const QPoint& pos, ModObject* target) override;
 };
 
-#endif // SETSOURCE_H
+#endif // MODSTORAGELIST_H

@@ -18,7 +18,7 @@
 
 #include "../CONSTANTS.h"
 
-bool CBaseConfig::configRead (std::istream& input, std::string& firstReturned, std::string& lastReturned) {
+bool CBaseConfig::configRead (std::ifstream& input, std::string& firstReturned, std::string& lastReturned) {
     std::string readedLine;
     if (std::getline(input, readedLine)) {
         size_t part = readedLine.find_first_of('=');
@@ -37,13 +37,14 @@ bool CBaseConfig::configRead (std::istream& input, std::string& firstReturned, s
 
 CConfigs::CConfigs () {
     if (std::filesystem::exists(CONFIG)) {
+        config.open(CONFIG, std::ios::app);
         config_reader();
     }
     else {
-        std::ofstream config(CONFIG, std::ios::app);
-        config << "Languages=lang/EN.ini" << "\n";
-        config << "Game=None" << "\n";
-        config.close();
+        config.open(CONFIG);
+        config << "WMM_CONFIG_LANGUAGES=lang/EN.ini" << "\n";
+        config << "WMM_CONFIG_GAME=None" << "\n";
+        config.flush();
         config_reader();
     }
 }
@@ -51,21 +52,29 @@ CConfigs::CConfigs () {
 
 
 void CConfigs::config_reader () {
-    std::ifstream readedFile(CONFIG);
-    std::string parameter;
-    std::string indicator;
-    while (configRead(readedFile, parameter, indicator)) {
-        if (parameter == "Languages") CONFIG_LANGUAGES = indicator;
-        else if (parameter == "Game") CONFIG_GAME      = indicator;
-    }
-    readedFile.close();
+    std::ifstream file(CONFIG);
+    std::string parameter, indicator;
+    while (configRead(file, parameter, indicator))
+        configs[parameter] = indicator;
+    file.close();
 }
 
 
 
 void CConfigs::overwriting_config_data () {
-    std::ofstream file(CONFIG, std::ios::out);
-    file << "Languages=" << CONFIG_LANGUAGES << "\n";
-    file << "Game=" << CONFIG_GAME << "\n";
-    file.close();
+    config.close();
+    config.open(CONFIG, std::ios::out);
+    for (const auto& entry : configs)
+        config << entry.first << "=" << entry.second << "\n";
+    config.flush();
+}
+
+
+
+void CConfigs::set_default (const std::string& key, const std::string& value) {
+    if (configs.find(key) == configs.end()) {
+        config << key << "=" << value << "\n";
+        config.flush();
+        configs[key] = value;
+    }
 }

@@ -14,34 +14,27 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef SETSOURCE_H
-#define SETSOURCE_H
+#ifndef CPROPERTIES_H
+#define CPROPERTIES_H
 
-#include "../patterns/CScrollWindow.h"
-#include "../patterns/ERRORdialog.h"
-#include "../patterns/CLinkTumbler.h"
-#include "../CONSTANTS.h"
-#include "../core.h"
+#include "../patterns/CFastDialog.h"
 
-#include <QWidget>
-
-class setsource : public QWidget
+class QSpinBox;
+class CObject;
+class CProperties : public CFastDialog
 {
     Q_OBJECT
-
-    bool copyMode;
-    QVBoxLayout* firstlist;
-    QVBoxLayout* lastlist;
-    QString buffer;
-    CLinkTumbler* target = nullptr;
+    QSpinBox* priority;
+    CObject* cobject;
 
 public:
-    setsource();
+    CProperties(signed char);
 
 private slots:
-    void chooseGame(QPushButton* parent);
-    void chooseExe(QPushButton* dirBTN);
-    void createBackup();
+    void appled();
+
+signals:
+    void complited(signed char);
 };
 
-#endif // SETSOURCE_H
+#endif // CPROPERTIES_H

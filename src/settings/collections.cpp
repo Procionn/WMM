@@ -26,6 +26,7 @@
 #include "../CONSTANTS.h"
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/WaitingWindow.h"
+#include "settings.h"
 
 
 collections::collections () {
@@ -145,6 +146,7 @@ void collections::importing () {
     );
     Core::get().importer(buffer.toStdString());
     update_list();
+    CSettings::get()->settings_modules_list->settings_storage->update();
     emit import_completed();
 }
 

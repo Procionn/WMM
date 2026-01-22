@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(HPP_ARCHIVE)
 FetchContent_Declare(
   wmml
   GIT_REPOSITORY https://github.com/Procionn/wmml2
-  GIT_TAG v1.4.0
+  GIT_TAG 5367decfaa97cf0ba3de9bde0e5bd15b7d6df211
 )
 FetchContent_MakeAvailable(wmml)
 
@@ -51,12 +51,16 @@ add_library(CORE STATIC
     core/InterprocessData.h
 )
 add_library(SETTINGS STATIC
-    settings/settings.h                 settings/settings.cpp
-    settings/setlang.h                  settings/setlang.cpp
-    settings/setsupport.h               settings/setsupport.cpp
-    settings/setsource.h                settings/setsource.cpp
-    settings/setextensions.h            settings/setextensions.cpp
-    settings/collections.h              settings/collections.cpp
+    settings/settings.h                     settings/settings.cpp
+    settings/setlang.h                      settings/setlang.cpp
+    settings/setsupport.h                   settings/setsupport.cpp
+    settings/setsource.h                    settings/setsource.cpp
+    settings/setextensions.h                settings/setextensions.cpp
+    settings/collections.h                  settings/collections.cpp
+    settings/ModStorage.h                   settings/ModStorage.cpp
+    settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
+    settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
+    settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
@@ -64,11 +68,12 @@ add_library(PATTERNS STATIC
     patterns/CSmartList.h
     patterns/CSmartObject.h             patterns/CSmartObject.cpp
     patterns/templatelist.h             patterns/templatelist.cpp
+    patterns/CBaseSmartObject.h         patterns/CBaseSmartObject.cpp
     patterns/CLinkTumbler.h             patterns/CLinkTumbler.cpp
     patterns/CFastDialog.h              patterns/CFastDialog.cpp
     patterns/ERRORdialog.h              patterns/ERRORdialog.cpp
-    patterns/CScrollWindow.h
     patterns/RenameDialog.h             patterns/RrenameDialog.cpp
+    patterns/CScrollWindow.h
     patterns/WaitingWindow.h
 )
 target_link_libraries(CORE PRIVATE
@@ -112,6 +117,7 @@ set(PROJECT_SOURCES
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    dialog_window/CProperties.h dialog_window/CProperties.cpp
 )
 
 target_compile_definitions(SETTINGS PRIVATE

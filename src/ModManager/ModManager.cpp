@@ -32,6 +32,12 @@
 // id       uint64_t
 
 ModManager::ModManager() {
+    Core::get().set_default("WMM_MOD_MANAGER_TYPE", "true");
+    std::string type = Core::configs["WMM_MOD_MANAGER_TYPE"];
+    if (type == "true")
+        copy = true;
+    else
+        copy = false;
     update();
 }
 
@@ -51,6 +57,20 @@ void ModManager::update () {
 
 void ModManager::flush () {
     dataSaveFile->flush();
+}
+
+
+bool ModManager::get_copy () {
+    return copy;
+}
+
+
+void ModManager::set_copy (const bool& status) {
+    if (status == copy)
+        return;
+    copy = status;
+    Core::configs["WMM_MOD_MANAGER_TYPE"] = std::string(status ? "true" : "false");
+    Core::get().overwriting_config_data();
 }
 
 
@@ -162,6 +182,22 @@ void ModManager::remove (const uint64_t id, const std::string& version) {
 
 void ModManager::remove (const std::string& name, const std::string& version) {
     remove(mod_data_converter(name), version);
+}
+
+
+void ModManager::remove (const uint64_t id) {
+    try {
+        stc::fs::remove_all(get_path(id));
+        ML_remove(id);
+    }
+    catch (const std::exception& err) {
+        stc::cerr(err.what());
+    }
+}
+
+
+void ModManager::remove (const std::string& name) {
+    remove(mod_data_converter(name));
 }
 
 

@@ -22,9 +22,14 @@
 class CSwitchButton : public CToggledButton
 {
     Q_OBJECT
+    const QString firstName;
+    const QString secondName;
+    bool colored;
 
 public:
-    CSwitchButton();
+    CSwitchButton(const std::string& firstName = "OFF",
+                  const std::string& secondName = "ON",
+                  const bool& colored = true);
 
 private slots:
     void ChangeOfState();

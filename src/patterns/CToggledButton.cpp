@@ -16,8 +16,8 @@
  */
 #include "CToggledButton.h"
 
-CToggledButton::CToggledButton(const std::string& setName, bool type) :
-    name(setName), selected(type) {
+CToggledButton::CToggledButton(const std::string& setName) :
+    name(setName) {
     setText(QString::fromStdString(setName));
     connect(this, &QPushButton::clicked, this, &CToggledButton::ChangeOfState);
 }
@@ -67,5 +67,15 @@ void CToggledButton::setColor(const std::string& toggled, const std::string& unt
 }
 void CToggledButton::isTarget(bool type) {
     if (type)
+        ChangeOfState();
+}
+
+void CToggledButton::set_target () {
+    if (!selected)
+        ChangeOfState();
+}
+
+void CToggledButton::set_untarget () {
+    if (selected)
         ChangeOfState();
 }

@@ -35,6 +35,7 @@ Core::wmmb::wmmb (void* v) noexcept {
     assert(std::get<bool>(c->at(2)));
     version = std::get<std::string>(c->at(1));
     name = std::get<std::string>(c->at(0));
+    priority = std::get<signed char>(c->at(5));
 }
 
 
@@ -83,8 +84,11 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
 }
 
 
-void Core::compiller (const std::vector<wmmb>& list, const std::filesystem::path& directory) {
+void Core::compiller (std::vector<wmmb>& list, const std::filesystem::path& directory) {
     // Using a monotone vector of mods, it collects their files into a directory
+    std::sort(list.begin(), list.end(), [](const wmmb& a, const wmmb& b){
+        return (a.priority > b.priority);
+    });
     for (const auto& obj : list) {
         if (obj.status) {
             ArchiveReader archive(ModManager::get().get_path(obj.id, obj.version));
@@ -141,10 +145,10 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
     std::vector<wmml::variant> v(GRID_WIDTH);
 
     for (const auto& ptr : newstruct) {
-        v = {ptr.name, ptr.version, true, ptr.id, ptr.status};
+        v = {ptr.name, ptr.version, true, ptr.id, ptr.status, ptr.priority};
         file.write(v);
     }
-    v = {name, "this", true, 0, true};
+    v = {name, "this", true, 0, true, (signed char)(0)};
     file.write(v);
 }
 
@@ -190,7 +194,7 @@ void Core::collector(const std::filesystem::path& name, bool type) {
 Core::CollectionInfo::CollectionInfo (const std::filesystem::path& name) {
     wmml file(stc::cwmm::ram_collection(name.string()));
     std::vector<std::string> buffer;
-    std::vector<wmml::variant> v(file.width());
+    std::vector<wmml::variant> v(GRID_WIDTH);
 
     while (file.read(v)) {
         if (std::get<bool>(v[2]))

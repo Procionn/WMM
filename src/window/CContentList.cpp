@@ -19,6 +19,7 @@
 #include "../window/modlist/cobject.h"
 #include <QLabel>
 #include <wmml.h>
+#include "../settings/settings.h"
 
 CContentList::CContentList () {
     setMinimumWidth(200);
@@ -34,6 +35,11 @@ CContentList::CContentList () {
     dnd = new CDND(BaseContainer, Core::lang["LANG_LABEL_DND"]);
     connect(siFrame, &CSubInfoFrame::filter_changed, this, &CContentList::sort);
     connect(searchWidget, &CSearchWidget::search_updated, contentList, &CObjectsContainer::search);
+    connect(dnd, &CDND::launch, []{CSettings::get()->settings_modules_list->settings_storage->update();});
+}
+
+CContentList::~CContentList() {
+    delete file;
 }
 
 
@@ -43,10 +49,11 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     clear();
     if (type) sPath = stc::cwmm::ram_preset(targetName);
     else      sPath = stc::cwmm::ram_collection(targetName);
-    wmml file(sPath);
-    std::vector<wmml::variant> v(file.width());
+    delete file;
+    file = new wmml(sPath);
+    std::vector<wmml::variant> v(GRID_WIDTH);
     bool counter = false;
-    for (uint64_t index = 0; file.read(v); ++index) {
+    for (uint64_t index = 0; file->read(v); ++index) {
         CObject* buttonWidget = new CObject(static_cast<void*>(&v), counter, index);
         contentList->add(buttonWidget);
         buttonWidget->spl1->setSizes(siFrame->spl1->sizes());
@@ -57,6 +64,9 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
         connect(siFrame->spl2,  &QSplitter::splitterMoved, buttonWidget->spl2, &CSplitter::moveSplitter);
         connect(buttonWidget,   &CObject::ON,     this, &CContentList::changeStatusOn);
         connect(buttonWidget,   &CObject::OFF,    this, &CContentList::changeStatusOff);
+        connect(buttonWidget,   &CObject::priority_changed, this, &CContentList::priority_changing);
+        connect(buttonWidget,   &CObject::flushing_request, this, &CContentList::flush);
+        connect(contentList,    &CObjectsContainer::flushing_request, this, &CContentList::flush);
         connect(buttonWidget,   &CObject::remove, contentList, &CObjectsContainer::delete_target);
         connect(contentList,    &CObjectsContainer::removed, this, &CContentList::deleting);
         connect(buttonWidget->Lversion, &CVersion::version_changed, this, &CContentList::change_version);
@@ -65,8 +75,8 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
 }
 
 void CContentList::change_version (const std::string_view& version, const uint64_t index) {
-    wmml file(sPath);
-    file.overwriting_sector(index, 1, std::string(version));
+    file->overwriting_sector(index, 1, std::string(version));
+    flush();
 }
 
 void CContentList::clear () {
@@ -74,18 +84,18 @@ void CContentList::clear () {
 }
 
 void CContentList::changeStatusOn(CObject* toggledElements) {
-    wmml file(sPath);
-    file.overwriting_sector(toggledElements->index, 4, true);
+    file->overwriting_sector(toggledElements->index, 4, true);
+    flush();
 }
 void CContentList::changeStatusOff(CObject* toggledElements) {
-    wmml file(sPath);
-    file.overwriting_sector(toggledElements->index, 4, false);
+    file->overwriting_sector(toggledElements->index, 4, false);
+    flush();
 }
 void CContentList::deleting (CObject* pointer) {
     static CObject* last;
     if (last != pointer) {
-        wmml file(sPath);
-        file.remove_object(pointer->index);
+        file->remove_object(pointer->index);
+        flush();
         delete pointer;
         last = pointer;
     }
@@ -106,5 +116,13 @@ void CContentList::show_search_widget () {
 
 void CContentList::hide_search_widget () {
     searchWidget->hide();
+}
+
+void CContentList::priority_changing (CObject* toggledElements, signed char priority) {
+    file->overwriting_sector(toggledElements->index, 5, priority);
+}
+
+void CContentList::flush() {
+    file->flush();
 }
 

@@ -61,6 +61,7 @@ private slots:
 
 
 
+class wmml;
 class CContentList : public QWidget
 {
     Q_OBJECT
@@ -71,12 +72,14 @@ class CContentList : public QWidget
     CSearchWidget* searchWidget;
     std::string sPath;
     std::string targetName;
+    wmml* file = nullptr;
 public:
 
     CDND* dnd;
     bool targetType;
 
     CContentList();
+    ~CContentList();
 
 public slots:
     void updateList(CObjectsButton* pointer, bool type);
@@ -90,6 +93,8 @@ private slots:
     void deleting(CObject* pointer);
     void sort(const int = INT_MAX);
     void change_version (const std::string_view&, const uint64_t);
+    void flush();
+    void priority_changing(CObject*, signed char);
 };
 
 

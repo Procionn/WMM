@@ -43,6 +43,7 @@ public:
     bool type;
     uint64_t id;
     const uint64_t index;
+    signed char priority;
 
 protected:
     static const inline std::string untoggledColor2 = " background-color: #2e2e2e;";
@@ -66,20 +67,26 @@ public:
     CObject(const void* v, bool& counter, const uint64_t& index);
     void set_style(const bool type);
     bool get_style();
+    void set_priority(signed char newValue);
+    char get_priority();
 
 signals:
     void ON(CObject* pointer);
     void OFF(CObject* pointer);
     void remove(CObject* pointer);
+    void flushing_request();
+    void priority_changed(CObject*, signed char);
 
 public slots:
     void turnOff() override;
     void turnOn() override;
     void context(const QPoint& pos) override;
     void DELETE();
+    void PRIORITY(signed char);
 
 private slots:
     void INFO();
+    void local_priority();
 };
 
 

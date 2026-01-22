@@ -19,17 +19,19 @@
 CSmartObject::CSmartObject(QWidget *parent) : QFrame(parent) {
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested,
-            [=](const QPoint& pos){emit rightClick(pos, this);});
+            [this](const QPoint& pos){emit rightClick(pos, this);});
+}
+
+bool CSmartObject::is_target() const {
+    return toggl_condition;
 }
 
 void CSmartObject::ChangeOfState () {
     if (toggl_condition)  {
         turnOff();
-        toggl_condition = false;
     }
     else {
         turnOn();
-        toggl_condition = true;
     }
 }
 

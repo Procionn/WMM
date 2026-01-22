@@ -23,22 +23,32 @@
 #include "setsupport.h"
 #include "setextensions.h"
 #include "collections.h"
+#include "ModStorage.h"
 
 #include <QWidget>
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QGridLayout>
 
+#define SETTING_SPAGES() \
+    X(sorce,       setsource,      settings_source,      "LANG_BUTTON_SORCE")           \
+    X(lang,        setlang,        settings_lang,        "LANG_BUTTON_LANG")            \
+    X(support,     setsupport,     settings_support,     "LANG_BUTTON_SUPPORT")         \
+    X(extensions,  setextensions,  settings_extension,   "LANG_BUTTON_EXTENSION")       \
+    X(collections, collections,    settings_collections, "LANG_BUTTON_IMPORT/EXPORT")   \
+    X(modStorage,  ModStorage,     settings_storage,     "LANG_BUTTON_MODSTORAGE")
+
 class SObjects : public QWidget
 {
     Q_OBJECT
+
 public:
     QVBoxLayout* list;
-    CLinkTumbler* sorce;
-    CLinkTumbler* lang;
-    CLinkTumbler* support;
-    CLinkTumbler* extensions;
-    CLinkTumbler* collections;
+
+#define X(button, class_, object, lang_str) \
+    CLinkTumbler* button;
+    SETTING_SPAGES()
+#undef X
     
     SObjects();
 };
@@ -50,21 +60,18 @@ public:
 class SList : public QWidget
 {
     Q_OBJECT
+    std::vector<QWidget*> pages;
+
 public:  
     SList();
 
-    setsource* settings_source;
-    setlang* settings_lang;
-    setsupport* settings_support;
-    setextensions* settings_extension;
-    collections* settings_collections;
+#define X(button, class_, object, lang_str) \
+    class_* object;
+    SETTING_SPAGES()
+#undef X
 
 public slots:
-    void sorce();
-    void lang();
-    void support();
-    void extensions();
-    void collection();
+    void show(QWidget*);
 };
 
 
@@ -74,12 +81,16 @@ public slots:
 class CSettings : public QDialog
 {
     Q_OBJECT
+    static inline CSettings* object;
+
 public:
+    CSettings();
     SObjects* sobjects;
     SList* settings_modules_list;
     
-    CSettings();
-private slots:
+    static CSettings* get();
+
+signals:
     void save();
 };
 
