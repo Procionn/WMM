@@ -18,22 +18,26 @@
 #include "window.h"
 #include "core.h"
 #include "ModManager.h"
-
+#include "cli.h"
+#include <QCommandLineParser>
 #include <QApplication>
 
 
 int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setApplicationName("Wirus Mod Manager");
+    app.setApplicationVersion(VERSION);
     app.setStyle("Fusion");
     int code = 0;
 
     try {
         do {
             Core::get();
-            ModManager::get();
-            Window w;
-            code = app.exec();
+            if (!cli::parser()){
+                ModManager::get();
+                Window w;
+                code = app.exec();
+            }
         } while (code == RESET);
     } catch(const char* error) {
         stc::cerr(error);

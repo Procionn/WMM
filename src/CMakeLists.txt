@@ -91,6 +91,7 @@ target_compile_definitions(PATTERNS PUBLIC LOG)
 
 set(PROJECT_SOURCES
     main.cpp
+    cli.h cli.cpp
     window.h window.cpp
 
     CONSTANTS.h
@@ -111,16 +112,19 @@ set(PROJECT_SOURCES
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
     dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
+    dialog_window/CProperties.h dialog_window/CProperties.cpp
 )
 
 
 qt_add_executable(Wirus
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    dialog_window/CProperties.h dialog_window/CProperties.cpp
 )
 
 target_compile_definitions(SETTINGS PRIVATE
+  VERSION="${PROJECT_VERSION}"
+)
+target_compile_definitions(Wirus PRIVATE
   VERSION="${PROJECT_VERSION}"
 )
 
