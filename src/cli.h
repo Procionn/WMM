@@ -24,18 +24,20 @@
 
 namespace cli {
     inline std::vector<std::pair<std::string, std::string>> FlagsList {
-        {"clear-cache",  "CLI_CLEAR_CACHE"},
-        {"clear-data",   "CLI_CLEAR_DATA"},
-        {"migrate",      "CLI_MIGRATE_DATA"}
+        {"clear-cache",   "CLI_CLEAR_CACHE"},
+        {"clear-data",    "CLI_CLEAR_DATA"},
+        {"migrate",       "CLI_MIGRATE_DATA"},
+        {"re-gen-config", "CLI_GENERATE_CONFIG"}
+        // {"update",        "CLI_APP_UPDATE"}
     };
 
     bool parser();
-    //void app_apdate();
+    // void app_apdate();
     void clear_cache();
     void clear_data();
-    void migrate_data();
-    // void set_lang();
+    void re_gen_config();
 
+    void migrate_data();
     void v97_to_v98();
 }
 

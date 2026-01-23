@@ -25,6 +25,9 @@
 #include <iostream>
 
 namespace cli {
+class WConfig : public CConfigs {};
+
+
 
 bool parser () {
     QCommandLineParser parser;
@@ -58,9 +61,16 @@ bool parser () {
             clear_data();
         if (flag == FlagsList[2].first)
             migrate_data();
+        if (flag == FlagsList[3].first)
+            re_gen_config();
     }
     return true;
 }
+
+
+// void app_apdate() {
+
+// }
 
 
 void clear_cache() {
@@ -75,6 +85,13 @@ void clear_data() {
     stc::fs::remove_all(MODS);
     stc::fs::remove_all(GAME);
     stc::fs::remove_all(ARCHIVE);
+}
+
+
+void re_gen_config() {
+    std::filesystem::remove(CONFIG);
+    WConfig module;
+    std::cout << "The config has been re-generated!" << std::endl;
 }
 
 
