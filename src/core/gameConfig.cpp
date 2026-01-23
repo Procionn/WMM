@@ -32,11 +32,6 @@
 namespace fs = std::filesystem;
 
 CGameConfig::CGameConfig() {
-#ifdef WIN64
-    Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "true");
-#else
-    Core::get().set_default("WMM_CONFIG_USE_EXTERNAL_MODULE", "false");
-#endif
     object = (Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
                       ? static_cast<IGameConfig*>(new WinGameConfig)
                       : static_cast<IGameConfig*>(new NixGameConfig));

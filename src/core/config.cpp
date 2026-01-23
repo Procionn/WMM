@@ -44,6 +44,11 @@ CConfigs::CConfigs () {
         config.open(CONFIG);
         config << "WMM_CONFIG_LANGUAGES=lang/EN.ini" << "\n";
         config << "WMM_CONFIG_GAME=None" << "\n";
+#ifdef WIN64
+        config << "WMM_CONFIG_USE_EXTERNAL_MODULE=true" << "\n";
+#else
+        config << "WMM_CONFIG_USE_EXTERNAL_MODULE=false" << "\n";
+#endif
         config.flush();
         config_reader();
     }
