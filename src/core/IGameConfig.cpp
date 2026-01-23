@@ -32,11 +32,13 @@
 namespace fs = std::filesystem;
 
 namespace {
+    bool sockeEstablished = false;
+
     void platform_test () {
 #ifdef WIN64
         stc::cerr("sending a command to admin process");
 #else
-        std::runtime_error("This programm module is not supported on this platform!");
+        std::runtime_error("This programm--keyboard=sdk module is not supported on this platform!");
 #endif
     }
 
@@ -69,6 +71,7 @@ namespace {
         static QLocalSocket process;
 #ifdef WIN64
         if (process.state() != QLocalSocket::ConnectedState) {
+            sockeEstablished = true;
             STARTUPINFOW si{sizeof(si)};
             PROCESS_INFORMATION pi;
             std::wstring cmd = std::wstring(L"\"WinRoot.exe\" --pipe=") + get_pipe().toStdWString() + L" --token=" + get_token().toStdWString();
@@ -126,11 +129,14 @@ namespace {
 
 
 WinGameConfig::~WinGameConfig () {
-    platform_test();
-    IpcHeader ipc;
-    ipc.comand = ComandList::kill;
-    QByteArray data;
-    send_command(data, &ipc);
+    if (sockeEstablished) {
+        platform_test();
+        IpcHeader ipc;
+        ipc.comand = ComandList::kill;
+        QByteArray data;
+        send_command(data, &ipc);
+        sockeEstablished = false;
+    }
 }
 
 
