@@ -18,12 +18,22 @@
 #define SETEXTENSIONS_H
 
 #include <QWidget>
+#include <vector>
+#include "../plugins/PluginInterface.h"
 
+class QVBoxLayout;
 class setextensions : public QWidget
 {
     Q_OBJECT
+    QVBoxLayout* list;
+
+    std::vector<PluginInterface*> expansionList;
+    void scan_dir();
+    void clear_list();
+
 public:
     setextensions();
+    ~setextensions();
 };
 
 #endif // SETEXTENSIONS_H

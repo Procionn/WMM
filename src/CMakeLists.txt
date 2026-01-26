@@ -1,3 +1,18 @@
+#
+#  Copyright (C) 2025 Procion ByProcion@gmail.com
+#
+#  This file is part of Wirus Mod Manager.
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#  See the LICENSE file for more details.
+#
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
 
 if (WIN32)
@@ -61,6 +76,7 @@ add_library(SETTINGS STATIC
     settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
     settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
     settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
+    plugins/PluginInterface.h
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
