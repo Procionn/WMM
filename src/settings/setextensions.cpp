@@ -26,17 +26,10 @@
 
 
 setextensions::setextensions() {
-    scan_dir();
     list = new QVBoxLayout;
     list->setAlignment(Qt::AlignTop);
     addScrollable(this, list);
-    CLinkTumbler* last = nullptr;
-    for (auto* plugin : expansionList) {
-        CLinkTumbler* button = new CLinkTumbler(plugin->name().toStdString(), last);
-        list->addWidget(button);
-        connect(button, &CLinkTumbler::toggled, [plugin]{plugin->plugin_main();});
-        last = button;
-    }
+    scan_dir();
 }
 
 setextensions::~setextensions() {
@@ -75,6 +68,7 @@ void setextensions::scan_dir () {
                 stc::cerr(pluginPath.toStdString() + " " + loader.errorString().toStdString() + " was not started");
         }
     }
+    generate_buttons();
 }
 
 
@@ -88,5 +82,16 @@ void setextensions::clear_list() {
     for (QLayoutItem* item; (item = list->takeAt(0)) != nullptr;) {
         delete item->widget();
         delete item;
+    }
+}
+
+
+void setextensions::generate_buttons() {
+    CLinkTumbler* last = nullptr;
+    for (auto* plugin : expansionList) {
+        CLinkTumbler* button = new CLinkTumbler(plugin->name().toStdString(), last);
+        list->addWidget(button);
+        connect(button, &CLinkTumbler::toggled, [plugin]{plugin->plugin_main();});
+        last = button;
     }
 }

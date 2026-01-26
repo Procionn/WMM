@@ -30,6 +30,7 @@ class setextensions : public QWidget
     std::vector<PluginInterface*> expansionList;
     void scan_dir();
     void clear_list();
+    void generate_buttons();
 
 public:
     setextensions();
