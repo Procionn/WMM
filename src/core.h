@@ -135,7 +135,7 @@ public:
 
 class Core final : public CConfigs, public Lang, public CGameConfig
 {
-    Core() = default;
+    Core();
     ~Core() = default;
     friend class import;
 

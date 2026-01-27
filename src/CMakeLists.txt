@@ -92,17 +92,30 @@ add_library(PATTERNS STATIC
     patterns/CScrollWindow.h
     patterns/WaitingWindow.h
 )
+add_library(wmm-API SHARED
+    api/Core.cpp        api/Core.h
+    api/ModManager.cpp  api/ModManager.h
+)
 target_link_libraries(CORE PRIVATE
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Network
   HPP_ARCHIVE
   wmml_static
 )
+target_link_libraries(wmm-API PRIVATE
+  Qt${QT_VERSION_MAJOR}::Widgets
+)
 target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 target_compile_definitions(CORE     PUBLIC LOG)
 target_compile_definitions(PATTERNS PUBLIC LOG)
+target_compile_definitions(wmm-API
+  PRIVATE
+  LOG
+  WMMAPI
+)
+
 
 
 set(PROJECT_SOURCES
@@ -128,7 +141,7 @@ set(PROJECT_SOURCES
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
     dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
-    dialog_window/CProperties.h dialog_window/CProperties.cpp
+    dialog_window/CProperties.h         dialog_window/CProperties.cpp
 )
 
 
@@ -151,6 +164,7 @@ target_link_libraries(Wirus PRIVATE
     PATTERNS
     CORE
     SETTINGS
+    wmm-API
 )
 if(WIN32)
     add_executable(WinRoot

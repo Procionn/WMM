@@ -19,6 +19,7 @@
 #include "../methods.h"
 #include "../core.h"
 #include "../CONSTANTS.h"
+#include "../api/ModManager.h"
 #include <hpp-archive.h>
 #include <filesystem>
 #include <regex>
@@ -39,6 +40,7 @@ ModManager::ModManager() {
     else
         copy = false;
     update();
+    WMM::APIModManager::start_api(this);
 }
 
 
