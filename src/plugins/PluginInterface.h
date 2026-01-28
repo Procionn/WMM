@@ -20,6 +20,7 @@ public:
     virtual ~PluginInterface() = default;
     virtual void plugin_main() = 0;
     virtual QString name() = 0;
+    virtual QString get_icon_path() {return"";}
 };
 
 

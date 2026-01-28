@@ -26,7 +26,6 @@ namespace WMM {
     class WMMAPI_EXPORT APICore {
     public:
         static void start_api(Core*);
-        APICore();
 
         void update_lang();
         QString tr (const QString& key);

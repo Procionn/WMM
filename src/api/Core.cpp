@@ -18,90 +18,70 @@
 #include "../core.h"
 #include "../methods.h"
 
-#define t(code)                 \
-try{                            \
-    code;                       \
-} catch(std::exception& e) {    \
-    cerr(e.what());             \
-}
 
 namespace {
     static Core* ptr;
-
-    template<typename T>
-    void cerr (T t) {
-        stc::cerr("Error in WMM-API:");
-        stc::cerr(t);
-    }
 }
 
 void WMM::APICore::start_api(Core* p) {
     ptr = p;
 }
 
-WMM::APICore::APICore() {
-    ptr = &Core::get();
-}
-
 void WMM::APICore::update_lang() {
-    t(ptr->update_lang())
+    ptr->update_lang();
 }
 QString WMM::APICore::tr (const QString& key) {
-    t(return QString::fromStdString(ptr->lang.at(key.toStdString())))
-    return"";
+    return QString::fromStdString(ptr->lang.at(key.toStdString()));
 }
 void WMM::APICore::load_new_lang_pack (const QString& path) {
-    // t(ptr->load_lang_pack(path.toStdString()))
-    stc::cerr(path.toStdString());
+    // ptr->load_lang_pack(path.toStdString());
 }
 QString WMM::APICore::get_config (const QString& key) {
-    t(return QString::fromStdString(ptr->configs.at(key.toStdString())))
-    return"";
+    return QString::fromStdString(ptr->configs.at(key.toStdString()));
 }
 void WMM::APICore::config_reader() {
-    t(ptr->config_reader())
+    ptr->config_reader();
 }
 void WMM::APICore::overwriting_config_data() {
-    t(ptr->overwriting_config_data())
+    ptr->overwriting_config_data();
 }
 void WMM::APICore::set_default (const QString& key, const QString& value){
-    t(ptr->set_default(key.toStdString(), value.toStdString()))
+    ptr->set_default(key.toStdString(), value.toStdString());
 }
 QString WMM::APICore::get_game_config(){
-    t(return QString::fromStdString(ptr->configs.at("WMM_CONFIG_GAME")))
-    return"";
+    return QString::fromStdString(ptr->configs.at("WMM_CONFIG_GAME"));;
 }
 
 void WMM::APICore::update_data_from_file(){
-    t(ptr->update_data_from_file())
+    ptr->update_data_from_file();
 }
 void WMM::APICore::save_game_path(const QString& path){
-    t(ptr->save_game_path(path.toStdString()))
+    ptr->save_game_path(path.toStdString());
 }
 void WMM::APICore::game_dir_backup(){
-    t(ptr->game_dir_backup())
+    ptr->game_dir_backup();
 }
 void WMM::APICore::game_recovery(){
-    t(ptr->game_recovery())
+    ptr->game_recovery();
 }
 
 void WMM::APICore::restorer(){
-    t(ptr->restorer())
+    ptr->restorer();
 }
 void WMM::APICore::symlink_deliting(){
-    t(ptr->symlink_deliting())
+    ptr->symlink_deliting();
 }
 void WMM::APICore::symlink_creating (const QString& targetCollection){
-    t(ptr->symlink_creating(targetCollection.toStdString()))
+    ptr->symlink_creating(targetCollection.toStdString());
 }
 
 void WMM::APICore::exporter (const QString& name, const bool monolith){
-    t(ptr->exporter(name.toStdString(), monolith))
+    ptr->exporter(name.toStdString(), monolith);
 }
 void WMM::APICore::importer (const QString& path){
-    t(ptr->importer(path.toStdString()))
+    ptr->importer(path.toStdString());
 }
 
 void WMM::APICore::collector (const QString& name, bool type){
-    t(ptr->collector(name.toStdString(), type))
+    ptr->collector(name.toStdString(), type);
 }
