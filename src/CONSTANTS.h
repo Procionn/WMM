@@ -44,5 +44,6 @@ static std::string CONST_FILE   = "file";
 static std::string ARCHIVE      = "archive/";
 static std::string DEEP_ARCHIVE = "deepArchivung/";
 static std::string SAVE         = "save.wmml";
+static std::string CORTEGE      = ".wmmcrt";
 
 #endif // CONSTANTS_H

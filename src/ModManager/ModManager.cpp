@@ -31,6 +31,7 @@
 // name     std::string
 // version  std::string
 // id       uint64_t
+// type     char        0 - mod, 1 - cortege (crt)
 
 ModManager::ModManager() {
     Core::get().set_default("WMM_MOD_MANAGER_TYPE", "true");
@@ -163,6 +164,11 @@ std::string ModManager::get_log_path(const std::string& name, const std::string&
 }
 
 
+std::string ModManager::get_cortege_path(const uint64_t id, const std::string& name) {
+    return stc::cwmm::cortege_path(name, id);
+}
+
+
 bool ModManager::exists (const uint64_t id, const std::string& version) {
     Mod* ptr = bsearch(id);
     if (ptr && bsearch(ptr, version))
@@ -176,9 +182,37 @@ bool ModManager::exists (const std::string& name, const std::string& version) {
 }
 
 
+bool ModManager::is_cortege(const uint64_t id,  const std::string& version) {
+    Mod* ptr = bsearch(id);
+    if (ptr) {
+        ModInfo* obj = bsearch(ptr, version);
+        if (obj && !obj->isModInfo)
+            return true;
+    }
+    return false;
+}
+
+
+std::vector<ModInfo*> ModManager::get_cortege_list(const uint64_t id,  const std::string& version) {
+    if (is_cortege(id, version)) {
+        Mod* ptr = bsearch(id);
+        ModCortege* obj = static_cast<ModCortege*>(bsearch(ptr, version));
+        std::vector<ModInfo*> list;
+        list.reserve(obj->dependence.size());
+        for (const auto& entry : obj->dependence)
+            list.emplace_back(bsearch(ptr, entry));
+        return list;
+    }
+    else throw std::runtime_error("Object is not cortege");
+}
+
+
 void ModManager::remove (const uint64_t id, const std::string& version) {
+    if (is_cortege(id, version))
+        std::filesystem::remove(get_cortege_path(id, version));
+    else
+        std::filesystem::remove(get_path(id, version));
     ML_remove(id, version);
-    std::filesystem::remove(get_path(id, version));
 }
 
 

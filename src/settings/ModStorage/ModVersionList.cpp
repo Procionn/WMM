@@ -20,8 +20,12 @@
 #include <QAction>
 #include "../../methods.h"
 #include "../../core.h"
+#include "../../ModManager.h"
+#include "../../dialog_window/CNewObjectDialog.h"
+#include "ModStorageObject.h"
+#include "../settings.h"
 
-ModVersionObject::ModVersionObject (const std::string_view version, ModObject* parentWidget)
+ModVersionObject::ModVersionObject (const std::string& version, ModObject* parentWidget)
     : CBaseSmartObject(false), parent(parentWidget), name(version) {
     infoEnabled = false;
     QHBoxLayout* lay = new QHBoxLayout(this);
@@ -35,7 +39,7 @@ void ModVersionObject::DELETE () {
     emit remove(this);
 }
 
-std::string_view ModVersionObject::get_name () {
+std::string ModVersionObject::get_name () {
     return name;
 }
 
@@ -52,7 +56,31 @@ void ModVersionList::RMB (const QPoint&, ModVersionObject*) {
     QMenu* contextMenu = new QMenu(this);
     QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
     connect(action1, &QAction::triggered, this, &ModVersionList::deletion_signals);
+    QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_CORTEGE"]));
+    connect(action2, &QAction::triggered, this, &ModVersionList::createing_cortege_signals_request);
     contextMenu->exec(QCursor::pos());
+}
+
+
+void ModVersionList::createing_cortege_signals_request () {
+    CNewObjectDialog* nameDialog = new CNewObjectDialog;
+    connect(nameDialog, &CNewObjectDialog::success, this, &ModVersionList::createing_cortege_signals);
+}
+
+
+void ModVersionList::createing_cortege_signals (const std::string name) {
+    try {
+        std::vector<std::string> list;
+        list.reserve(childList.size()/2);
+        for (auto* target : childList)
+            if (target->is_target())
+                list.emplace_back(target->get_name());
+        ModObject* target = childList[0]->parent;
+        ModManager::get().create_cortege(list, name, target->get_mod_id());
+        CSettings::get()->settings_modules_list->settings_storage->update();
+    } catch (const std::string err) {
+        ERRORdialog* dialog = new ERRORdialog(err);
+    }
 }
 
 

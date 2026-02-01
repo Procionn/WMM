@@ -19,6 +19,7 @@
 
 #include <string>
 #include <filesystem>
+#include <cstdint>
 #ifdef LOG
 #include <fstream>
 #include <QDateTime>
@@ -44,6 +45,7 @@ namespace stc {
         std::string modsURL(const std::string& id);
         std::string ram_mods();
         std::string ram_mods(const std::string& name);
+        std::string cortege_path(const std::string& name, const uint64_t& id);
 
     }
     namespace fs {   // file system

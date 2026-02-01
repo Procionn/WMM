@@ -27,9 +27,25 @@ class wmml;
 struct ModInfo
 {
     ModInfo(const std::string& modVersion, const uint64_t& localId);
+    virtual ~ModInfo() = default;
 
+    bool isModInfo = true;
     uint64_t localId;
     std::string modVersion;
+};
+
+
+
+
+
+struct ModCortege : public ModInfo
+{
+    ModCortege(const std::vector<std::string>& versionsList, const std::string& name,
+               const uint64_t& localId);
+    ModCortege(const std::vector<std::string>&& versionsList, const std::string& name,
+               const uint64_t& localId);
+
+    std::vector<std::string> dependence;
 };
 
 
@@ -40,9 +56,12 @@ struct Mod
 {
     Mod(const uint64_t& modId);
     Mod(const std::string& modVersion, const uint64_t& modId, const uint64_t& localId);
+    Mod(const std::string& modVersion, const uint64_t& modId, const uint64_t& localId, bool);
     ~Mod();
     Mod(Mod&& ref) noexcept;
     Mod& operator=(Mod&& other) noexcept;
+
+    void add_cortege(const std::string& name, const uint64_t& localid);
 
     std::vector<ModInfo>* versions = nullptr;
     uint64_t modId;
@@ -58,7 +77,7 @@ class ModList
 {
     std::vector<Mod*> list;
     uint64_t localId = 0;
-    static constexpr const unsigned char gridSize = 3;
+    static constexpr const unsigned char gridSize = 4;
 
     ModList(ModList&& ref) = delete;
     ModList& operator=(ModList&& other) = delete;
@@ -73,6 +92,7 @@ protected:
 
 private:
     void add_in_ram(const void*);
+    void create_object_in_ram(const std::string&, const uint64_t&, signed char type);
 
 protected:
     ModList() = default;
@@ -82,7 +102,7 @@ protected:
     void add_in_ram(const uint64_t& modId, std::string& modVersion,
                     const std::string& modName, const std::string&);
     void add_in_ram(const uint64_t& modId, const std::string& modVersion,
-                    const std::string& modName);
+                    const std::string& modName, const signed char type = 0);
     void add_in_rom(const uint64_t& modId, const std::string& modVersion,
                     const std::string& modName);
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
@@ -91,12 +111,18 @@ protected:
     std::string mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr,
                                       const std::string& version, const std::string& name);
     void import_saved_data();
+    void create_cortege_in_ram(const std::vector<std::string>& versionsList, const std::string& name,
+                               const uint64_t modid);
+    void create_cortege_in_rom(const std::vector<std::string>& versionsList, const std::string& name,
+                               const uint64_t modid);
 
 public:
     void add(const uint64_t& modId, const std::string&& modVersion,
              const std::string&& modName);
     void add(const uint64_t& modId, std::string& modVersion,
              const std::string& modName, const std::string&);
+    void create_cortege(const std::vector<std::string>& versionsList, const std::string& name,
+                        const uint64_t modid);
     const std::vector<Mod*>& all_mods_list();
     const std::vector<std::string_view> all_versions_list(const uint64_t& modId);
 };
@@ -130,6 +156,9 @@ public:
     bool exists(const uint64_t id,  const std::string& version);
     bool exists(const std::string& name, const std::string& version);
 
+    bool is_cortege(const uint64_t id,  const std::string& version);
+    std::vector<ModInfo*> get_cortege_list(const uint64_t id,  const std::string& version);
+
     void remove(const uint64_t id);
     void remove(const uint64_t id,  const std::string& version);
     void remove(const std::string& name);
@@ -141,6 +170,7 @@ public:
     std::string get_path(const std::string& name);
     std::string get_path(const std::string& name,     const std::string& version);
     std::string get_log_path(const std::string& name, const std::string& version);
+    std::string get_cortege_path(const uint64_t id,   const std::string& name);
 
     uint64_t    mod_data_converter(const std::string& modName);
     std::string mod_data_converter(const uint64_t modId);

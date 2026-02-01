@@ -15,7 +15,9 @@
  *
  */
 #include "../ModManager.h"
+#include"../methods.h"
 #include <cassert>
+#include <fstream>
 
 ModInfo::ModInfo(const std::string& modversion, const uint64_t& localid) :
     localId(localid),
@@ -23,10 +25,31 @@ ModInfo::ModInfo(const std::string& modversion, const uint64_t& localid) :
 {}
 
 
+ModCortege::ModCortege (const std::vector<std::string>& versionsList, const std::string& name,
+                       const uint64_t& localid) :
+    ModInfo(name, localid), dependence(versionsList) {
+    isModInfo = false;
+}
+
+
+ModCortege::ModCortege (const std::vector<std::string>&& versionsList, const std::string& name,
+                       const uint64_t& localid) :
+    ModInfo(name, localid), dependence(versionsList) {
+    isModInfo = false;
+}
+
+
 Mod::Mod (const std::string& modversion, const uint64_t& modid, const uint64_t& localid) :
           modId(modid) {
     versions = new std::vector<ModInfo>;
     versions->emplace_back(modversion, localid);
+}
+
+
+Mod::Mod (const std::string& modVersion, const uint64_t& modid, const uint64_t& localId, bool) :
+          modId(modid) {
+    versions = new std::vector<ModInfo>;
+    add_cortege(modVersion, localId);
 }
 
 
@@ -57,4 +80,14 @@ Mod::~Mod () {
 std::string Mod::recommended_version () const {
     assert(versions);
     return versions->back().modVersion;
+}
+
+
+void Mod::add_cortege (const std::string& name, const uint64_t& localid) {
+    std::ifstream file(stc::cwmm::cortege_path(name, modId));
+    std::string str;
+    std::vector<std::string> list;
+    while(std::getline(file, str))
+        list.emplace_back(str);
+    versions->emplace_back(ModCortege(std::move(list), name, localid));
 }

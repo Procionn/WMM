@@ -21,6 +21,8 @@
 #include "hpp-archive.h"
 #include "../dialog_window/unificator.h"
 #include "../patterns/WaitingWindow.h"
+#include "../methods.h"
+#include "../CONSTANTS.h"
 
 namespace {
     bool modinfo_cmp(const ModInfo& a, const ModInfo& b) {
@@ -106,26 +108,39 @@ void ModList::add(const uint64_t& modId, std::string& modVersion,
 
 
 void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
-                         const std::string& modName) {
+                         const std::string& modName, const signed char type) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr)
             throw Core::lang["LANG_LABEL_MOD_EXISTS"];
         else {
-            ptr->versions->emplace_back(modVersion, localId);
+            switch(type){
+                case 0:
+                    ptr->versions->emplace_back(modVersion, localId);
+                    break;
+                case 1:
+                    ptr->add_cortege(modVersion, localId);
+                    break;
+            }
             std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
         }
     }
     else {
-        list.push_back(new Mod(modVersion, modId, localId));
+        switch(type) {
+        case 0:
+            list.push_back(new Mod(modVersion, modId, localId));
+            break;
+        case 1:
+            list.push_back(new Mod(modVersion, modId, localId, true));
+        }
         std::sort(list.begin(), list.end(), mod_cmp);
     }
     dictionary[modName] = modId;
     reverceDictionary[modId] = modName;
 }
 
-
+#if 1
 void ModList::add_in_ram(const uint64_t& modId, std::string& modVersion,
                          const std::string& modName, const std::string& path) {
     Mod* ptr = bsearch(modId);
@@ -152,11 +167,11 @@ void ModList::add_in_ram(const uint64_t& modId, std::string& modVersion,
         reverceDictionary[modId] = modName;
     }
 }
-
+#endif
 
 void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName) {
     if (dataSaveFile) {
-        std::vector<wmml::variant> v{modName, modVersion, modId};
+        std::vector<wmml::variant> v{modName, modVersion, modId, (signed char)(0)};
         dataSaveFile->write(v);
     }
     else
@@ -167,8 +182,53 @@ void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, c
 void ModList::add_in_ram (const void* v) {
     const auto* c = static_cast<const std::vector<wmml::variant>*>(v);
     add_in_ram(std::get<uint64_t>(c->at(2)), std::get<std::string>(c->at(1)),
-               std::get<std::string>(c->at(0)));
+               std::get<std::string>(c->at(0)), std::get<signed char>(c->at(3)));
 }
+
+
+void ModList::create_cortege_in_ram (const std::vector<std::string>& versionsList, const std::string& name,
+                                     const uint64_t modid) {
+    Mod* ptr = bsearch(modid);
+    if (ptr) {
+        auto* version_ptr = bsearch(ptr, name);
+        if (version_ptr)
+            throw Core::lang["LANG_LABEL_CORTEGE_EXISTS"];
+        else {
+            for (auto& entry: versionsList) {
+                if (ModManager::get().is_cortege(modid, entry))
+                    throw Core::lang["LANG_LABEL_MOD_IS_CORTEGE"];
+            }
+            ptr->versions->emplace_back(ModCortege(versionsList, name, localId));
+            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
+        }
+    }
+    else
+        stc::cerr("Error. Trying to create a cortege before creating the mod structure!");
+}
+
+
+void ModList::create_cortege_in_rom (const std::vector<std::string>& versionsList, const std::string& name,
+                                     const uint64_t modid) {
+    if (dataSaveFile) {
+        std::vector<wmml::variant> v{ModManager::get().mod_data_converter(modid), name, modid, (signed char)(1)};
+        dataSaveFile->write(v);
+    }
+    else
+        std::runtime_error("BD file is not open");
+
+    std::ofstream file(stc::cwmm::cortege_path(name, modid));
+    for (auto& entry : versionsList)
+        file << entry << "\n";
+}
+
+
+void ModList::create_cortege (const std::vector<std::string>& versionsList, const std::string& name,
+                              const uint64_t modid) {
+    create_cortege_in_ram(versionsList, name, modid);
+    create_cortege_in_rom(versionsList, name, modid);
+    ++localId;
+}
+
 
 
 void ModList::ML_rom_remove (const uint64_t& localid) {

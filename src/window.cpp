@@ -63,9 +63,8 @@ Window::Window () {
 void Window::NewObjectDialog() {
     if (Core::CONFIG_GAME != "None") {
         newObjectDialog = new CNewObjectDialog();
-        newObjectDialog->show();
-        connect(newObjectDialog, &CNewObjectDialog::success, [this]{
-            ObjectList->CreteObject(newObjectDialog->name);
+        connect(newObjectDialog, &CNewObjectDialog::success, [this](const std::string name){
+            ObjectList->CreteObject(name);
             settingsWindow->settings_modules_list->settings_collections->update_list();
         });
     }

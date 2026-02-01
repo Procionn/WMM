@@ -31,7 +31,7 @@ class WConfig : public CConfigs {};
 
 bool parser () {
     QCommandLineParser parser;
-    parser.setApplicationDescription("Wirus Mod Manager");
+    parser.setApplicationDescription(QString::fromStdString(Core::lang["LANG_LABEL_WMM"]));
 
     for (auto target : FlagsList) {
         QCommandLineOption clearCache(QString::fromStdString(target.first),
@@ -97,6 +97,7 @@ void re_gen_config() {
 
 void migrate_data() {
     v97_to_v98();
+    v98_to_v99();
 
     std::cout << "Migration is successful!" << std::endl;
 }
@@ -104,6 +105,7 @@ void migrate_data() {
 
 
 void v97_to_v98() {
+    const unsigned char gridSize = 6;
     std::filesystem::path fname, sname;
     std::vector<std::vector<wmml::variant>> ram;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(RAM)) {
@@ -113,13 +115,43 @@ void v97_to_v98() {
         sname = std::filesystem::path(entry.path())+="2";
 
         wmml file(fname);
-        if (file.width() != GRID_WIDTH) {
+        if (file.width() != gridSize) {
             ram.reserve(file.height());
             std::vector<wmml::variant> v(file.width());
             while(file.read(v))
                 ram.emplace_back(v);
 
-            wmml newFile(sname, GRID_WIDTH);
+            wmml newFile(sname, gridSize);
+            for (auto t : ram) {
+                t.emplace_back(((signed char)(0)));
+                newFile.write(t);
+            }
+            std::filesystem::remove(fname);
+            std::filesystem::rename(sname, fname);
+        }
+        ram.clear();
+    }
+}
+
+
+void v98_to_v99() {
+    const unsigned char gridSize = 4;
+    std::filesystem::path fname, sname;
+    std::vector<std::vector<wmml::variant>> ram;
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(MODS)) {
+        if (entry.is_directory() || entry.path().extension() != ".wmml")
+            continue;
+        fname = entry.path();
+        sname = std::filesystem::path(entry.path())+="2";
+
+        wmml file(fname);
+        if (file.width() != gridSize) {
+            ram.reserve(file.height());
+            std::vector<wmml::variant> v(file.width());
+            while(file.read(v))
+                ram.emplace_back(v);
+
+            wmml newFile(sname, gridSize);
             for (auto t : ram) {
                 t.emplace_back(((signed char)(0)));
                 newFile.write(t);

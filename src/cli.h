@@ -39,6 +39,7 @@ namespace cli {
 
     void migrate_data();
     void v97_to_v98();
+    void v98_to_v99();
 }
 
 #endif // CLI_H

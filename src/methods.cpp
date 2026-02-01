@@ -89,6 +89,10 @@ std::string stc::cwmm::ram_mods(const std::string& name) {
     return (MODS + CConfigs::CONFIG_GAME + "/" + name);
 }
 
+std::string stc::cwmm::cortege_path(const std::string& name, const uint64_t& id) {
+    return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + name + CORTEGE);
+}
+
 
 
 std::string stc::cwmm::modsURL (const std::string& id) {
