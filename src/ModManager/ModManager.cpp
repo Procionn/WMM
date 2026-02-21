@@ -16,14 +16,15 @@
  */
 #include "../ModManager.h"
 
-#include "../methods.h"
-#include "../core.h"
 #include "../CONSTANTS.h"
 #include "../api/ModManager.h"
-#include <hpp-archive.h>
-#include <filesystem>
-#include <regex>
+#include "../core.h"
+#include "../dialog_window/CCortegeWindow.h"
+#include "../methods.h"
 #include <archive_entry.h>
+#include <filesystem>
+#include <hpp-archive.h>
+#include <regex>
 #include <wmml.h>
 
 // Save file struct:
@@ -105,24 +106,33 @@ std::tuple<std::string, uint64_t, std::string> ModManager::regex (const std::str
     return {matches[1], std::stoi(matches[2]), matches[3]};
 }
 
-
 void ModManager::load (const std::string& path) {
     auto dataBlock = regex(path);
-    uint64_t modId 	= std::get<1>(dataBlock);
-    std::string modVersion  = std::get<2>(dataBlock);
-    std::string modName 	= std::get<0>(dataBlock);
+    uint64_t modId = std::get<1>(dataBlock);
+    std::string modVersion = std::get<2>(dataBlock);
+    std::string modName = std::get<0>(dataBlock);
 
-    try {
-        add(modId, modVersion, modName, path);
+    std::string crtName, baseVersion;
+    std::string inDatabaseValue = reverceDictionary[modId];
+    if (!inDatabaseValue.empty() && modName != inDatabaseValue) {
+        std::tuple<std::string, std::string, std::string> ret;
+        if (exists(modId, modVersion)) // start creating cortege window
+            ret = CCortegeWindow::create(modVersion, modName, modId);
+        else // start cortege question window
+            ret = CCortegeWindow::question(modVersion, modName, modId);
+
+        std::string version = std::get<0>(ret);
+        if (version.empty())
+            return;
+        modVersion = std::move(version);
+        crtName = std::get<1>(ret);
+        baseVersion = std::get<2>(ret);
     }
-    catch (const int err) {
-        switch (err) {
-            case  1:
-            case -1: return;
-            case  0: break;
-        }
-    }
+    add(modId, modVersion, modName);
+
     mod_log(path, modId, modVersion);
+    if (!crtName.empty())
+        create_cortege({baseVersion, modVersion}, crtName, modId);
 
     std::filesystem::path archivePath = get_path(modId, modVersion);
     std::filesystem::create_directories(archivePath.parent_path());

@@ -91,17 +91,8 @@ void ModList::import_saved_data () {
 }
 
 
-void ModList::add(const uint64_t& modId, const std::string&& modVersion,
-                  const std::string&& modName) {
+void ModList::add (const uint64_t& modId, const std::string modVersion, const std::string modName) {
     add_in_ram(modId, modVersion, modName);
-    add_in_rom(modId, modVersion, modName);
-    ++localId;
-}
-
-
-void ModList::add(const uint64_t& modId, std::string& modVersion,
-                  const std::string& modName, const std::string& path) {
-    add_in_ram(modId, modVersion, modName, path);
     add_in_rom(modId, modVersion, modName);
     ++localId;
 }
@@ -128,11 +119,12 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
     }
     else {
         switch(type) {
-        case 0:
-            list.push_back(new Mod(modVersion, modId, localId));
-            break;
-        case 1:
-            list.push_back(new Mod(modVersion, modId, localId, true));
+            case 0:
+                list.push_back(new Mod(modVersion, modId, localId));
+                break;
+            case 1:
+                list.push_back(new Mod(modVersion, modId, localId, true));
+                break;
         }
         std::sort(list.begin(), list.end(), mod_cmp);
     }
@@ -140,34 +132,6 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
     reverceDictionary[modId] = modName;
 }
 
-#if 1
-void ModList::add_in_ram(const uint64_t& modId, std::string& modVersion,
-                         const std::string& modName, const std::string& path) {
-    Mod* ptr = bsearch(modId);
-    bool modified = false;
-    if (ptr) {
-        if (modName != reverceDictionary[modId]) {
-            modVersion = mod_archive_unificate(path, modId, ptr, modVersion, modName);
-            modified = true;
-        }
-        auto* version_ptr = bsearch(ptr, modVersion);
-        if (version_ptr)
-            throw Core::lang["LANG_LABEL_MOD_EXISTS"];
-        else {
-            ptr->versions->emplace_back(modVersion, localId);
-            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
-        }
-    }
-    else {
-        list.push_back(new Mod(modVersion, modId, localId));
-        std::sort(list.begin(), list.end(), mod_cmp);
-    }
-    if (!modified) {
-        dictionary[modName] = modId;
-        reverceDictionary[modId] = modName;
-    }
-}
-#endif
 
 void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName) {
     if (dataSaveFile) {
@@ -305,9 +269,9 @@ const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& 
     return versionList;
 }
 
-
 std::string ModList::mod_archive_unificate (const std::string& path, const uint64_t& modId, Mod* ptr,
                                             const std::string& modVersion, const std::string& modName) {
+#if 0
     auto version = unificator::start(static_cast<void*>(ptr->versions), modName, modVersion, modId);
     if (version.empty())
         throw -1;
@@ -338,4 +302,22 @@ std::string ModList::mod_archive_unificate (const std::string& path, const uint6
         ModManager::get().mod_log(ModManager::get().get_path(modId, version), modId, version);
     }
     throw 1;
+#endif
+    return {};
+}
+
+void ModList::add_in_cortege (const uint64_t modId, const std::string& crtName,
+                              const std::string& modVersion) {
+    auto* ptr = bsearch(modId);
+    if (ptr) {
+        auto* obj = bsearch(ptr, crtName);
+        if (obj) {
+            if (ModManager::get().is_cortege(modId, crtName))
+                static_cast<ModCortege*>(obj)->add(modVersion, modId);
+            else
+                throw std::runtime_error("object is not cortege");
+        }
+    }
+    else
+        throw std::runtime_error("mod is not exists");
 }

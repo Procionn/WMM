@@ -18,11 +18,13 @@
 #include"../methods.h"
 #include <cassert>
 #include <fstream>
+#include <algorithm>
 
 ModInfo::ModInfo(const std::string& modversion, const uint64_t& localid) :
     localId(localid),
     modVersion(modversion)
 {}
+
 
 
 ModCortege::ModCortege (const std::vector<std::string>& versionsList, const std::string& name,
@@ -39,19 +41,27 @@ ModCortege::ModCortege (const std::vector<std::string>&& versionsList, const std
 }
 
 
-Mod::Mod (const std::string& modversion, const uint64_t& modid, const uint64_t& localid) :
-          modId(modid) {
+void ModCortege::add (const std::string& version, const uint64_t modId) {
+    std::ofstream file(stc::cwmm::cortege_path(modVersion, modId));
+    if (std::find(dependence.begin(), dependence.end(), version) == dependence.end())
+	std::runtime_error("element is already exists");
+    dependence.emplace_back(version);
+    file << version;
+}
+
+
+
+Mod::Mod (const std::string& modversion, const uint64_t& modid, const uint64_t& localid)
+    : modId(modid) {
     versions = new std::vector<ModInfo>;
     versions->emplace_back(modversion, localid);
 }
 
-
-Mod::Mod (const std::string& modVersion, const uint64_t& modid, const uint64_t& localId, bool) :
-          modId(modid) {
+Mod::Mod (const std::string& modVersion, const uint64_t& modid, const uint64_t& localId, bool)
+    : modId(modid) {
     versions = new std::vector<ModInfo>;
     add_cortege(modVersion, localId);
 }
-
 
 Mod::Mod (const uint64_t& modid) : modId(modid) {}
 
@@ -72,7 +82,6 @@ Mod& Mod::operator=(Mod&& other) noexcept {
 }
 
 
-
 Mod::~Mod () {
     delete versions;
 }
@@ -81,7 +90,6 @@ std::string Mod::recommended_version () const {
     assert(versions);
     return versions->back().modVersion;
 }
-
 
 void Mod::add_cortege (const std::string& name, const uint64_t& localid) {
     std::ifstream file(stc::cwmm::cortege_path(name, modId));
