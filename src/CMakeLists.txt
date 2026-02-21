@@ -61,7 +61,6 @@ add_library(CORE STATIC
     ModManager/ModList.cpp
     ModManager/objects.cpp
 
-    dialog_window/unificator.cpp        dialog_window/unificator.h
     core/IGameConfig.cpp                core/IGameConfig.h
     core/InterprocessData.h
 )
@@ -142,6 +141,7 @@ set(PROJECT_SOURCES
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
     dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
     dialog_window/CProperties.h         dialog_window/CProperties.cpp
+    dialog_window/CCortegeWindow.h      dialog_window/CCortegeWindow.cpp
 )
 
 
