@@ -16,16 +16,16 @@
  */
 #include "../importer.h"
 
+#include "../CONSTANTS.h"
 #include "../ModManager.h"
+#include "../core.h"
+#include "../methods.h"
 #include "../patterns/ERRORdialog.h"
 #include "../patterns/RenameDialog.h"
 #include "../patterns/WaitingWindow.h"
-#include "../methods.h"
-#include "../core.h"
-#include "../CONSTANTS.h"
 #include <hpp-archive.h>
+#include <vector>
 #include <wmml.h>
-
 
 import::import (const std::string& path) : archivePath(path) {
     collectionPath = stc::cwmm::ram_collection();
