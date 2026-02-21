@@ -64,7 +64,7 @@ void CCortegeWindow::set_version (const std::string& version) {
         }
         *returnedVersion = verLine->text().toStdString();
         returnedCortege->clear();
-        delete this;
+        this->deleteLater();
     });
 }
 
@@ -116,7 +116,7 @@ void CCortegeWindow::crt (const std::string& version, const std::string& name, c
         *returnedVersion = verLine->text().toStdString();
         *returnedCortege = crtLine->text().toStdString();
         *baseVersion = versions->currentText().toStdString();
-        delete this;
+        this->deleteLater();
     });
 }
 
@@ -131,24 +131,26 @@ void CCortegeWindow::que (const std::string& version, const std::string& name) {
     lay->addWidget(mainName, 2, 0, 1, -1);
     lay->addWidget(newName, 3, 0, 1, -1);
     DialogButtonBox->addWidget(setVersion);
-    connect(apply, &QPushButton::clicked,
-            [this, message, setVersion, version, name, mainName, newName] {
-                delete message;
-                delete setVersion;
-                delete mainName;
-                delete newName;
-                apply->disconnect();
-                crt(version, name, false);
-            });
-    connect(setVersion, &QPushButton::clicked,
-            [this, message, setVersion, version, mainName, newName] {
-                delete message;
-                delete setVersion;
-                delete mainName;
-                delete newName;
-                apply->disconnect();
-                set_version(version);
-            });
+    connect(
+        apply, &QPushButton::clicked, this,
+        [this, message, setVersion, version, name, mainName, newName] {
+            delete message;
+            delete setVersion;
+            delete mainName;
+            delete newName;
+            crt(version, name, false);
+        },
+        Qt::SingleShotConnection);
+    connect(
+        setVersion, &QPushButton::clicked, this,
+        [this, message, setVersion, version, mainName, newName] {
+            delete message;
+            delete setVersion;
+            delete mainName;
+            delete newName;
+            set_version(version);
+        },
+        Qt::SingleShotConnection);
 }
 
 

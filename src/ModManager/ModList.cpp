@@ -19,7 +19,6 @@
 #include <wmml.h>
 #include "../core.h"
 #include "hpp-archive.h"
-#include "../dialog_window/unificator.h"
 #include "../patterns/WaitingWindow.h"
 #include "../methods.h"
 #include "../CONSTANTS.h"
@@ -269,42 +268,6 @@ const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& 
     return versionList;
 }
 
-std::string ModList::mod_archive_unificate (const std::string& path, const uint64_t& modId, Mod* ptr,
-                                            const std::string& modVersion, const std::string& modName) {
-#if 0
-    auto version = unificator::start(static_cast<void*>(ptr->versions), modName, modVersion, modId);
-    if (version.empty())
-        throw -1;
-    else if (!ModManager::get().exists(modId, version)) {
-        return version;
-    }
-    else {
-#define PARAMETERS , modId, version, &d, path
-        Wait2({
-            auto mainArchivePath = ModManager::get().get_path(modId, version);
-            auto newMainArchivePath = mainArchivePath + "2";
-
-            ArchiveReader mainArchive(mainArchivePath);
-            ArchiveReader archivePart(path);
-            CustomArchive newArchive(newMainArchivePath, "");
-
-            d.setValue(10);
-            newArchive.clone(&mainArchive);
-            d.setValue(60);
-            newArchive.clone(&archivePart);
-            d.setValue(90);
-
-            std::filesystem::remove(mainArchivePath);
-            std::filesystem::rename(newMainArchivePath, mainArchivePath);
-
-        }, PARAMETERS);
-        std::filesystem::remove(ModManager::get().get_log_path(modId, version));
-        ModManager::get().mod_log(ModManager::get().get_path(modId, version), modId, version);
-    }
-    throw 1;
-#endif
-    return {};
-}
 
 void ModList::add_in_cortege (const uint64_t modId, const std::string& crtName,
                               const std::string& modVersion) {

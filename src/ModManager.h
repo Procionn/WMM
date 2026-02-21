@@ -100,8 +100,6 @@ protected:
     void ML_remove(const uint64_t& modId, const std::string& modVersion);
     void ML_remove(const uint64_t& modId);
     void ML_rom_remove(const uint64_t& localId);
-    std::string mod_archive_unificate(const std::string& path, const uint64_t& modId, Mod* ptr,
-                                      const std::string& version, const std::string& name);
     void import_saved_data();
     void create_cortege_in_ram(const std::vector<std::string>& versionsList,
                                const std::string& name, const uint64_t modid);
