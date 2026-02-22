@@ -16,10 +16,10 @@
  */
 #include "mainWidgets.h"
 
+#include "../settings/settings.h"
 #include "../window/modlist/cobject.h"
 #include <QLabel>
 #include <wmml.h>
-#include "../settings/settings.h"
 
 CContentList::CContentList () {
     setMinimumWidth(200);
@@ -39,7 +39,7 @@ CContentList::CContentList () {
 }
 
 CContentList::~CContentList() {
-    delete file;
+    close_file();
 }
 
 
@@ -49,7 +49,7 @@ void CContentList::updateList (CObjectsButton* pointer, bool type) {
     clear();
     if (type) sPath = stc::cwmm::ram_preset(targetName);
     else      sPath = stc::cwmm::ram_collection(targetName);
-    delete file;
+    close_file();
     file = new wmml(sPath);
     std::vector<wmml::variant> v(GRID_WIDTH);
     bool counter = false;
@@ -124,5 +124,12 @@ void CContentList::priority_changing (CObject* toggledElements, signed char prio
 
 void CContentList::flush() {
     file->flush();
+}
+
+void CContentList::close_file () {
+    if (file) {
+        delete file;
+        file = nullptr;
+    }
 }
 

@@ -88,6 +88,7 @@ void Window::objectChoosing (CObjectsButton* pointer, bool type) {
 
 
 void Window::applyClicking () {
+    ContentWidget->close_file();
     inpad->application(ObjectList->targetName, ObjectList->TypeTarget);
     ContentWidget->updateList(target, ContentWidget->targetType);
 }
