@@ -49,7 +49,9 @@ ModCortege::ModCortege (const std::vector<std::string>&& versionsList, const std
 
 void ModCortege::add (const std::string& version, const uint64_t modId) {
     if (std::find(dependence.begin(), dependence.end(), version) != dependence.end())
-        std::runtime_error("element is already exists");
+        throw std::runtime_error("element is already exists");
+    if (ModManager::get().is_cortege(modId, version))
+        throw std::runtime_error("the object being added is a cortege");
     std::ofstream file(stc::cwmm::cortege_path(modVersion, modId));
     dependence.emplace_back(version);
     file << version;

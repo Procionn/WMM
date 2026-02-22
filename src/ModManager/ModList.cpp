@@ -278,6 +278,8 @@ void ModList::add_in_cortege (const uint64_t modId, const std::string& crtName,
             else
                 throw std::runtime_error("object is not cortege");
         }
+        else
+            throw std::runtime_error("object is not exists");
     }
     else
         throw std::runtime_error("mod is not exists");
