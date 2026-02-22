@@ -24,15 +24,14 @@
 #include "../CONSTANTS.h"
 
 namespace {
-    bool modinfo_cmp(const ModInfo& a, const ModInfo& b) {
-        return a.modVersion < b.modVersion;
+    bool modinfo_cmp (const ModInfo* a, const ModInfo* b) {
+        return a->modVersion < b->modVersion;
     }
 
-    bool mod_cmp(const Mod* a, const Mod* b) {
+    bool mod_cmp (const Mod* a, const Mod* b) {
         return a->modId < b->modId;
     }
 }
-
 
 
 ModList::~ModList () {
@@ -41,10 +40,9 @@ ModList::~ModList () {
     delete dataSaveFile;
 }
 
-
 Mod* ModList::bsearch (const uint64_t& modId) {
     auto it = std::lower_bound(list.begin(), list.end(), modId,
-        [](const Mod* mod, uint64_t id) {return mod->modId < id;});
+                               [] (const Mod* mod, uint64_t id) { return mod->modId < id; });
     if (it != list.end() && (*it)->modId == modId)
         return *it;
     return nullptr;
@@ -54,12 +52,12 @@ Mod* ModList::bsearch (const uint64_t& modId) {
 ModInfo* ModList::bsearch (Mod* ptr, const std::string& modVersion) {
     if (!ptr || !ptr->versions)
         std::runtime_error("ptr or ptr->versions is not valid");
-    auto it = std::lower_bound(
-        ptr->versions->begin(), ptr->versions->end(), modVersion,
-        [](const ModInfo& info, const std::string& version)
-        {return info.modVersion < version;});
-    if (it != ptr->versions->end() && it->modVersion == modVersion)
-        return &(*it);
+    auto it = std::lower_bound(ptr->versions->begin(), ptr->versions->end(), modVersion,
+                               [] (const ModInfo* info, const std::string& version) {
+                                   return info->modVersion < version;
+                               });
+    if (it != ptr->versions->end() && (*it)->modVersion == modVersion)
+        return *it;
     return nullptr;
 }
 
@@ -75,7 +73,7 @@ void ModList::import_saved_data () {
         dataSaveFile = new wmml(saveFile);
         std::vector<wmml::variant> v(gridSize);
         list.reserve(dataSaveFile->height());
-        while(dataSaveFile->read(v)) {
+        while (dataSaveFile->read(v)) {
             add_in_ram(static_cast<void*>(&v));
             ++localId;
         }
@@ -107,7 +105,7 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
         else {
             switch(type){
                 case 0:
-                    ptr->versions->emplace_back(modVersion, localId);
+                    ptr->versions->emplace_back(new ModInfo(modVersion, localId));
                     break;
                 case 1:
                     ptr->add_cortege(modVersion, localId);
@@ -161,7 +159,7 @@ void ModList::create_cortege_in_ram (const std::vector<std::string>& versionsLis
                 if (ModManager::get().is_cortege(modid, entry))
                     throw Core::lang["LANG_LABEL_MOD_IS_CORTEGE"];
             }
-            ptr->versions->emplace_back(ModCortege(versionsList, name, localId));
+            ptr->versions->emplace_back(new ModCortege(versionsList, name, localId));
             std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
         }
     }
@@ -197,9 +195,9 @@ void ModList::create_cortege (const std::vector<std::string>& versionsList, cons
 void ModList::ML_rom_remove (const uint64_t& localid) {
     dataSaveFile->remove_object(localid);
     for (const Mod* mod : list) {
-        for(ModInfo& entry : *mod->versions) {
-            if (entry.localId > localid)
-                --entry.localId;
+        for (ModInfo* entry : *mod->versions) {
+            if (entry->localId > localid)
+                --(entry->localId);
         }
     }
     --localId;
@@ -211,8 +209,8 @@ void ModList::ML_remove (const uint64_t& modId, const std::string& modVersion) {
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr) {
-            auto index = version_ptr - ptr->versions->data(); // счёт от нуля
-            ML_rom_remove(ptr->versions->data()[index].localId);
+            auto index = version_ptr - *(ptr->versions->data()); // счёт от нуля
+            ML_rom_remove(ptr->versions->data()[index]->localId);
             ptr->versions->erase(ptr->versions->begin() + index);
             if (ptr->versions->empty()) {
                 // в таком случае нужно уничтожить весь Mod объект
@@ -242,8 +240,8 @@ void ModList::ML_remove (const uint64_t& modId) {
         list.erase(iterator);
 
         int i = 0;
-        for (const ModInfo& entry : *ptr->versions) {
-            ML_rom_remove(entry.localId - i);
+        for (const ModInfo* entry : *ptr->versions) {
+            ML_rom_remove(entry->localId - i);
             ++i;
         }
         delete ptr;
@@ -263,8 +261,8 @@ const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& 
     assert(mod->versions);
     std::vector<std::string_view> versionList;
     versionList.reserve(mod->versions->size());
-    for (const auto& entry : *mod->versions)
-        versionList.emplace_back(entry.modVersion);
+    for (const auto* entry : *mod->versions)
+        versionList.emplace_back(entry->modVersion);
     return versionList;
 }
 

@@ -21,11 +21,8 @@
 #include <string>
 #include <fstream>
 #include <filesystem>
-#include <cassert>
 #include <map>
 #include "core/IGameConfig.h"
-class wmml;
-
 
 
 class CBaseConfig
@@ -56,6 +53,7 @@ protected:
 class CConfigs : public virtual CBaseConfig
 {
     std::ofstream config;
+
 protected:
     CConfigs();
 
@@ -108,7 +106,7 @@ protected:
 
 private:
     const int wmml_size = 3;
-    void write(wmml* input, std::string str);
+    void write(class wmml* input, std::string str);
 };
 
 

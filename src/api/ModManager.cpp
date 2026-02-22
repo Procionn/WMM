@@ -40,10 +40,10 @@ QString recommended_version (const Mod* ptr) {
 uint64_t get_modId (const Mod* ptr) {
     return ptr->modId;
 }
-QList<ModInfo> get_versions (const Mod* ptr) {
+QList<ModInfo*> get_versions (const Mod* ptr) {
     if (ptr->versions) {
         auto data = *ptr->versions;
-        QList<ModInfo> list;
+        QList<ModInfo*> list;
         list.reserve(data.size());
         for (auto& entry : data)
             list.push_back(entry);
@@ -58,11 +58,6 @@ QList<ModInfo> get_versions (const Mod* ptr) {
 
 void WMM::APIModManager::add (const uint64_t& modId, const QString modVersion, const QString modName) {
     ptr->add(modId, modVersion.toStdString(), modName.toStdString());
-}
-void WMM::APIModManager::add (const uint64_t& modId, QString& modVersion, const QString& modName, const QString& path) {
-    std::string version = modVersion.toStdString();
-    ptr->add(modId, version, modName.toStdString(), path.toStdString());
-    modVersion = QString::fromStdString(version);
 }
 const QList<Mod*> WMM::APIModManager::all_mods_list() {
     auto data = all_mods_list();

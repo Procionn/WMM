@@ -32,7 +32,7 @@ namespace WMM {
 
     WMMAPI_EXPORT QString recommended_version (const Mod*);
     WMMAPI_EXPORT uint64_t get_modId (const Mod*);
-    WMMAPI_EXPORT QList<ModInfo> get_versions (const Mod*);
+    WMMAPI_EXPORT QList<ModInfo*> get_versions (const Mod*);
 
 
     class WMMAPI_EXPORT APIModManager {
@@ -40,8 +40,6 @@ namespace WMM {
         static void start_api(ModManager* p);
         void add (const uint64_t& modId, const QString modVersion,
                   const QString modName);
-        void add (const uint64_t& modId, QString& modVersion,
-                  const QString& modName, const QString&);
         const QList<Mod*> all_mods_list();
         const QList<QString> all_versions_list (const uint64_t& modId);
 

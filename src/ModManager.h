@@ -59,7 +59,7 @@ struct Mod
 
     void add_cortege(const std::string& name, const uint64_t& localid);
 
-    std::vector<ModInfo>* versions = nullptr;
+    std::vector<ModInfo*>* versions = nullptr;
     uint64_t modId;
 
     std::string recommended_version() const;

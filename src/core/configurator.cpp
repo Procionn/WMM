@@ -58,12 +58,20 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
     while (targetfile.read(v)) {
         if (std::get<std::string>(v[1]) == "this")
             continue;
-        if (std::get<bool>(v[2])) {
+        if (std::get<bool>(v[2])) { // if mod
             if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
-                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
-            list.emplace_back(static_cast<void*>(&v));
+                throw(Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
+            if (ModManager::get().is_cortege(std::get<uint64_t>(v[3]), std::get<std::string>(v[1]))) {
+                for (auto* entry : ModManager::get().get_cortege_list(std::get<uint64_t>(v[3]),
+                                                                      std::get<std::string>(v[1]))) {
+                    v[1] = entry->modVersion;
+                    list.emplace_back(static_cast<void*>(&v));
+                }
+            }
+            else
+                list.emplace_back(static_cast<void*>(&v));
         }
-        else {
+        else { // if preset
             if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))) && except)
                 throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset - " + std::get<std::string>(v[0]));
             if (presets)
