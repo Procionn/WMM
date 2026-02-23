@@ -114,8 +114,8 @@ target_link_libraries(SETTINGS PRIVATE
     PLUGIN_LOADER)
 
 target_compile_definitions(CORE     PUBLIC
-  LOG
-  WMMAPI
+    LOG
+    WMMAPI
 )
 target_compile_definitions(PATTERNS PUBLIC LOG)
 target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
