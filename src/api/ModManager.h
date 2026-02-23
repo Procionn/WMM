@@ -15,12 +15,7 @@
 #include <QList>
 #include <cstdint>
 #include <QtCore/qglobal.h>
-
-#if defined(WMMAPI)
-    #define WMMAPI_EXPORT Q_DECL_EXPORT
-#else
-    #define WMMAPI_EXPORT Q_DECL_IMPORT
-#endif
+#include "export.h"
 
 class ModManager;
 class ModInfo;

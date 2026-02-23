@@ -22,8 +22,10 @@
 #include <map>
 #include <tuple>
 #include <stdint.h>
+#include "api/export.h"
 
-struct ModInfo
+
+struct WMMAPI_EXPORT ModInfo
 {
     ModInfo(const std::string& modVersion, const uint64_t& localId);
     virtual ~ModInfo() = default;
@@ -35,7 +37,7 @@ struct ModInfo
 
 
 
-struct ModCortege : public ModInfo
+struct WMMAPI_EXPORT ModCortege : public ModInfo
 {
     ModCortege(const std::vector<std::string>& versionsList, const std::string& name,
                const uint64_t& localId);
@@ -48,7 +50,7 @@ struct ModCortege : public ModInfo
 
 
 
-struct Mod
+struct WMMAPI_EXPORT Mod
 {
     Mod(const uint64_t& modId);
     Mod(const std::string& modVersion, const uint64_t& modId, const uint64_t& localId);
@@ -67,7 +69,7 @@ struct Mod
 
 
 
-class ModList
+class WMMAPI_EXPORT ModList
 {
     std::vector<Mod*> list;
     uint64_t localId = 0;
@@ -118,7 +120,7 @@ public:
 
 
 
-class ModManager final : public ModList
+class WMMAPI_EXPORT ModManager final : public ModList
 {
     friend class ModList;
     const std::string archiveExpansion = ".MOD";

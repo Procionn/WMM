@@ -95,6 +95,7 @@ add_library(wmm-API SHARED
     api/Core.cpp              api/Core.h
     api/ModManager.cpp        api/ModManager.h
     plugins/PluginInterface.h
+    api/export.h
 )
 add_library(PLUGIN_LOADER STATIC
     plugins/PluginLoader.h    plugins/PluginLoader.cpp
@@ -112,13 +113,16 @@ target_link_libraries(SETTINGS PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     PLUGIN_LOADER)
 
-target_compile_definitions(CORE     PUBLIC LOG)
+target_compile_definitions(CORE     PUBLIC
+  LOG
+  WMMAPI
+)
 target_compile_definitions(PATTERNS PUBLIC LOG)
 target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
 target_compile_definitions(wmm-API
-  PRIVATE
-  LOG
-  WMMAPI
+    PRIVATE
+    LOG
+    WMMAPI
 )
 
 
