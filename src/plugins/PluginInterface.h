@@ -20,6 +20,7 @@ protected:
     const bool demon = false;
     // If the extensions is demon - switch to true
     // If the extension is service - switch to false
+    PluginInterface (const bool isDemon = false) : demon(isDemon) {}
 
 public:
     virtual ~PluginInterface() = default;
