@@ -2,13 +2,13 @@
 #define EXPORT_H
 
 #ifdef _WIN32
-    #ifdef WMMAPI
-        #define WMMAPI_EXPORT __declspec(dllexport)
+    #ifdef WMMCORE
+        #define WMMCORE_EXPORT __declspec(dllexport)
     #else
-        #define WMMAPI_EXPORT __declspec(dllimport)
+        #define WMMCORE_EXPORT __declspec(dllimport)
     #endif
 #else
-    #define WMMAPI_EXPORT __attribute__((visibility("default")))
+    #define WMMCORE_EXPORT __attribute__((visibility("default")))
 #endif
 
 #endif // EXPORT_H

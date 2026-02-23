@@ -37,7 +37,7 @@ protected:
 
 
 
-class WMMAPI_EXPORT Lang : public virtual CBaseConfig
+class WMMCORE_EXPORT Lang : public virtual CBaseConfig
 {
 public:
     inline static std::map<std::string, std::string> lang;
@@ -51,7 +51,7 @@ protected:
 
 
 
-class WMMAPI_EXPORT CConfigs : public virtual CBaseConfig
+class WMMCORE_EXPORT CConfigs : public virtual CBaseConfig
 {
     std::ofstream config;
 
@@ -72,7 +72,7 @@ public:
 
 
 
-class WMMAPI_EXPORT CBaseGameConfig : public virtual CBaseConfig
+class WMMCORE_EXPORT CBaseGameConfig : public virtual CBaseConfig
 {
     friend class NixGameConfig;
     friend class WinGameConfig;
@@ -114,7 +114,7 @@ private:
 
 
 
-class WMMAPI_EXPORT CGameConfig : public CBaseGameConfig
+class WMMCORE_EXPORT CGameConfig : public CBaseGameConfig
 {
     IGameConfig* object;
 
@@ -132,7 +132,7 @@ public:
 
 
 
-class WMMAPI_EXPORT Core final : public CConfigs, public Lang, public CGameConfig
+class WMMCORE_EXPORT Core final : public CConfigs, public Lang, public CGameConfig
 {
     Core();
     ~Core() = default;

@@ -25,7 +25,7 @@
 #include "api/export.h"
 
 
-struct WMMAPI_EXPORT ModInfo
+struct WMMCORE_EXPORT ModInfo
 {
     ModInfo(const std::string& modVersion, const uint64_t& localId);
     virtual ~ModInfo() = default;
@@ -37,7 +37,7 @@ struct WMMAPI_EXPORT ModInfo
 
 
 
-struct WMMAPI_EXPORT ModCortege : public ModInfo
+struct WMMCORE_EXPORT ModCortege : public ModInfo
 {
     ModCortege(const std::vector<std::string>& versionsList, const std::string& name,
                const uint64_t& localId);
@@ -50,7 +50,7 @@ struct WMMAPI_EXPORT ModCortege : public ModInfo
 
 
 
-struct WMMAPI_EXPORT Mod
+struct WMMCORE_EXPORT Mod
 {
     Mod(const uint64_t& modId);
     Mod(const std::string& modVersion, const uint64_t& modId, const uint64_t& localId);
@@ -69,7 +69,7 @@ struct WMMAPI_EXPORT Mod
 
 
 
-class WMMAPI_EXPORT ModList
+class WMMCORE_EXPORT ModList
 {
     std::vector<Mod*> list;
     uint64_t localId = 0;
@@ -120,7 +120,7 @@ public:
 
 
 
-class WMMAPI_EXPORT ModManager final : public ModList
+class WMMCORE_EXPORT ModManager final : public ModList
 {
     friend class ModList;
     const std::string archiveExpansion = ".MOD";
