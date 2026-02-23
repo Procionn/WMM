@@ -19,19 +19,19 @@
 #include <wmml.h>
 #include "../core.h"
 #include "hpp-archive.h"
-#include "../dialog_window/unificator.h"
 #include "../patterns/WaitingWindow.h"
+#include "../methods.h"
+#include "../CONSTANTS.h"
 
 namespace {
-    bool modinfo_cmp(const ModInfo& a, const ModInfo& b) {
-        return a.modVersion < b.modVersion;
+    bool modinfo_cmp (const ModInfo* a, const ModInfo* b) {
+        return a->modVersion < b->modVersion;
     }
 
-    bool mod_cmp(const Mod* a, const Mod* b) {
+    bool mod_cmp (const Mod* a, const Mod* b) {
         return a->modId < b->modId;
     }
 }
-
 
 
 ModList::~ModList () {
@@ -40,10 +40,9 @@ ModList::~ModList () {
     delete dataSaveFile;
 }
 
-
 Mod* ModList::bsearch (const uint64_t& modId) {
     auto it = std::lower_bound(list.begin(), list.end(), modId,
-        [](const Mod* mod, uint64_t id) {return mod->modId < id;});
+                               [] (const Mod* mod, uint64_t id) { return mod->modId < id; });
     if (it != list.end() && (*it)->modId == modId)
         return *it;
     return nullptr;
@@ -53,12 +52,12 @@ Mod* ModList::bsearch (const uint64_t& modId) {
 ModInfo* ModList::bsearch (Mod* ptr, const std::string& modVersion) {
     if (!ptr || !ptr->versions)
         std::runtime_error("ptr or ptr->versions is not valid");
-    auto it = std::lower_bound(
-        ptr->versions->begin(), ptr->versions->end(), modVersion,
-        [](const ModInfo& info, const std::string& version)
-        {return info.modVersion < version;});
-    if (it != ptr->versions->end() && it->modVersion == modVersion)
-        return &(*it);
+    auto it = std::lower_bound(ptr->versions->begin(), ptr->versions->end(), modVersion,
+                               [] (const ModInfo* info, const std::string& version) {
+                                   return info->modVersion < version;
+                               });
+    if (it != ptr->versions->end() && (*it)->modVersion == modVersion)
+        return *it;
     return nullptr;
 }
 
@@ -74,7 +73,7 @@ void ModList::import_saved_data () {
         dataSaveFile = new wmml(saveFile);
         std::vector<wmml::variant> v(gridSize);
         list.reserve(dataSaveFile->height());
-        while(dataSaveFile->read(v)) {
+        while (dataSaveFile->read(v)) {
             add_in_ram(static_cast<void*>(&v));
             ++localId;
         }
@@ -89,36 +88,41 @@ void ModList::import_saved_data () {
 }
 
 
-void ModList::add(const uint64_t& modId, const std::string&& modVersion,
-                  const std::string&& modName) {
+void ModList::add (const uint64_t& modId, const std::string modVersion, const std::string modName) {
     add_in_ram(modId, modVersion, modName);
     add_in_rom(modId, modVersion, modName);
     ++localId;
 }
 
 
-void ModList::add(const uint64_t& modId, std::string& modVersion,
-                  const std::string& modName, const std::string& path) {
-    add_in_ram(modId, modVersion, modName, path);
-    add_in_rom(modId, modVersion, modName);
-    ++localId;
-}
-
-
 void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
-                         const std::string& modName) {
+                         const std::string& modName, const signed char type) {
     Mod* ptr = bsearch(modId);
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr)
             throw Core::lang["LANG_LABEL_MOD_EXISTS"];
         else {
-            ptr->versions->emplace_back(modVersion, localId);
+            switch(type){
+                case 0:
+                    ptr->versions->emplace_back(new ModInfo(modVersion, localId));
+                    break;
+                case 1:
+                    ptr->add_cortege(modVersion, localId);
+                    break;
+            }
             std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
         }
     }
     else {
-        list.push_back(new Mod(modVersion, modId, localId));
+        switch(type) {
+            case 0:
+                list.push_back(new Mod(modVersion, modId, localId));
+                break;
+            case 1:
+                list.push_back(new Mod(modVersion, modId, localId, true));
+                break;
+        }
         std::sort(list.begin(), list.end(), mod_cmp);
     }
     dictionary[modName] = modId;
@@ -126,37 +130,9 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
 }
 
 
-void ModList::add_in_ram(const uint64_t& modId, std::string& modVersion,
-                         const std::string& modName, const std::string& path) {
-    Mod* ptr = bsearch(modId);
-    bool modified = false;
-    if (ptr) {
-        if (modName != reverceDictionary[modId]) {
-            modVersion = mod_archive_unificate(path, modId, ptr, modVersion, modName);
-            modified = true;
-        }
-        auto* version_ptr = bsearch(ptr, modVersion);
-        if (version_ptr)
-            throw Core::lang["LANG_LABEL_MOD_EXISTS"];
-        else {
-            ptr->versions->emplace_back(modVersion, localId);
-            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
-        }
-    }
-    else {
-        list.push_back(new Mod(modVersion, modId, localId));
-        std::sort(list.begin(), list.end(), mod_cmp);
-    }
-    if (!modified) {
-        dictionary[modName] = modId;
-        reverceDictionary[modId] = modName;
-    }
-}
-
-
 void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, const std::string& modName) {
     if (dataSaveFile) {
-        std::vector<wmml::variant> v{modName, modVersion, modId};
+        std::vector<wmml::variant> v{modName, modVersion, modId, (signed char)(0)};
         dataSaveFile->write(v);
     }
     else
@@ -167,16 +143,61 @@ void ModList::add_in_rom(const uint64_t& modId, const std::string& modVersion, c
 void ModList::add_in_ram (const void* v) {
     const auto* c = static_cast<const std::vector<wmml::variant>*>(v);
     add_in_ram(std::get<uint64_t>(c->at(2)), std::get<std::string>(c->at(1)),
-               std::get<std::string>(c->at(0)));
+               std::get<std::string>(c->at(0)), std::get<signed char>(c->at(3)));
 }
+
+
+void ModList::create_cortege_in_ram (const std::vector<std::string>& versionsList, const std::string& name,
+                                     const uint64_t modid) {
+    Mod* ptr = bsearch(modid);
+    if (ptr) {
+        auto* version_ptr = bsearch(ptr, name);
+        if (version_ptr)
+            throw Core::lang["LANG_LABEL_CORTEGE_EXISTS"];
+        else {
+            for (auto& entry: versionsList) {
+                if (ModManager::get().is_cortege(modid, entry))
+                    throw Core::lang["LANG_LABEL_MOD_IS_CORTEGE"];
+            }
+            ptr->versions->emplace_back(new ModCortege(versionsList, name, localId));
+            std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);
+        }
+    }
+    else
+        stc::cerr("Error. Trying to create a cortege before creating the mod structure!");
+}
+
+
+void ModList::create_cortege_in_rom (const std::vector<std::string>& versionsList, const std::string& name,
+                                     const uint64_t modid) {
+    if (dataSaveFile) {
+        std::vector<wmml::variant> v{ModManager::get().mod_data_converter(modid), name, modid, (signed char)(1)};
+        dataSaveFile->write(v);
+    }
+    else
+        std::runtime_error("BD file is not open");
+
+    std::ofstream file(stc::cwmm::cortege_path(name, modid));
+    for (auto& entry : versionsList)
+        file << entry << "\n";
+}
+
+
+void ModList::create_cortege (const std::vector<std::string>& versionsList, const std::string& name,
+                              const uint64_t modid) {
+    create_cortege_in_ram(versionsList, name, modid);
+    create_cortege_in_rom(versionsList, name, modid);
+    ++localId;
+}
+
 
 
 void ModList::ML_rom_remove (const uint64_t& localid) {
     dataSaveFile->remove_object(localid);
     for (const Mod* mod : list) {
-        for(ModInfo& entry : *mod->versions) {
-            if (entry.localId > localid)
-                --entry.localId;
+        for (ModInfo* entry : *mod->versions) {
+            if (entry->localId > localid)
+                --(entry->localId);
         }
     }
     --localId;
@@ -188,8 +209,8 @@ void ModList::ML_remove (const uint64_t& modId, const std::string& modVersion) {
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr) {
-            auto index = version_ptr - ptr->versions->data(); // счёт от нуля
-            ML_rom_remove(ptr->versions->data()[index].localId);
+            auto index = version_ptr - *(ptr->versions->data()); // счёт от нуля
+            ML_rom_remove(ptr->versions->data()[index]->localId);
             ptr->versions->erase(ptr->versions->begin() + index);
             if (ptr->versions->empty()) {
                 // в таком случае нужно уничтожить весь Mod объект
@@ -219,8 +240,8 @@ void ModList::ML_remove (const uint64_t& modId) {
         list.erase(iterator);
 
         int i = 0;
-        for (const ModInfo& entry : *ptr->versions) {
-            ML_rom_remove(entry.localId - i);
+        for (const ModInfo* entry : *ptr->versions) {
+            ML_rom_remove(entry->localId - i);
             ++i;
         }
         delete ptr;
@@ -240,42 +261,26 @@ const std::vector<std::string_view> ModList::all_versions_list (const uint64_t& 
     assert(mod->versions);
     std::vector<std::string_view> versionList;
     versionList.reserve(mod->versions->size());
-    for (const auto& entry : *mod->versions)
-        versionList.emplace_back(entry.modVersion);
+    for (const auto* entry : *mod->versions)
+        versionList.emplace_back(entry->modVersion);
     return versionList;
 }
 
 
-std::string ModList::mod_archive_unificate (const std::string& path, const uint64_t& modId, Mod* ptr,
-                                            const std::string& modVersion, const std::string& modName) {
-    auto version = unificator::start(static_cast<void*>(ptr->versions), modName, modVersion, modId);
-    if (version.empty())
-        throw -1;
-    else if (!ModManager::get().exists(modId, version)) {
-        return version;
+void ModList::add_in_cortege (const uint64_t modId, const std::string& crtName,
+                              const std::string& modVersion) {
+    auto* ptr = bsearch(modId);
+    if (ptr) {
+        auto* obj = bsearch(ptr, crtName);
+        if (obj) {
+            if (ModManager::get().is_cortege(modId, crtName))
+                static_cast<ModCortege*>(obj)->add(modVersion, modId);
+            else
+                throw std::runtime_error("object is not cortege");
+        }
+        else
+            throw std::runtime_error("object is not exists");
     }
-    else {
-#define PARAMETERS , modId, version, &d, path
-        Wait2({
-            auto mainArchivePath = ModManager::get().get_path(modId, version);
-            auto newMainArchivePath = mainArchivePath + "2";
-
-            ArchiveReader mainArchive(mainArchivePath);
-            ArchiveReader archivePart(path);
-            CustomArchive newArchive(newMainArchivePath, "");
-
-            d.setValue(10);
-            newArchive.clone(&mainArchive);
-            d.setValue(60);
-            newArchive.clone(&archivePart);
-            d.setValue(90);
-
-            std::filesystem::remove(mainArchivePath);
-            std::filesystem::rename(newMainArchivePath, mainArchivePath);
-
-        }, PARAMETERS);
-        std::filesystem::remove(ModManager::get().get_log_path(modId, version));
-        ModManager::get().mod_log(ModManager::get().get_path(modId, version), modId, version);
-    }
-    throw 1;
+    else
+        throw std::runtime_error("mod is not exists");
 }

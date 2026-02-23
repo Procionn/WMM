@@ -15,10 +15,13 @@
  *
  */
 #include "CNewObjectDialog.h"
+#include <QLineEdit>
+#include <QLabel>
 #include "../core.h"
 #include "../patterns/ERRORdialog.h"
 
 CNewObjectDialog::CNewObjectDialog () {
+    autodeleting = true;
     QHBoxLayout* glist = new QHBoxLayout;
     list->setLayout(glist);
     glist->setAlignment(Qt::AlignTop);
@@ -27,20 +30,21 @@ CNewObjectDialog::CNewObjectDialog () {
     nameTab = new QLineEdit;
     glist->addWidget(nameTab);
     connect(apply, &QPushButton::clicked, this, &CNewObjectDialog::test);
+    show();
 }
 
 
 void CNewObjectDialog::test () {
     std::string tab = nameTab->text().toStdString();
 #ifdef __linux__
-    std::string separator = "/";
+    std::string separators = "/";
 #elif WIN64
-    std::string separator = "<>:\"/\\|?*";
+    std::string separators = "<>:\"/\\|?*";
 #endif
-    if (tab.find_last_of(separator) == std::string::npos) {
-        name = std::move(tab);
-        emit success();
+    if (tab.find_last_of(separators) == std::string::npos) {
+        emit success(tab);
         delete this;
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_PATH_RULES"] + separator);
+    else
+        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_PATH_RULES"] + separators);
 }

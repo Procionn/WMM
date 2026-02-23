@@ -56,14 +56,14 @@ void CObjectsContainer::change_priority(signed char newValue) {
 
 void CObjectsContainer::deletionSignals () {
     std::vector<CObject*> newVector;
-    newVector.reserve(childList.size());
-    for (CObject* target : childList) {
+    newVector.reserve(childList.size()/2);
+
+    for (auto* target : childList)
         if (target->is_target())
-            target->DELETE();
-        else newVector.emplace_back(target);
-    }
-    childList.clear();
-    childList = std::move(newVector);
+            newVector.emplace_back(target);
+
+    for (auto* target : newVector)
+        target->DELETE();
 }
 
 

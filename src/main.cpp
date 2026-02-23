@@ -19,9 +19,9 @@
 #include "core.h"
 #include "ModManager.h"
 #include "cli.h"
+#include "plugins/PluginLoader.h"
 #include <QCommandLineParser>
 #include <QApplication>
-
 
 int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -35,6 +35,7 @@ int main (int argc, char *argv[]) {
             Core::get();
             if (!cli::parser()){
                 ModManager::get();
+                PluginLoader::get();
                 Window w;
                 code = app.exec();
             }

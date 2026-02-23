@@ -15,6 +15,12 @@
  *
  */
 #include "../core.h"
+#include "../api/Core.h"
+
+Core::Core () {
+    WMM::APICore::start_api(this);
+}
+
 
 Core& Core::get () {
     static Core singleton;

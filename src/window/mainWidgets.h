@@ -73,8 +73,8 @@ class CContentList : public QWidget
     std::string sPath;
     std::string targetName;
     wmml* file = nullptr;
-public:
 
+public:
     CDND* dnd;
     bool targetType;
 
@@ -86,13 +86,14 @@ public slots:
     void clear();
     void show_search_widget();
     void hide_search_widget();
+    void close_file();
 
 private slots:
     void changeStatusOn(CObject* toggledElements);
     void changeStatusOff(CObject* toggledElements);
     void deleting(CObject* pointer);
     void sort(const int = INT_MAX);
-    void change_version (const std::string_view&, const uint64_t);
+    void change_version(const std::string_view&, const uint64_t);
     void flush();
     void priority_changing(CObject*, signed char);
 };

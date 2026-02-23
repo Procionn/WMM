@@ -18,12 +18,21 @@
 #define SETEXTENSIONS_H
 
 #include <QWidget>
+#include <vector>
 
+class QVBoxLayout;
 class setextensions : public QWidget
 {
     Q_OBJECT
+    QVBoxLayout* list;
+
+    std::vector<QWidget*> expansionList;
+    void clear_list();
+    void generate_buttons();
+
 public:
     setextensions();
+    ~setextensions();
 };
 
 #endif // SETEXTENSIONS_H

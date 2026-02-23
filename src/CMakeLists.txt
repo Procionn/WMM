@@ -1,3 +1,18 @@
+#
+#  Copyright (C) 2025 Procion ByProcion@gmail.com
+#
+#  This file is part of Wirus Mod Manager.
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#  See the LICENSE file for more details.
+#
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
 
 if (WIN32)
@@ -46,7 +61,6 @@ add_library(CORE STATIC
     ModManager/ModList.cpp
     ModManager/objects.cpp
 
-    dialog_window/unificator.cpp        dialog_window/unificator.h
     core/IGameConfig.cpp                core/IGameConfig.h
     core/InterprocessData.h
 )
@@ -61,6 +75,7 @@ add_library(SETTINGS STATIC
     settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
     settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
     settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
+
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
@@ -76,17 +91,36 @@ add_library(PATTERNS STATIC
     patterns/CScrollWindow.h
     patterns/WaitingWindow.h
 )
-target_link_libraries(CORE PRIVATE
-  Qt${QT_VERSION_MAJOR}::Widgets
-  Qt${QT_VERSION_MAJOR}::Network
-  HPP_ARCHIVE
-  wmml_static
+add_library(wmm-API SHARED
+    api/Core.cpp              api/Core.h
+    api/ModManager.cpp        api/ModManager.h
+    plugins/PluginInterface.h
 )
-target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+add_library(PLUGIN_LOADER STATIC
+    plugins/PluginLoader.h    plugins/PluginLoader.cpp
+)
+target_link_libraries(CORE PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
+    HPP_ARCHIVE
+    wmml_static
+)
+target_link_libraries(wmm-API       PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(PLUGIN_LOADER PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(SETTINGS PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    PLUGIN_LOADER)
 
 target_compile_definitions(CORE     PUBLIC LOG)
 target_compile_definitions(PATTERNS PUBLIC LOG)
+target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
+target_compile_definitions(wmm-API
+  PRIVATE
+  LOG
+  WMMAPI
+)
+
 
 
 set(PROJECT_SOURCES
@@ -112,7 +146,8 @@ set(PROJECT_SOURCES
     dialog_window/cinpad/CInpad.h       dialog_window/cinpad/CInpad.cpp
     dialog_window/cinpad/CInpadList.h   dialog_window/cinpad/CInpadList.cpp
     dialog_window/cinpad/CInpadButton.h dialog_window/cinpad/CInpadButton.cpp
-    dialog_window/CProperties.h dialog_window/CProperties.cpp
+    dialog_window/CProperties.h         dialog_window/CProperties.cpp
+    dialog_window/CCortegeWindow.h      dialog_window/CCortegeWindow.cpp
 )
 
 
@@ -135,6 +170,7 @@ target_link_libraries(Wirus PRIVATE
     PATTERNS
     CORE
     SETTINGS
+    wmm-API
 )
 if(WIN32)
     add_executable(WinRoot

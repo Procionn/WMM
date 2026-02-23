@@ -16,13 +16,15 @@
  */
 #include "../ModManager.h"
 
-#include "../methods.h"
-#include "../core.h"
 #include "../CONSTANTS.h"
-#include <hpp-archive.h>
-#include <filesystem>
-#include <regex>
+#include "../api/ModManager.h"
+#include "../core.h"
+#include "../dialog_window/CCortegeWindow.h"
+#include "../methods.h"
 #include <archive_entry.h>
+#include <filesystem>
+#include <hpp-archive.h>
+#include <regex>
 #include <wmml.h>
 
 // Save file struct:
@@ -30,6 +32,7 @@
 // name     std::string
 // version  std::string
 // id       uint64_t
+// type     char        0 - mod, 1 - cortege (crt)
 
 ModManager::ModManager() {
     Core::get().set_default("WMM_MOD_MANAGER_TYPE", "true");
@@ -39,6 +42,7 @@ ModManager::ModManager() {
     else
         copy = false;
     update();
+    WMM::APIModManager::start_api(this);
 }
 
 
@@ -102,24 +106,33 @@ std::tuple<std::string, uint64_t, std::string> ModManager::regex (const std::str
     return {matches[1], std::stoi(matches[2]), matches[3]};
 }
 
-
 void ModManager::load (const std::string& path) {
     auto dataBlock = regex(path);
-    uint64_t modId 	= std::get<1>(dataBlock);
-    std::string modVersion  = std::get<2>(dataBlock);
-    std::string modName 	= std::get<0>(dataBlock);
+    uint64_t modId = std::get<1>(dataBlock);
+    std::string modVersion = std::get<2>(dataBlock);
+    std::string modName = std::get<0>(dataBlock);
 
-    try {
-        add(modId, modVersion, modName, path);
+    std::string crtName, baseVersion;
+    std::string inDatabaseValue = reverceDictionary[modId];
+    if (!inDatabaseValue.empty() && modName != inDatabaseValue) {
+        std::tuple<std::string, std::string, std::string> ret;
+        if (exists(modId, modVersion)) // start creating cortege window
+            ret = CCortegeWindow::create(modVersion, modName, modId);
+        else // start cortege question window
+            ret = CCortegeWindow::question(modVersion, modName, modId);
+
+        std::string version = std::get<0>(ret);
+        if (version.empty())
+            return;
+        modVersion = std::move(version);
+        crtName = std::get<1>(ret);
+        baseVersion = std::get<2>(ret);
     }
-    catch (const int err) {
-        switch (err) {
-            case  1:
-            case -1: return;
-            case  0: break;
-        }
-    }
+    add(modId, modVersion, modName);
+
     mod_log(path, modId, modVersion);
+    if (!crtName.empty())
+        create_cortege({baseVersion, modVersion}, crtName, modId);
 
     std::filesystem::path archivePath = get_path(modId, modVersion);
     std::filesystem::create_directories(archivePath.parent_path());
@@ -161,6 +174,11 @@ std::string ModManager::get_log_path(const std::string& name, const std::string&
 }
 
 
+std::string ModManager::get_cortege_path(const uint64_t id, const std::string& name) {
+    return stc::cwmm::cortege_path(name, id);
+}
+
+
 bool ModManager::exists (const uint64_t id, const std::string& version) {
     Mod* ptr = bsearch(id);
     if (ptr && bsearch(ptr, version))
@@ -174,9 +192,37 @@ bool ModManager::exists (const std::string& name, const std::string& version) {
 }
 
 
+bool ModManager::is_cortege(const uint64_t id,  const std::string& version) {
+    Mod* ptr = bsearch(id);
+    if (ptr) {
+        ModInfo* obj = bsearch(ptr, version);
+        if (obj && !obj->isModInfo)
+            return true;
+    }
+    return false;
+}
+
+
+std::vector<ModInfo*> ModManager::get_cortege_list(const uint64_t id,  const std::string& version) {
+    if (is_cortege(id, version)) {
+        Mod* ptr = bsearch(id);
+        ModCortege* obj = static_cast<ModCortege*>(bsearch(ptr, version));
+        std::vector<ModInfo*> list;
+        list.reserve(obj->dependence.size());
+        for (const auto& entry : obj->dependence)
+            list.emplace_back(bsearch(ptr, entry));
+        return list;
+    }
+    else throw std::runtime_error("Object is not cortege");
+}
+
+
 void ModManager::remove (const uint64_t id, const std::string& version) {
+    if (is_cortege(id, version))
+        std::filesystem::remove(get_cortege_path(id, version));
+    else
+        std::filesystem::remove(get_path(id, version));
     ML_remove(id, version);
-    std::filesystem::remove(get_path(id, version));
 }
 
 

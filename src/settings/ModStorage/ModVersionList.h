@@ -19,21 +19,20 @@
 
 #include "../../patterns/CSmartList.h"
 #include "../../patterns/CBaseSmartObject.h"
-#include <iostream>
 class ModObject;
 
 class ModVersionObject final : public CBaseSmartObject
 {
     Q_OBJECT
     static const inline std::string untoggledColor2 = "#3b3b3b";
-    const std::string_view name;
+    const std::string name;
 
 public:
     ModObject* parent;
 
-    ModVersionObject(const std::string_view version, ModObject* parentWidget);
+    ModVersionObject(const std::string& version, ModObject* parentWidget);
     void DELETE() override;
-    std::string_view get_name();
+    std::string get_name();
 
 private:
     void INFO() override {}
@@ -65,6 +64,8 @@ private slots:
     void child_status();
     void RMB(const QPoint&, ModVersionObject*) override;
     void deletion_signals();
+    void createing_cortege_signals(const std::string name);
+    void createing_cortege_signals_request();
 
 signals:
     void allOn();

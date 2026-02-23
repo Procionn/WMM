@@ -39,6 +39,7 @@ public:
     virtual void turnOn() override;
     virtual void DELETE() override;
     std::string get_name();
+    uint64_t get_mod_id();
 
 private:
     void INFO() override;

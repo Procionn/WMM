@@ -92,8 +92,6 @@ SObjects::SObjects () {
 
     SETTING_SPAGES()
 #undef X
-    
-    extensions->hide();
 }
 
 

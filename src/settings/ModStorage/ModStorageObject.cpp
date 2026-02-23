@@ -49,7 +49,7 @@ ModObject::ModObject (const Mod* base) : data(base), versions(nullptr), CBaseSma
             ModVersionObject* obj = nullptr;
             l->addWidget(list);
             for (const auto& entry : ModManager::get().all_versions_list(data->modId)) {
-                obj = new ModVersionObject(entry, this);
+                obj = new ModVersionObject(entry.data(), this);
                 list->add(obj);
                 connect(obj, &ModVersionObject::remove, this, &ModObject::delete_child);
             }
@@ -76,8 +76,8 @@ void ModObject::delete_child(ModVersionObject* target) {
     if (data->versions->size()==1)
         DELETE();
     else {
-        list->delete_target(target);
         ModManager::get().remove(data->modId, target->get_name().data());
+        list->delete_target(target);
     }
 }
 
@@ -129,4 +129,8 @@ void ModObject::none_triggered_off () {
 
 std::string ModObject::get_name () {
     return ModManager::get().mod_data_converter(data->modId);
+}
+
+uint64_t ModObject::get_mod_id () {
+    return data->modId;
 }

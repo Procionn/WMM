@@ -14,32 +14,26 @@
  *  See the LICENSE file for more details.
  *
  */
-#ifndef CLI_H
-#define CLI_H
+#ifndef PLUGINLOADER_H
+#define PLUGINLOADER_H
+
 #include <vector>
-#include <utility>
 #include <string>
 
+class PluginInterface;
+class PluginLoader
+{
+    std::vector<PluginInterface*> list;
 
+    PluginLoader();
+    ~PluginLoader();
+    void scan_directory();
+    void demons_init();
+    void exp_cerr(const std::string& value);
 
-namespace cli {
-    inline std::vector<std::pair<std::string, std::string>> FlagsList {
-        {"clear-cache",   "CLI_CLEAR_CACHE"},
-        {"clear-data",    "CLI_CLEAR_DATA"},
-        {"migrate",       "CLI_MIGRATE_DATA"},
-        {"re-gen-config", "CLI_GENERATE_CONFIG"}
-        // {"update",        "CLI_APP_UPDATE"}
-    };
+public:
+    static PluginLoader& get();
+    static std::vector<PluginInterface*> get_plugins_list();
+};
 
-    bool parser();
-    // void app_apdate();
-    void clear_cache();
-    void clear_data();
-    void re_gen_config();
-
-    void migrate_data();
-    void v97_to_v98();
-    void v98_to_v99();
-}
-
-#endif // CLI_H
+#endif // PLUGINLOADER_H

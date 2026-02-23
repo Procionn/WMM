@@ -19,9 +19,7 @@
 
 #include "../patterns/CFastDialog.h"
 
-#include <QLineEdit>
-#include <QLabel>
-
+class QLineEdit;
 class CNewObjectDialog : public CFastDialog
 {
     Q_OBJECT
@@ -29,13 +27,12 @@ class CNewObjectDialog : public CFastDialog
 
 public:
     CNewObjectDialog();
-    std::string name;
 
 protected slots:
     void test();
 
 signals:
-    void success();
+    void success(std::string);
 };
 
 #endif // CNEWOBJECTDIALOG_H

@@ -15,5 +15,47 @@
  *
  */
 #include "setextensions.h"
+#include <QPluginLoader>
+#include <QString>
+#include <QDir>
+#include <QApplication>
+#include <QVBoxLayout>
+#include "../methods.h"
+#include "../patterns/CScrollWindow.h"
+#include "../patterns/CLinkTumbler.h"
+#include "../plugins/PluginLoader.h"
+#include "../plugins/PluginInterface.h"
 
-setextensions::setextensions() {}
+
+setextensions::setextensions() {
+    list = new QVBoxLayout;
+    list->setAlignment(Qt::AlignTop);
+    addScrollable(this, list);
+    generate_buttons();
+}
+
+setextensions::~setextensions() {
+    clear_list();
+}
+
+
+void setextensions::clear_list() {
+    if (!expansionList.empty()) {
+        for (auto* entry : expansionList)
+            delete entry;
+        expansionList.clear();
+    }
+}
+
+
+void setextensions::generate_buttons() {
+    clear_list();
+    CLinkTumbler* last = nullptr;
+    for (auto* plugin : PluginLoader::get_plugins_list()) {
+        CLinkTumbler* button = new CLinkTumbler(plugin->name().toStdString(), last);
+        list->addWidget(button);
+        connect(button, &CLinkTumbler::toggled, [plugin]{plugin->main();});
+        last = button;
+        expansionList.emplace_back(button);
+    }
+}

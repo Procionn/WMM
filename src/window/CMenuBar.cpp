@@ -36,9 +36,9 @@ CMenuBar::CMenuBar(Window* parent) {
     addAction(reassembly);
     addAction(linking);
 
-    connect(content,    &QAction::triggered, [=]{emit content_click();});
-    connect(settings,   &QAction::triggered, [=]{emit settings_click();});
-    connect(object,     &QAction::triggered, [=]{emit object_click();});
+    connect(content,    &QAction::triggered, [this] { emit content_click(); });
+    connect(settings,   &QAction::triggered, [this] { emit settings_click(); });
+    connect(object,     &QAction::triggered, [this] { emit object_click(); });
     connect(assembling, &QAction::triggered, this, &CMenuBar::assembling_clicked);
     connect(reassembly, &QAction::triggered, this, &CMenuBar::reassembly_clicked);
     connect(linking,    &QAction::triggered, this, &CMenuBar::linking_clicked);

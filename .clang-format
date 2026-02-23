@@ -1,0 +1,31 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+Language: Cpp
+AccessModifierOffset: -4
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+ColumnLimit: 100
+BreakBeforeBraces: Custom
+FixNamespaceComments: true
+EmptyLineBeforeAccessModifierStyle: Always
+MaxEmptyLinesToKeep: 3
+SeparateDefinitionStyle: Always
+BraceWrapping:
+    BeforeLambdaBody: false
+    AfterFunction: false
+    AfterNamespace: false
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: MultiLine
+    AfterStruct: false
+    AfterExternBlock: false
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeWhile: false
+    SplitEmptyRecord: false
+    SplitEmptyFunction: false
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+    AfterControlStatements: true
+    AfterFunctionDefinitionName: true
