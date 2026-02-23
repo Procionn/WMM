@@ -19,7 +19,6 @@
 
 #include <QWidget>
 #include <vector>
-#include "../plugins/PluginInterface.h"
 
 class QVBoxLayout;
 class setextensions : public QWidget
@@ -27,8 +26,7 @@ class setextensions : public QWidget
     Q_OBJECT
     QVBoxLayout* list;
 
-    std::vector<PluginInterface*> expansionList;
-    void scan_dir();
+    std::vector<QWidget*> expansionList;
     void clear_list();
     void generate_buttons();
 

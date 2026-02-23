@@ -75,7 +75,7 @@ add_library(SETTINGS STATIC
     settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
     settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
     settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
-    plugins/PluginInterface.h
+
 )
 add_library(PATTERNS STATIC
     patterns/CSwitchButton.h            patterns/CSwitchButton.cpp
@@ -92,23 +92,29 @@ add_library(PATTERNS STATIC
     patterns/WaitingWindow.h
 )
 add_library(wmm-API SHARED
-    api/Core.cpp        api/Core.h
-    api/ModManager.cpp  api/ModManager.h
+    api/Core.cpp              api/Core.h
+    api/ModManager.cpp        api/ModManager.h
+    plugins/PluginInterface.h
+)
+add_library(PLUGIN_LOADER STATIC
+    plugins/PluginLoader.h    plugins/PluginLoader.cpp
 )
 target_link_libraries(CORE PRIVATE
-  Qt${QT_VERSION_MAJOR}::Widgets
-  Qt${QT_VERSION_MAJOR}::Network
-  HPP_ARCHIVE
-  wmml_static
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
+    HPP_ARCHIVE
+    wmml_static
 )
-target_link_libraries(wmm-API PRIVATE
-  Qt${QT_VERSION_MAJOR}::Widgets
-)
-target_link_libraries(SETTINGS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(wmm-API       PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(PLUGIN_LOADER PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(SETTINGS PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    PLUGIN_LOADER)
 
 target_compile_definitions(CORE     PUBLIC LOG)
 target_compile_definitions(PATTERNS PUBLIC LOG)
+target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
 target_compile_definitions(wmm-API
   PRIVATE
   LOG
