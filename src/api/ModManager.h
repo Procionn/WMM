@@ -25,6 +25,7 @@
 class ModManager;
 class ModInfo;
 class Mod;
+extern "C" WMMAPI_EXPORT void start_modmanager_api(ModManager* p);
 namespace WMM {
 
     WMMAPI_EXPORT const uint64_t get_localId (const ModInfo*);
@@ -37,7 +38,6 @@ namespace WMM {
 
     class WMMAPI_EXPORT APIModManager {
     public:
-        static void start_api(ModManager* p);
         void add (const uint64_t& modId, const QString modVersion,
                   const QString modName);
         const QList<Mod*> all_mods_list();

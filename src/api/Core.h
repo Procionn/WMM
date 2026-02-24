@@ -21,11 +21,11 @@
 #endif
 
 class Core;
+extern "C" WMMAPI_EXPORT void start_core_api(Core*);
 namespace WMM {
 
     class WMMAPI_EXPORT APICore {
     public:
-        static void start_api(Core*);
 
         void update_lang();
         QString tr (const QString& key);

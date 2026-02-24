@@ -17,10 +17,10 @@
 #include "../ModManager.h"
 
 #include "../CONSTANTS.h"
-#include "../api/ModManager.h"
 #include "../core.h"
 #include "../dialog_window/CCortegeWindow.h"
 #include "../methods.h"
+#include <QLibrary>
 #include <archive_entry.h>
 #include <filesystem>
 #include <hpp-archive.h>
@@ -34,6 +34,7 @@
 // id       uint64_t
 // type     char        0 - mod, 1 - cortege (crt)
 
+typedef void (*func)(ModManager*);
 ModManager::ModManager() {
     Core::get().set_default("WMM_MOD_MANAGER_TYPE", "true");
     std::string type = Core::configs["WMM_MOD_MANAGER_TYPE"];
@@ -42,7 +43,10 @@ ModManager::ModManager() {
     else
         copy = false;
     update();
-    WMM::APIModManager::start_api(this);
+
+    func f = (func)(QLibrary::resolve(LIB, "start_modmanager_api"));
+    if (f)
+        f(this);
 }
 
 

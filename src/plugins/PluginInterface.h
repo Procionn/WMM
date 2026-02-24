@@ -28,6 +28,7 @@ public:
     virtual QString name() = 0;
     virtual QString get_icon_path () { return ""; }
     virtual bool is_demon () { return demon; }
+    virtual QString description () { return ""; }
 };
 
 

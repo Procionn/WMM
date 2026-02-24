@@ -15,10 +15,14 @@
  *
  */
 #include "../core.h"
-#include "../api/Core.h"
+#include "../CONSTANTS.h"
+#include <QLibrary>
 
+typedef void (*func)(Core*);
 Core::Core () {
-    WMM::APICore::start_api(this);
+    func f = (func)(QLibrary::resolve(LIB, "start_core_api"));
+    if (f)
+        f(this);
 }
 
 

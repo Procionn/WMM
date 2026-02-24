@@ -23,7 +23,7 @@ namespace {
     static Core* ptr;
 }
 
-void WMM::APICore::start_api(Core* p) {
+void start_core_api(Core* p) {
     ptr = p;
 }
 

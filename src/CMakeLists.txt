@@ -106,12 +106,16 @@ target_link_libraries(CORE PRIVATE
     HPP_ARCHIVE
     wmml_static
 )
-target_link_libraries(wmm-API       PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(wmm-API       PRIVATE
+  Qt${QT_VERSION_MAJOR}::Widgets
+  Wirus
+)
 target_link_libraries(PLUGIN_LOADER PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(SETTINGS PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
-    PLUGIN_LOADER)
+    PLUGIN_LOADER
+)
 
 target_compile_definitions(CORE     PUBLIC
     LOG
@@ -119,8 +123,7 @@ target_compile_definitions(CORE     PUBLIC
 )
 target_compile_definitions(PATTERNS PUBLIC LOG)
 target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
-target_compile_definitions(wmm-API
-    PRIVATE
+target_compile_definitions(wmm-API PRIVATE
     LOG
     WMMAPI
 )
@@ -174,8 +177,8 @@ target_link_libraries(Wirus PRIVATE
     PATTERNS
     CORE
     SETTINGS
-    wmm-API
 )
+set_target_properties(Wirus PROPERTIES ENABLE_EXPORTS ON)
 if(WIN32)
     add_executable(WinRoot
       winmodule/winrootmain.cpp

@@ -23,7 +23,7 @@ namespace {
 }
 
 
-void WMM::APIModManager::start_api(ModManager* p) {
+void start_modmanager_api(ModManager* p) {
     ptr = p;
 }
 

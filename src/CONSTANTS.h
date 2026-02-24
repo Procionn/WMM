@@ -19,6 +19,7 @@
 #include <string>
 
 #define RESET 187
+#define LIB "libwmml-API-1.0"
 
 const int INI_MAIN_PART         = 4;
 const int MAIN_PART             = 5;
