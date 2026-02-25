@@ -58,8 +58,8 @@ void winrootbackend::connection () {
 
         pack.readRawData(reinterpret_cast<char*>(&ipc), sizeof(ipc));
         if (ipc.hash != IpcHeader::hash || ipc.version != IpcHeader::version) {
-            stc::cerr(ipc.hash +" "s + IpcHeader::hash + "\n"s
-                      + ipc.version + " "s + IpcHeader::version);
+            stc::cerr(std::to_string(ipc.hash) +" "s + std::to_string(IpcHeader::hash) + "\n"s
+                      + std::to_string(ipc.version) + " "s + std::to_string(IpcHeader::version));
             kill();
         }
         if (client->bytesAvailable() < ipc.dataSize) {
@@ -155,8 +155,8 @@ void winrootbackend::dir_comparison (const fs::path& file, const std::string& co
                     fs::create_directories(collectionFile.parent_path());
                     if (fs::exists(collectionFile))
                         fs::remove(collectionFile);
-                    fs::rename(stc::string::replace(entry.path(), '\\', '/'),
-                               stc::string::replace(collectionFile, '\\', '/'));
+                    fs::rename(stc::replace(entry.path(), '\\', '/'),
+                               stc::replace(collectionFile, '\\', '/'));
                 }
             }
         }
@@ -191,7 +191,7 @@ void winrootbackend::symlink_deliting (QByteArray& data) {
 
         for (const auto& entry : fs::recursive_directory_iterator(CONFIG_GAME_PATH)) {
             if (is_symlink(entry.path())) {
-                DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
+                DeleteFileA(stc::replace(entry.path(), '\\', '/').string().c_str());
             }
         }
     }
@@ -225,10 +225,10 @@ void winrootbackend::symlink_creating (QByteArray& data) {
             if (fs::exists(target_path)) {
                 if (!fs::is_directory(target_path)) {
                     fs::remove(target_path);
-                    stc::fs::symlink(global_target_path, target_path);
+                    stc::symlink(global_target_path, target_path);
                 }
             }
-            else stc::fs::symlink(global_target_path, target_path);
+            else stc::symlink(global_target_path, target_path);
         }
     }
     catch (const std::exception& e) {

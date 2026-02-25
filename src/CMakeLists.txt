@@ -48,6 +48,7 @@ FetchContent_MakeAvailable(wmml)
 
 add_library(CORE STATIC
     core.h
+    api/export.h
 
     core/core.cpp
     core/lang.cpp
@@ -95,38 +96,37 @@ add_library(wmm-API SHARED
     api/Core.cpp              api/Core.h
     api/ModManager.cpp        api/ModManager.h
     plugins/PluginInterface.h
-    api/export.h
 )
 add_library(PLUGIN_LOADER STATIC
     plugins/PluginLoader.h    plugins/PluginLoader.cpp
 )
+
 target_link_libraries(CORE PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Network
-    HPP_ARCHIVE
-    wmml_static
-)
-target_link_libraries(wmm-API       PRIVATE
   Qt${QT_VERSION_MAJOR}::Widgets
-  Wirus
+  Qt${QT_VERSION_MAJOR}::Network
+  HPP_ARCHIVE
+  wmml_static
 )
+target_link_libraries(wmm-API       PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Wirus)
 target_link_libraries(PLUGIN_LOADER PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PATTERNS PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(SETTINGS PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    PLUGIN_LOADER
+  Qt${QT_VERSION_MAJOR}::Widgets
+  PLUGIN_LOADER
 )
 
-target_compile_definitions(CORE     PUBLIC
-    LOG
-    WMMCORE
+target_compile_definitions(CORE PRIVATE
+  LOG
+  EXPORT_SYMBOLS
+  WMMCORE
 )
 target_compile_definitions(PATTERNS PUBLIC LOG)
 target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
 target_compile_definitions(wmm-API PRIVATE
-    LOG
-    WMMAPI
+  LOG
+  EXPORT_SYMBOLS
 )
+
 
 
 
@@ -171,12 +171,12 @@ target_compile_definitions(Wirus PRIVATE
 )
 
 target_link_libraries(Wirus PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    wmml_static
+  Qt${QT_VERSION_MAJOR}::Widgets
+  wmml_static
 
-    PATTERNS
-    CORE
-    SETTINGS
+  PATTERNS
+  CORE
+  SETTINGS
 )
 set_target_properties(Wirus PROPERTIES ENABLE_EXPORTS ON)
 if(WIN32)

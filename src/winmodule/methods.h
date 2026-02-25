@@ -34,7 +34,7 @@ inline std::filesystem::path replace (const std::filesystem::path& input, const 
     std::filesystem::path out = sorce;
     return out;
 }
-inline std::stting replace (std::string source, const char& replaceable, const char& target) {
+inline std::string replace (std::string source, const char& replaceable, const char& target) {
     std::replace(source.begin(), source.end(), replaceable, target);
     return source;
 }
@@ -60,8 +60,8 @@ void cerr(const T& t) noexcept {
 }
 
 inline void symlink (const std::filesystem::path& file, const std::filesystem::path& name) {
-    std::filesystem::path newName = stc::string::replace(name, '\\', '/');
-    std::filesystem::path newFile = stc::string::replace(file, '\\', '/');
+    std::filesystem::path newName = stc::replace(name, '\\', '/');
+    std::filesystem::path newFile = stc::replace(file, '\\', '/');
     std::filesystem::create_directories(newName.parent_path());
     try {
 #ifdef _WIN32
