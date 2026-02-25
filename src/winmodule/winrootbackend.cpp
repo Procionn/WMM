@@ -16,7 +16,7 @@
  */
 #include "winrootbackend.h"
 #include "../CONSTANTS.h"
-#include "../methods.h"
+#include "methods.h"
 #include <iostream>
 #include <QLocalSocket>
 #include <QTimer>
@@ -36,7 +36,7 @@ winrootbackend::winrootbackend(const QString& pipe, const QString& newToken)
     connect(&server, &QLocalServer::newConnection, this, &winrootbackend::connection);
 
     QTimer::singleShot(1500, []{
-        std::cerr << "auto-exit" << std::endl;
+        stc::cerr("auto-exit");
         QCoreApplication::exit(0);
     });
 }
@@ -52,18 +52,18 @@ void winrootbackend::connection () {
         QDataStream pack(client);
         IpcHeader ipc;
         if (client->bytesAvailable() < sizeof(IpcHeader)) {
-            std::cerr << "data lose" << std::endl;
+            stc::cerr("data lose"s);
             return;
         }
 
         pack.readRawData(reinterpret_cast<char*>(&ipc), sizeof(ipc));
         if (ipc.hash != IpcHeader::hash || ipc.version != IpcHeader::version) {
-            std::cerr << ipc.hash    << " " << IpcHeader::hash << "\n"
-                      << ipc.version << " " << IpcHeader::version << std::endl;
+            stc::cerr(ipc.hash +" "s + IpcHeader::hash + "\n"s
+                      + ipc.version + " "s + IpcHeader::version);
             kill();
         }
         if (client->bytesAvailable() < ipc.dataSize) {
-            std::cerr << "data lose" << std::endl;
+            stc::cerr("data lose");
             return;
         }
 
@@ -162,7 +162,7 @@ void winrootbackend::dir_comparison (const fs::path& file, const std::string& co
         }
     }
     catch (const std::exception& e) {
-        stc::cerr(std::string("Error: ") + e.what());
+        stc::cerr("Error: "s + e.what());
     }
 }
 
@@ -196,7 +196,7 @@ void winrootbackend::symlink_deliting (QByteArray& data) {
         }
     }
     catch (const std::exception& e) {
-        stc::cerr(std::string("Error: ") + e.what());
+        stc::cerr("Error: "s + e.what());
     }
 }
 
@@ -232,7 +232,7 @@ void winrootbackend::symlink_creating (QByteArray& data) {
         }
     }
     catch (const std::exception& e) {
-        stc::cerr(std::string("Error: ") + e.what());
+        stc::cerr("Error: "s + e.what());
     }
 }
 
@@ -242,3 +242,4 @@ void winrootbackend::kill () {
         client->close();
     QCoreApplication::exit(1);
 }
+
