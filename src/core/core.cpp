@@ -15,7 +15,6 @@
  *
  */
 #include "../core.h"
-#include "../CONSTANTS.h"
 #include <QLibrary>
 
 typedef void (*func)(Core*);

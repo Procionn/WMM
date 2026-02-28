@@ -119,12 +119,17 @@ target_compile_definitions(CORE PRIVATE
   LOG
   EXPORT_SYMBOLS
   WMMCORE
+  LIB="${APINAME}"
 )
 target_compile_definitions(PATTERNS PUBLIC LOG)
 target_compile_definitions(PLUGIN_LOADER PUBLIC LOG)
 target_compile_definitions(wmm-API PRIVATE
   LOG
   EXPORT_SYMBOLS
+)
+set_target_properties(wmm-API PROPERTIES
+    OUTPUT_NAME ${APINAME}
+    PREFIX ""
 )
 
 
