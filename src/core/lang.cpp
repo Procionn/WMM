@@ -30,3 +30,12 @@ void Lang::update_lang () {
     while (configRead(readedFile, parameter, indicator))
         lang[parameter] = indicator;
 }
+
+
+void Lang::load_lang_pack(const std::string& pathToFile) {
+    std::ifstream readedFile (pathToFile);
+    std::string parameter;
+    std::string indicator;
+    while (configRead(readedFile, parameter, indicator))
+        lang[parameter] = indicator;
+}

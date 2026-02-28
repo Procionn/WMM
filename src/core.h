@@ -42,6 +42,7 @@ class WMMCORE_EXPORT Lang : public virtual CBaseConfig
 public:
     inline static std::map<std::string, std::string> lang;
     void update_lang();
+    void load_lang_pack(const std::string&);
 
 protected:
     Lang();

@@ -22,6 +22,7 @@
     #define WMMAPI_EXPORT Q_DECL_IMPORT
 #endif
 
+#define APIMM APIModManager
 class ModManager;
 class ModInfo;
 class Mod;
@@ -38,38 +39,38 @@ namespace WMM {
 
     class WMMAPI_EXPORT APIModManager {
     public:
-        void add (const uint64_t& modId, const QString modVersion,
+        static void add (const uint64_t& modId, const QString modVersion,
                   const QString modName);
-        const QList<Mod*> all_mods_list();
-        const QList<QString> all_versions_list (const uint64_t& modId);
+        static const QList<Mod*> all_mods_list();
+        static const QList<QString> all_versions_list (const uint64_t& modId);
 
-        void update();
-        void flush();
-        bool get_copy();
-        void set_copy (const bool&);
+        static void update();
+        static void flush();
+        static bool get_copy();
+        static void set_copy (const bool&);
 
-        void load (const QString& path);
+        static void load (const QString& path);
 
-        bool exists (const uint64_t id,  const QString& version);
-        bool exists (const QString& name, const QString& version);
+        static bool exists (const uint64_t id,  const QString& version);
+        static bool exists (const QString& name, const QString& version);
 
-        void remove (const uint64_t id);
-        void remove (const uint64_t id,  const QString& version);
-        void remove (const QString& name);
-        void remove (const QString& name, const QString& version);
+        static void remove (const uint64_t id);
+        static void remove (const uint64_t id,  const QString& version);
+        static void remove (const QString& name);
+        static void remove (const QString& name, const QString& version);
 
-        QString get_path (const uint64_t id);
-        QString get_path (const uint64_t id,     const QString& version);
-        QString get_log_path (const uint64_t id, const QString& version);
-        QString get_path (const QString& name);
-        QString get_path (const QString& name,     const QString& version);
-        QString get_log_path (const QString& name, const QString& version);
+        static QString get_path (const uint64_t id);
+        static QString get_path(const uint64_t id, const QString& version);
+        static QString get_log_path(const uint64_t id, const QString& version);
+        static QString get_path (const QString& name);
+        static QString get_path(const QString& name, const QString& version);
+        static QString get_log_path(const QString& name, const QString& version);
 
-        uint64_t mod_data_converter (const QString& modName);
-        QString  mod_data_converter (const uint64_t modId);
+        static uint64_t mod_data_converter (const QString& modName);
+        static QString  mod_data_converter (const uint64_t modId);
 
-        QString mod_recommended_version (const uint64_t modId);
-        QString mod_recommended_version (const QString& modName);
+        static QString mod_recommended_version (const uint64_t modId);
+        static QString mod_recommended_version (const QString& modName);
 
     };
 

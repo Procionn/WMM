@@ -34,7 +34,7 @@ QString WMM::APICore::tr (const QString& key) {
     return QString::fromStdString(ptr->lang.at(key.toStdString()));
 }
 void WMM::APICore::load_new_lang_pack (const QString& path) {
-    // ptr->load_lang_pack(path.toStdString());
+    ptr->load_lang_pack(path.toStdString());
 }
 QString WMM::APICore::get_config (const QString& key) {
     return QString::fromStdString(ptr->configs.at(key.toStdString()));
