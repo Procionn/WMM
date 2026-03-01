@@ -21,6 +21,7 @@
 
 class CCortegeWindow : public CFastDialog
 {
+    class CLabel *message, *mainName, *newName;
     class QLineEdit* verLine;
     class QLineEdit* crtLine;
     class CLabel* error;

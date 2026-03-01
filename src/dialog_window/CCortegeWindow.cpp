@@ -21,13 +21,15 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
-
+#include "../methods.h"
 class CLabel : public QLabel
 {
 public:
-    CLabel (const std::string& str) : QLabel(QString::fromStdString(str)) {
+    const std::string s;
+    CLabel (const std::string& str) : QLabel(QString::fromStdString(str)), s(str) {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
+    ~CLabel() {stc::cerr("clabel deleted " + s);}
     void setText (const std::string& str) { QLabel::setText(QString::fromStdString(str)); }
 };
 
@@ -121,9 +123,9 @@ void CCortegeWindow::crt (const std::string& version, const std::string& name, c
 }
 
 void CCortegeWindow::que (const std::string& version, const std::string& name) {
-    CLabel* message = new CLabel(Core::lang["LANG_LABEL_CORTEGE_QUESTION"]);
-    CLabel* mainName = new CLabel(ModManager::get().mod_data_converter(id));
-    CLabel* newName = new CLabel(name);
+    message = new CLabel(Core::lang["LANG_LABEL_CORTEGE_QUESTION"]);
+    mainName = new CLabel(ModManager::get().mod_data_converter(id));
+    newName = new CLabel(name);
 
     QPushButton* setVersion =
         new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_SET_VERSION"]));
@@ -131,9 +133,8 @@ void CCortegeWindow::que (const std::string& version, const std::string& name) {
     lay->addWidget(mainName, 2, 0, 1, -1);
     lay->addWidget(newName, 3, 0, 1, -1);
     DialogButtonBox->addWidget(setVersion);
-    connect(
-        apply, &QPushButton::clicked, this,
-        [this, message, setVersion, version, name, mainName, newName] {
+    auto applyConnect = connect(apply, &QPushButton::clicked, this,
+        [this, setVersion, version, name] {
             delete message;
             delete setVersion;
             delete mainName;
@@ -141,9 +142,9 @@ void CCortegeWindow::que (const std::string& version, const std::string& name) {
             crt(version, name, false);
         },
         Qt::SingleShotConnection);
-    connect(
-        setVersion, &QPushButton::clicked, this,
-        [this, message, setVersion, version, mainName, newName] {
+    connect(setVersion, &QPushButton::clicked, this,
+        [this, setVersion, version, applyConnect] {
+            disconnect(applyConnect);
             delete message;
             delete setVersion;
             delete mainName;
