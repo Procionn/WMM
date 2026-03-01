@@ -129,7 +129,6 @@ target_compile_definitions(wmm-API PRIVATE
 )
 set_target_properties(wmm-API PROPERTIES
     OUTPUT_NAME ${APINAME}
-    PREFIX ""
 )
 
 

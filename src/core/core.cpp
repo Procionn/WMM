@@ -16,12 +16,18 @@
  */
 #include "../core.h"
 #include <QLibrary>
+#include <QDir>
+#include "../methods.h"
 
 typedef void (*func)(Core*);
 Core::Core () {
-    func f = (func)(QLibrary::resolve(LIB, "start_core_api"));
+    func f = (func)(QLibrary::resolve("./" LIB, "start_core_api"));
     if (f)
         f(this);
+    else {
+        stc::cerr("api not loaded");
+        std::exit(12);
+    }
 }
 
 

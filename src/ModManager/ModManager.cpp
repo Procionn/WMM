@@ -26,6 +26,7 @@
 #include <hpp-archive.h>
 #include <regex>
 #include <wmml.h>
+#include <QDir>
 
 // Save file struct:
 //
@@ -44,9 +45,13 @@ ModManager::ModManager() {
         copy = false;
     update();
 
-    func f = (func)(QLibrary::resolve(LIB, "start_modmanager_api"));
+    func f = (func)(QLibrary::resolve("./" LIB, "start_modmanager_api"));
     if (f)
         f(this);
+    else {
+        stc::cerr("api not loaded");
+        std::exit(12);
+    }
 }
 
 
