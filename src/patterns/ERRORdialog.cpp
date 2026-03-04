@@ -46,7 +46,7 @@ FatalError::FatalError (const std::string& error, bool fatality) {
 
     QVBoxLayout* tempLay = new QVBoxLayout(list);
     QLabel* label = new QLabel(QString::fromStdString(error));
-    QPushButton* resetButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_RESET"]));
+    QPushButton* resetButton = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_RESET")));
 
     if (fatality)
         tempLay->addWidget(new QLabel("Fatal Error!"));

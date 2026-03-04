@@ -25,8 +25,8 @@ CFastDialog::CFastDialog () {
     // setModal(Qt::WindowModal);
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
     DialogButtonBox = new QHBoxLayout();
-    apply = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_APPLY"]), this);
-    cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]), this);
+    apply = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_APPLY")), this);
+    cansel = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_CANSEL")), this);
     list = new QWidget();
     list->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     dialogLayout->addWidget(list);

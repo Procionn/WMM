@@ -31,10 +31,10 @@
 
 namespace fs = std::filesystem;
 
-CGameConfig::CGameConfig() {
-    object = (Core::configs["WMM_CONFIG_USE_EXTERNAL_MODULE"] == "true"
-                      ? static_cast<IGameConfig*>(new WinGameConfig)
-                      : static_cast<IGameConfig*>(new NixGameConfig));
+CGameConfig::CGameConfig (const std::string& externalModule, const std::string& game) {
+    ConfigGame = game;
+    object = (externalModule == "true" ? static_cast<IGameConfig*>(new WinGameConfig)
+                                       : static_cast<IGameConfig*>(new NixGameConfig));
 }
 CGameConfig::~CGameConfig() {
     delete object;
@@ -58,12 +58,31 @@ CBaseGameConfig::CBaseGameConfig () {
 }
 
 
+std::vector<std::string> CBaseGameConfig::get_OMD () { return OMD; }
+std::vector<std::string> CBaseGameConfig::get_MGD () { return MGD; }
+
+
+std::string CBaseGameConfig::get_game_config (const std::string_view key) {
+// after updating the game-configs system, this implementation will be changed.
+    if (key == "CONFIG_GAME_PATH")
+        return CONFIG_GAME_PATH;
+    else if (key == "CONFIG_EXECUTABLE_FILE")
+        return CONFIG_EXECUTABLE_FILE;
+    else if (key == "core_dir_name")
+        return core_dir_name;
+    else if (key == "CONFIG_URL")
+        return CONFIG_URL;
+    else
+        throw std::runtime_error("undifened game config key!");
+}
+
+
 void CBaseGameConfig::update_data_from_file () {
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
         std::vector<wmml::variant> v(wmml_size);
         while (file.read(v)) {
-            if (std::get<std::string>(v[0]) == Core::CONFIG_GAME)
+            if (std::get<std::string>(v[0]) == ConfigGame)
                 break;
         }
         CONFIG_GAME_PATH = std::get<std::string>(v[2]);
@@ -79,7 +98,7 @@ void CBaseGameConfig::update_data_from_file () {
         CONFIG_EXECUTABLE_FILE = "";
     }
 
-    std::ifstream readedFile ((GAMES + Core::CONFIG_GAME + EXPANSION3).c_str());
+    std::ifstream readedFile ((GAMES + ConfigGame + EXPANSION3).c_str());
     std::string parameter;
     std::string indicator;
     if (!MGD.empty())
@@ -106,7 +125,7 @@ void CBaseGameConfig::write(wmml* input, std::string str) {
     }
     CONFIG_GAME_PATH = str;
     core_dir_name = stc::string::get_name(CONFIG_GAME_PATH);
-    v[0] = Core::CONFIG_GAME;
+    v[0] = ConfigGame;
     v[1] = CONFIG_EXECUTABLE_FILE;
     v[2] = CONFIG_GAME_PATH;
     input->write(v);
@@ -119,7 +138,7 @@ void CBaseGameConfig::save_game_path (const std::string& path) {
         wmml file(SAVE);
         std::vector<wmml::variant> v(wmml_size);
         for (int counter = 0; file.read(v); ++counter) {
-            if (std::get<std::string>(v[0]) == Core::CONFIG_GAME) {
+            if (std::get<std::string>(v[0]) == ConfigGame) {
                 file.remove_object(counter);
                 write(&file, path);
             }

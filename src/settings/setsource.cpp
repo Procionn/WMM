@@ -33,19 +33,19 @@ setsource::setsource() {
     QWidget* firstwidget = new QWidget;
     QWidget* lastwidget = new QWidget;
     addScrollable(this, list);
-    QLabel* dir                 = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_DIRECTORY_CHOOSE"]));
-    QLabel* game                = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_CHOOSE"]));
-    QLabel* backup              = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_BACKUP"]));
-    QLabel* clear               = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_CLEAR"]));
-    QLabel* recovery            = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_GAME_RECOVERY"]));
-    QLabel* modLoadType         = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MOD_TYPE"]));
+    QLabel* dir                 = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_DIRECTORY_CHOOSE")));
+    QLabel* game                = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_GAME_CHOOSE")));
+    QLabel* backup              = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_GAME_BACKUP")));
+    QLabel* clear               = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_GAME_CLEAR")));
+    QLabel* recovery            = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_GAME_RECOVERY")));
+    QLabel* modLoadType         = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_MOD_TYPE")));
     QPushButton* dirBTN         = new QPushButton(QString::fromStdString(""));
-    QPushButton* gameBTN        = new QPushButton(QString::fromStdString(Core::CONFIG_GAME));
-    QPushButton* backupBTN      = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_BACKUP"]));
-    QPushButton* clearBTN       = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_CLEAR"]));
-    QPushButton* recoveryBTN    = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_GAME_RECOVERY"]));
-    CSwitchButton* modLoadTypeBTN = new CSwitchButton(Core::lang["LANG_BUTTON_MOD_TYPE_COPY"],
-                                                      Core::lang["LANG_BUTTON_MOD_TYPE_MOVE"], false);
+    QPushButton* gameBTN        = new QPushButton(QString::fromStdString(Core::config("WMM_CONFIG_GAME")));
+    QPushButton* backupBTN      = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_GAME_BACKUP")));
+    QPushButton* clearBTN       = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_GAME_CLEAR")));
+    QPushButton* recoveryBTN    = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_GAME_RECOVERY")));
+    CSwitchButton* modLoadTypeBTN = new CSwitchButton(Core::tr("LANG_BUTTON_MOD_TYPE_COPY"),
+                                                      Core::tr("LANG_BUTTON_MOD_TYPE_MOVE"), false);
 
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Raised);
@@ -90,7 +90,7 @@ setsource::setsource() {
     lastlist->addWidget(recoveryBTN);
     lastlist->addWidget(modLoadTypeBTN);
 
-    dirBTN->setText(QString::fromStdString(Core::CONFIG_GAME_PATH));
+    dirBTN->setText(QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH")));
 
     connect(CSettings::get(), &CSettings::save, [this]{
         if (!buffer.isEmpty()) {
@@ -100,7 +100,7 @@ setsource::setsource() {
     });
     connect(CSettings::get(), &CSettings::save, [this]{
         if (target) {
-            Core::CONFIG_GAME = target->name;
+            Core::get().set_config_value("WMM_CONFIG_GAME", target->name);
             Core::get().overwriting_config_data();
             target = nullptr;
             Core::get().update_data_from_file();
@@ -144,28 +144,28 @@ void setsource::chooseGame (QPushButton* parent) {
 
 
 void setsource::chooseExe (QPushButton* dirBTN) {
-    if (Core::CONFIG_GAME != "None" || target) {
+    if (Core::config("WMM_CONFIG_GAME") != "None" || target) {
         buffer = QFileDialog::getOpenFileName(
             nullptr,
-            QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_GAME_FILE"]),
+            QString::fromStdString(Core::tr("LANG_LABEL_CHOOSE_GAME_FILE")),
             "",
-            QString::fromStdString(Core::lang["LANG_LABEL_ALL_FILE"] + " (*.exe)"));
+            QString::fromStdString(Core::tr("LANG_LABEL_ALL_FILE") + " (*.exe)"));
         if (!buffer.isEmpty()) {
             dirBTN->setText(buffer);
         }
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R33"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R33"));
 }
 
 
 void setsource::createBackup () {
-    if (Core::CONFIG_GAME != "None") {
-        if (!Core::CONFIG_GAME_PATH.empty()) {
+    if (Core::config("WMM_CONFIG_GAME") != "None") {
+        if (!Core::get().get_game_config("CONFIG_GAME_PATH").empty()) {
             Wait(
                 Core::get().game_dir_backup();
             );
         }
-        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R40"]);
+        else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R40"));
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R32"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R32"));
 }

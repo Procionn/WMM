@@ -83,3 +83,11 @@ void CConfigs::set_default (const std::string& key, const std::string& value) {
         configs[key] = value;
     }
 }
+
+
+std::string CConfigs::get_config (const std::string& key) { return configs[key]; }
+
+
+void CConfigs::set_config_value (const std::string& key, const std::string& value) {
+    configs[key] = value;
+}

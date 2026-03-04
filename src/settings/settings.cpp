@@ -32,8 +32,8 @@ CSettings::CSettings () {
     resize(1000, 600);
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
     QHBoxLayout* dialogButtonBox = new QHBoxLayout();
-    QPushButton* accept = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_ACCEPT"]));
-    QPushButton* cansel = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_CANSEL"]));
+    QPushButton* accept = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_ACCEPT")));
+    QPushButton* cansel = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_CANSEL")));
     QWidget* separator = new QWidget;
     QSplitter* splitter = new QSplitter;
     QFrame* line = new QFrame();
@@ -84,7 +84,7 @@ SObjects::SObjects () {
     CLinkTumbler* last = nullptr;
 
 #define X(button, class_, object, lang_str) \
-    button = new CLinkTumbler(Core::lang[lang_str], last); \
+    button = new CLinkTumbler(Core::tr(lang_str), last); \
     button->SetLeftAlignment(true);   \
     button->setMinimumHeight(35);     \
     list->addWidget(button);  \

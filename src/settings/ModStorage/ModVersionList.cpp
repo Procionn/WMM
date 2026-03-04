@@ -54,9 +54,9 @@ ModVersionList::ModVersionList (QWidget* parent) : CSmartList(parent) {
 
 void ModVersionList::RMB (const QPoint&, ModVersionObject*) {
     QMenu* contextMenu = new QMenu(this);
-    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_DELETE")));
     connect(action1, &QAction::triggered, this, &ModVersionList::deletion_signals);
-    QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_CORTEGE"]));
+    QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_CORTEGE")));
     connect(action2, &QAction::triggered, this, &ModVersionList::createing_cortege_signals_request);
     contextMenu->exec(QCursor::pos());
 }

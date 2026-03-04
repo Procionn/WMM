@@ -28,9 +28,10 @@
 setlang::setlang () {
     QVBoxLayout* list = new QVBoxLayout;
     QHBoxLayout* hbox = new QHBoxLayout;
-    QLabel* lang = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_LANG"]));
-    QLabel* community = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CUSTOM_LANG"]).replace("\\n", "\n"));
-    QPushButton* button = new QPushButton(QString::fromStdString(stc::string::get_name(Core::CONFIG_LANGUAGES)));
+    QLabel* lang = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_CHOOSE_LANG")));
+    QLabel* community = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_CUSTOM_LANG")).replace("\\n", "\n"));
+    QPushButton* button = new QPushButton(
+        QString::fromStdString(stc::string::get_name(Core::config("WMM_CONFIG_LANGUAGES"))));
     addScrollable(this, list);
 
     list->setAlignment(Qt::AlignTop);
@@ -44,12 +45,12 @@ setlang::setlang () {
 
     connect(CSettings::get(), &CSettings::save, [this]{
         if (target) {
-            CConfigs::CONFIG_LANGUAGES = LANG + target->name + EXPANSION3;
+            Core::get().set_config_value("WMM_CONFIG_LANGUAGES", LANG + target->name + EXPANSION3);
             Core::get().overwriting_config_data();
-            Core::get().update_lang();
+            Core::get().update_lang(Core::config("WMM_WMM_CONFIG_LANGUAGES"));
             delete target;
             target = nullptr;
-            FatalError* dialog = new FatalError(Core::lang["LANG_LABEL_NEW_LANG"]);
+            FatalError* dialog = new FatalError(Core::tr("LANG_LABEL_NEW_LANG"));
         }
     });
 

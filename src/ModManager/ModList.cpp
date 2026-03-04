@@ -63,7 +63,7 @@ ModInfo* ModList::bsearch (Mod* ptr, const std::string& modVersion) {
 
 
 void ModList::import_saved_data () {
-    if (Core::CONFIG_GAME == "None")
+    if (Core::config("WMM_CONFIG_GAME") == "None")
         return;
     for (Mod* mod : list)
         delete mod;
@@ -101,7 +101,7 @@ void ModList::add_in_ram(const uint64_t& modId, const std::string& modVersion,
     if (ptr) {
         auto* version_ptr = bsearch(ptr, modVersion);
         if (version_ptr)
-            throw Core::lang["LANG_LABEL_MOD_EXISTS"];
+            throw Core::tr("LANG_LABEL_MOD_EXISTS");
         else {
             switch(type){
                 case 0:
@@ -153,11 +153,11 @@ void ModList::create_cortege_in_ram (const std::vector<std::string>& versionsLis
     if (ptr) {
         auto* version_ptr = bsearch(ptr, name);
         if (version_ptr)
-            throw Core::lang["LANG_LABEL_CORTEGE_EXISTS"];
+            throw Core::tr("LANG_LABEL_CORTEGE_EXISTS");
         else {
             for (auto& entry: versionsList) {
                 if (ModManager::get().is_cortege(modid, entry))
-                    throw Core::lang["LANG_LABEL_MOD_IS_CORTEGE"];
+                    throw Core::tr("LANG_LABEL_MOD_IS_CORTEGE");
             }
             ptr->versions->emplace_back(new ModCortege(versionsList, name, localId));
             std::sort(ptr->versions->begin(), ptr->versions->end(), modinfo_cmp);

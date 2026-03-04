@@ -61,7 +61,7 @@ Window::Window () {
 }
 
 void Window::NewObjectDialog() {
-    if (Core::CONFIG_GAME != "None") {
+    if (Core::config("WMM_CONFIG_GAME") != "None") {
         newObjectDialog = new CNewObjectDialog();
         connect(newObjectDialog, &CNewObjectDialog::success, [this](const std::string name){
             ObjectList->CreteObject(name);
@@ -69,7 +69,7 @@ void Window::NewObjectDialog() {
         });
     }
     else
-        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
+        ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R37"));
 }
 
 
@@ -116,7 +116,7 @@ void Window::grounding (CObjectsButton* pointer) {
 void Window::inpadShow () {
     if (target != nullptr)
         inpad->show();
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R35"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R35"));
 }
 
 

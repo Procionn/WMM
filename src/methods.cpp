@@ -62,41 +62,41 @@ std::string stc::string::get_name(const std::string& path, std::string& director
 
 
 std::string stc::cwmm::backup_path () {
-    return (GAME + "/" + CConfigs::CONFIG_GAME);
+    return (GAME + "/" + Core::config("WMM_CONFIG_GAME"));
 }
 
 std::string stc::cwmm::ram_preset () {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS);
+    return (RAM + Core::config("WMM_CONFIG_GAME") + "/" + PRESETS);
 }
 
 std::string stc::cwmm::ram_preset (const std::string& name) {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + PRESETS + name + EXPANSION);
+    return (RAM + Core::config("WMM_CONFIG_GAME") + "/" + PRESETS + name + EXPANSION);
 }
 
 std::string stc::cwmm::ram_collection () {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS);
+    return (RAM + Core::config("WMM_CONFIG_GAME") + "/" + COLLECTIONS);
 }
 
 std::string stc::cwmm::ram_collection (const std::string& name) {
-    return (RAM + CConfigs::CONFIG_GAME + "/" + COLLECTIONS + name + EXPANSION);
+    return (RAM + Core::config("WMM_CONFIG_GAME") + "/" + COLLECTIONS + name + EXPANSION);
 }
 
 std::string stc::cwmm::ram_mods() {
-    return (MODS + CConfigs::CONFIG_GAME);
+    return (MODS + Core::config("WMM_CONFIG_GAME"));
 }
 
 std::string stc::cwmm::ram_mods(const std::string& name) {
-    return (MODS + CConfigs::CONFIG_GAME + "/" + name);
+    return (MODS + Core::config("WMM_CONFIG_GAME") + "/" + name);
 }
 
 std::string stc::cwmm::cortege_path(const std::string& name, const uint64_t& id) {
-    return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + name + CORTEGE);
+    return (MODS + Core::config("WMM_CONFIG_GAME") + "/" + std::to_string(id) + "/" + name + CORTEGE);
 }
 
 
 
 std::string stc::cwmm::modsURL (const std::string& id) {
-    std::string tmp = Core::CONFIG_URL;
+    std::string tmp = Core::get().get_game_config("WMM_CONFIG_GAME");
     size_t mark1 = tmp.find_last_of('[');
     size_t mark2 = tmp.find_last_of(']');
 #ifndef NDEBUG

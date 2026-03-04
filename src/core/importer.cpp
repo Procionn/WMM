@@ -61,12 +61,12 @@ void import::unarchivate_main_objects () {
                 std::string dir, expansion;
                 renameMark:
                     mainCollectionFile = file_renaming(stc::string::get_name(archivedFilePath, dir, expansion),
-                                                       Core::lang["LANG_LABEL_RENAME_COLLECTIONS"]);
+                                                       Core::tr("LANG_LABEL_RENAME_COLLECTIONS"));
                     if (mainCollectionFile.empty())
-                        throw Core::lang["LANG_LABEL_EXPORT_INTERRUPTED"];
+                        throw Core::tr("LANG_LABEL_EXPORT_INTERRUPTED");
                     archivedFilePath = dir + mainCollectionFile + expansion;
                     if (std::filesystem::exists(archivedFilePath)) {
-                        ERRORdialog* error = new ERRORdialog(Core::lang["LANG_LABEL_R34"]);
+                        ERRORdialog* error = new ERRORdialog(Core::tr("LANG_LABEL_R34"));
                         error->exec();
                         goto renameMark;
                     }
@@ -130,7 +130,7 @@ void import::mods_import (void* vector) {
     std::vector<Core::wmmb>* importList = static_cast<std::vector<Core::wmmb>*>(vector);
 
     std::string modsDirectory = stc::cwmm::ram_mods() + "/";
-    std::string archiveDirectory = ARCHIVE + Core::CONFIG_GAME + "/";
+    std::string archiveDirectory = ARCHIVE + Core::config("WMM_CONFIG_GAME") + "/";
 
     ArchiveReader archive(archivePath);
     std::string targetFilename;

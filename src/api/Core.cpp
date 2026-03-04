@@ -28,16 +28,16 @@ void start_core_api(Core* p) {
 }
 
 void WMM::APICore::update_lang() {
-    ptr->update_lang();
+    ptr->update_lang(ptr->get_config(ptr->get_config("WMM_CONFIG_LANGUAGES")));
 }
 QString WMM::APICore::tr (const QString& key) {
-    return QString::fromStdString(ptr->lang.at(key.toStdString()));
+    return QString::fromStdString(ptr->get_lang(key.toStdString()));
 }
 void WMM::APICore::load_new_lang_pack (const QString& path) {
     ptr->load_lang_pack(path.toStdString());
 }
 QString WMM::APICore::get_config (const QString& key) {
-    return QString::fromStdString(ptr->configs.at(key.toStdString()));
+    return QString::fromStdString(ptr->get_config(key.toStdString()));
 }
 void WMM::APICore::config_reader() {
     ptr->config_reader();
@@ -49,7 +49,7 @@ void WMM::APICore::set_default (const QString& key, const QString& value){
     ptr->set_default(key.toStdString(), value.toStdString());
 }
 QString WMM::APICore::get_game_config(){
-    return QString::fromStdString(ptr->configs.at("WMM_CONFIG_GAME"));;
+    return QString::fromStdString(ptr->get_config("WMM_CONFIG_GAME"));;
 }
 
 void WMM::APICore::update_data_from_file(){

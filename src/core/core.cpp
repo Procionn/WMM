@@ -20,7 +20,12 @@
 #include "../methods.h"
 
 typedef void (*func)(Core*);
-Core::Core () {
+Core::Core ()
+    : CConfigs(),
+      Lang(CConfigs::get_config("WMM_CONFIG_LANGUAGES")),
+      CGameConfig(CConfigs::get_config("WMM_CONFIG_USE_EXTERNAL_MODULE"),
+                  CConfigs::get_config("WMM_CONFIG_GAME")) {
+
     func f = (func)(QLibrary::resolve("./" LIB, "start_core_api"));
     if (f)
         f(this);

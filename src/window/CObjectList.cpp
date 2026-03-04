@@ -29,8 +29,8 @@ CObjectList::CObjectList () {
     setLayout(privateObjectList);
     QHBoxLayout* objectButtonBox = new QHBoxLayout();
     privateObjectList->addLayout(objectButtonBox);
-    CLinkTumbler* Collection = new CLinkTumbler(Core::lang["LANG_BUTTON_COLLECTIONS"]);
-    CLinkTumbler* Preset     = new CLinkTumbler(Core::lang["LANG_BUTTON_PRESETS"], Collection);
+    CLinkTumbler* Collection = new CLinkTumbler(Core::tr("LANG_BUTTON_COLLECTIONS"));
+    CLinkTumbler* Preset     = new CLinkTumbler(Core::tr("LANG_BUTTON_PRESETS"), Collection);
     QLineEdit* searchTab     = new QLineEdit;
     privateObjectList->addWidget(searchTab);
     objectButtonBox->addWidget(Collection);
@@ -73,7 +73,7 @@ void CObjectList::CreteObject (const std::string& name) {
         updateList();
         render();
     }
-    else ERRORdialog* errorR34 = new ERRORdialog(Core::lang["LANG_LABEL_R34"]);
+    else ERRORdialog* errorR34 = new ERRORdialog(Core::tr("LANG_LABEL_R34"));
 }
 
 

@@ -38,14 +38,14 @@
 typedef void (*func)(ModManager*);
 ModManager::ModManager() {
     Core::get().set_default("WMM_MOD_MANAGER_TYPE", "true");
-    std::string type = Core::configs["WMM_MOD_MANAGER_TYPE"];
+    std::string type = Core::config("WMM_MOD_MANAGER_TYPE");
     if (type == "true")
         copy = true;
     else
         copy = false;
     update();
 
-    func f = (func)(QLibrary::resolve("./" LIB, "start_modmanager_api"));
+    func f = (func)(QLibrary::resolve("./lib" LIB, "start_modmanager_api"));
     if (f)
         f(this);
     else {
@@ -82,7 +82,7 @@ void ModManager::set_copy (const bool& status) {
     if (status == copy)
         return;
     copy = status;
-    Core::configs["WMM_MOD_MANAGER_TYPE"] = std::string(status ? "true" : "false");
+    Core::get().set_config_value("WMM_MOD_MANAGER_TYPE", (status ? "true" : "false"));
     Core::get().overwriting_config_data();
 }
 
@@ -154,17 +154,17 @@ void ModManager::load (const std::string& path) {
 
 
 std::string ModManager::get_path(const uint64_t id) {
-    return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id));
+    return (MODS + Core::config("WMM_CONFIG_GAME") + "/" + std::to_string(id));
 }
 
 
 std::string ModManager::get_path(const uint64_t id, const std::string& version) {
-    return (MODS + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + version + archiveExpansion);
+    return (MODS + Core::config("WMM_CONFIG_GAME") + "/" + std::to_string(id) + "/" + version + archiveExpansion);
 }
 
 
 std::string ModManager::get_log_path(const uint64_t id, const std::string& version) {
-    return (ARCHIVE + Core::CONFIG_GAME + "/" + std::to_string(id) + "/" + version + EXPANSION2);
+    return (ARCHIVE + Core::config("WMM_CONFIG_GAME") + "/" + std::to_string(id) + "/" + version + EXPANSION2);
 }
 
 

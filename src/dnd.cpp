@@ -46,7 +46,7 @@ void CDND::dragEnterEvent(QDragEnterEvent* e) {
 }
 
 void CDND::dropEvent(QDropEvent* e) {
-    if (Core::CONFIG_GAME != "None") {
+    if (Core::config("WMM_CONFIG_GAME") != "None") {
         try {
             for (const QUrl &url : e->mimeData()->urls()) {
                 std::string fileName = url.toLocalFile().toStdString();
@@ -62,5 +62,5 @@ void CDND::dropEvent(QDropEvent* e) {
             ERRORdialog* dialog = new ERRORdialog(std::string("DND ERROR: ") + e);
         }
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R37"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R37"));
 }

@@ -26,7 +26,7 @@ CNewObjectDialog::CNewObjectDialog () {
     list->setLayout(glist);
     glist->setAlignment(Qt::AlignTop);
     glist->setContentsMargins(15, 15, 0, 0);
-    glist->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_NAME"])));
+    glist->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_NAME"))));
     nameTab = new QLineEdit;
     glist->addWidget(nameTab);
     connect(apply, &QPushButton::clicked, this, &CNewObjectDialog::test);
@@ -46,5 +46,5 @@ void CNewObjectDialog::test () {
         delete this;
     }
     else
-        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_PATH_RULES"] + separators);
+        ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_PATH_RULES") + separators);
 }

@@ -26,7 +26,7 @@
 PluginLoader::PluginLoader () {
     Core::get().set_default("WMM_EXPANSION_DEBUG", "false");
     Core::get().set_default("WMM_ENABLE_PLUGINS", "true");
-    if (Core::configs["WMM_ENABLE_PLUGINS"] == "true") {
+    if (Core::config("WMM_ENABLE_PLUGINS") == "true") {
         scan_directory();
         demons_init();
     }
@@ -91,7 +91,7 @@ void PluginLoader::demons_init () {
 
 
 void PluginLoader::exp_cerr (const std::string& value) {
-    if (Core::configs["WMM_EXPANSION_DEBUG"] == "true")
+    if (Core::config("WMM_EXPANSION_DEBUG") == "true")
         stc::cerr(value);
 }
 

@@ -31,11 +31,11 @@ class WConfig : public CConfigs {};
 
 bool parser () {
     QCommandLineParser parser;
-    parser.setApplicationDescription(QString::fromStdString(Core::lang["LANG_LABEL_WMM"]));
+    parser.setApplicationDescription(QString::fromStdString(Core::tr("LANG_LABEL_WMM")));
 
     for (auto target : FlagsList) {
         QCommandLineOption clearCache(QString::fromStdString(target.first),
-                                      QString::fromStdString(Core::get().lang.at(target.second)));
+                                      QString::fromStdString(Core::tr(target.second)));
         parser.addOption(clearCache);
     }
 

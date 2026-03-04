@@ -25,7 +25,7 @@
 #include "core/IGameConfig.h"
 #include "api/export.h"
 
-
+class Core;
 class CBaseConfig
 {
 protected:
@@ -39,13 +39,15 @@ protected:
 
 class WMMCORE_EXPORT Lang : public virtual CBaseConfig
 {
+    std::map<std::string, std::string> langStorage;
+
 public:
-    inline static std::map<std::string, std::string> lang;
-    void update_lang();
-    void load_lang_pack(const std::string&);
+    std::string get_lang(const std::string& key);
+    void update_lang(const std::string& configLang);
+    void load_lang_pack(const std::string& pathToFile);
 
 protected:
-    Lang();
+    Lang(const std::string& configLang);
 };
 
 
@@ -55,18 +57,17 @@ protected:
 class WMMCORE_EXPORT CConfigs : public virtual CBaseConfig
 {
     std::ofstream config;
-
-protected:
-    CConfigs();
+    std::map<std::string, std::string> configs;
 
 public:
-    inline static std::map<std::string, std::string> configs;
-#define CONFIG_LANGUAGES        configs["WMM_CONFIG_LANGUAGES"]
-#define CONFIG_GAME             configs["WMM_CONFIG_GAME"]
-
+    std::string get_config(const std::string& key);
     void config_reader();
     void overwriting_config_data();
     void set_default(const std::string& key, const std::string& value);
+    void set_config_value(const std::string& key, const std::string& value);
+
+protected:
+    CConfigs();
 };
 
 
@@ -75,8 +76,7 @@ public:
 
 class WMMCORE_EXPORT CBaseGameConfig : public virtual CBaseConfig
 {
-    friend class NixGameConfig;
-    friend class WinGameConfig;
+protected:
     static constexpr const char* config_string[4]{
         "ModCoreDirectoryStage",
         "OnlyModDirectory",
@@ -88,11 +88,15 @@ class WMMCORE_EXPORT CBaseGameConfig : public virtual CBaseConfig
     std::string core_dir_name;
     unsigned int GAME_CORE_DIR_STAGE;
 
+    std::string CONFIG_GAME_PATH;
+    std::string CONFIG_EXECUTABLE_FILE;
+    std::string CONFIG_URL;
+    std::string ConfigGame;
+
 public:
-    inline static std::string CONFIG_GAME_PATH;
-    inline static std::string CONFIG_EXECUTABLE_FILE;
-    inline static std::string CONFIG_URL;
-    
+    std::string get_game_config(const std::string_view key);
+    std::vector<std::string> get_OMD();
+    std::vector<std::string> get_MGD();
     void update_data_from_file();
     void save_game_path(const std::string& path);
     void game_dir_backup();
@@ -120,7 +124,7 @@ class WMMCORE_EXPORT CGameConfig : public CBaseGameConfig
     IGameConfig* object;
 
 protected:
-    CGameConfig();
+    CGameConfig(const std::string& externalModule, const std::string& game);
     ~CGameConfig();
     void dir_comparison (const std::filesystem::path& file) override;
 
@@ -172,6 +176,8 @@ protected:
 
 public:
     static Core& get();
+    static auto tr (const std::string& key) { return Core::get().get_lang(key); }
+    static auto config (const std::string& key) { return Core::get().get_config(key); }
 
     void exporter(const std::string& name, const bool monolith);
     void importer(const std::string& path);

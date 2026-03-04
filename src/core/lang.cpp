@@ -16,19 +16,15 @@
  */
 #include "../core.h"
 
-Lang::Lang () {
-    update_lang();
+Lang::Lang (const std::string& configLang) {
+    update_lang(configLang);
 }
 
 
-void Lang::update_lang () {
-    if (!lang.empty())
-        lang.clear();
-    std::ifstream readedFile (CConfigs::CONFIG_LANGUAGES);
-    std::string parameter;
-    std::string indicator;
-    while (configRead(readedFile, parameter, indicator))
-        lang[parameter] = indicator;
+void Lang::update_lang (const std::string& configLang) {
+    if (!langStorage.empty())
+        langStorage.clear();
+    load_lang_pack(configLang);
 }
 
 
@@ -37,5 +33,8 @@ void Lang::load_lang_pack(const std::string& pathToFile) {
     std::string parameter;
     std::string indicator;
     while (configRead(readedFile, parameter, indicator))
-        lang[parameter] = indicator;
+        langStorage[parameter] = indicator;
 }
+
+
+std::string Lang::get_lang (const std::string& key) { return langStorage[key]; }

@@ -54,7 +54,9 @@ void setextensions::generate_buttons() {
     for (auto* plugin : PluginLoader::get_plugins_list()) {
         CLinkTumbler* button = new CLinkTumbler(plugin->name().toStdString(), last);
         list->addWidget(button);
-        connect(button, &CLinkTumbler::toggled, [plugin]{plugin->main();});
+        connect(button, &CLinkTumbler::toggled, [plugin]{
+            plugin->main();
+        });
         last = button;
         expansionList.emplace_back(button);
     }

@@ -25,7 +25,7 @@
 
 #define Wait(func)                              \
     QProgressDialog d(QString::fromStdString(   \
-    Core::lang["LANG_LABERL_WAIT"]), nullptr, 0, 100, nullptr); \
+    Core::tr("LANG_LABERL_WAIT")), nullptr, 0, 100, nullptr); \
     d.setWindowModality(Qt::WindowModal);       \
     d.setMinimumDuration(0);                    \
     d.show();                                   \
@@ -38,7 +38,7 @@
 
 #define Wait2(func, PARAMETERS)                 \
     QProgressDialog d(QString::fromStdString(   \
-    Core::lang["LANG_LABERL_WAIT"]), nullptr, 0, 100, nullptr); \
+    Core::tr("LANG_LABERL_WAIT")), nullptr, 0, 100, nullptr); \
     d.setWindowModality(Qt::WindowModal);       \
     d.setMinimumDuration(0);                    \
     d.show();                                   \

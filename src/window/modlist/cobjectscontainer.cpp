@@ -32,9 +32,9 @@ CObjectsContainer::CObjectsContainer() {
 
 void CObjectsContainer::RMB (const QPoint& pos, CObject* target) {
     QMenu* contextMenu = new QMenu(this);
-    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_DELETE")));
     connect(action1, &QAction::triggered, this, &CObjectsContainer::deletionSignals);
-    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_PROPERTIES"]));
+    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_PROPERTIES")));
     connect(action3, &QAction::triggered, this, &CObjectsContainer::change_priority_window);
     contextMenu->exec(QCursor::pos());
 }

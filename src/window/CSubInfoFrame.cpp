@@ -34,10 +34,10 @@ CSubInfoFrame::CSubInfoFrame (QVBoxLayout* parent) {
     QHBoxLayout* splitterBox = new QHBoxLayout(siFrame);
     addWidget(siFrame);
 
-    CSortedFrame* lblName     = new CSortedFrame(Core::lang["LANG_LABEL_NAME"]);
-    CSortedFrame* lblVersion  = new CSortedFrame(Core::lang["LANG_LABEL_VERSION"]);
-    CSortedFrame* lblType     = new CSortedFrame(Core::lang["LANG_LABEL_TYPE"]);
-    CSortedFrame* lblSwitcher = new CSortedFrame(Core::lang["LANG_LABEL_SWITCHER"]);
+    CSortedFrame* lblName     = new CSortedFrame(Core::tr("LANG_LABEL_NAME"));
+    CSortedFrame* lblVersion  = new CSortedFrame(Core::tr("LANG_LABEL_VERSION"));
+    CSortedFrame* lblType     = new CSortedFrame(Core::tr("LANG_LABEL_TYPE"));
+    CSortedFrame* lblSwitcher = new CSortedFrame(Core::tr("LANG_LABEL_SWITCHER"));
     list.emplace_back(lblName);
     list.emplace_back(lblVersion);
     list.emplace_back(lblType);

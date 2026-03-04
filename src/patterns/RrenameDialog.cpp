@@ -41,7 +41,7 @@ RenameDialog::RenameDialog(std::string& renamedFile, const std::string& messageS
 std::string file_renaming(const std::string& renamedFile, std::string errorMessage) {
     std::string filename = renamedFile;
     if (errorMessage.empty())
-        errorMessage = Core::lang["LANG_LABEL_RENAME_MESSAGE"];
+        errorMessage = Core::tr("LANG_LABEL_RENAME_MESSAGE");
 
     RenameDialog* dialog = new RenameDialog(filename, errorMessage);
     dialog->exec();

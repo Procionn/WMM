@@ -40,7 +40,7 @@ CObjectsButton::CObjectsButton(const std::string& name, CObjectsButton* linked) 
 
 void CObjectsButton::context (const QPoint &pos) {
     QMenu* contextMenu = new QMenu(this);
-    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction *action1 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_DELETE")));
     connect(action1, &QAction::triggered, this, &CObjectsButton::DELETE);
     contextMenu->exec(this->mapToGlobal(pos));
 }
@@ -49,7 +49,7 @@ void CObjectsButton::DELETE() {
     if (type) std::filesystem::remove(stc::cwmm::ram_preset(name));
     else {
         std::filesystem::remove(stc::cwmm::ram_collection(name));
-        auto path = std::filesystem::path(COLLECTIONS + Core::CONFIG_GAME) / name;
+        auto path = std::filesystem::path(COLLECTIONS + Core::config("WMM_CONFIG_GAME")) / name;
         if (std::filesystem::exists(path))
             stc::fs::remove_all(path);
     }

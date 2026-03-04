@@ -36,9 +36,9 @@ collections::collections () {
     right_list = new QVBoxLayout;
     QWidget* pad = new QWidget;
     QFrame* line = new QFrame;
-    QLabel* collections_label = new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_COLLECTIONS"]));
-    QPushButton* importButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_IMPORT"]));
-    QPushButton* exportButton = new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_EXPORT"]));
+    QLabel* collections_label = new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_COLLECTIONS")));
+    QPushButton* importButton = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_IMPORT")));
+    QPushButton* exportButton = new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_EXPORT")));
     settingsBox = new SettingsBox;
     QFrame* modInfoFrame = new QFrame;
     QGridLayout* modInfoList = new QGridLayout(modInfoFrame);
@@ -64,9 +64,9 @@ collections::collections () {
     left_list->addWidget(pad);
     left_list->addWidget(importButton);
 
-    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MODS"])));
-    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_PRESETS"])));
-    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ALL_MODS"])));
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_MODS"))));
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_PRESETS"))));
+    modInfoList->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_ALL_MODS"))));
     modInfoList->addWidget(mods,    0, 1);
     modInfoList->addWidget(presets, 1, 1);
     modInfoList->addWidget(allMods, 2, 1);
@@ -120,7 +120,7 @@ void collections::update_collection_info (CToggledButton* target) {
 
 void collections::exporting () {
     if (!target || target->name.empty()) {
-        ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R39"]);
+        ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R39"));
         return;
     }
     if (!std::filesystem::exists(EXPORT))
@@ -140,9 +140,9 @@ void collections::exporting () {
 void collections::importing () {
     QString buffer = QFileDialog::getOpenFileName(
         nullptr,
-        QString::fromStdString(Core::lang["LANG_LABEL_CHOOSE_COLLECTION"]),
+        QString::fromStdString(Core::tr("LANG_LABEL_CHOOSE_COLLECTION")),
         "",
-        QString::fromStdString(Core::lang["LANG_LABEL_ALL_FILE"] + " (*.tar.zst)")
+        QString::fromStdString(Core::tr("LANG_LABEL_ALL_FILE") + " (*.tar.zst)")
     );
     Core::get().importer(buffer.toStdString());
     update_list();
@@ -157,7 +157,7 @@ void collections::importing () {
 SettingsBox::SettingsBox () {
     QGridLayout* list = new QGridLayout(this);
     CSwitchButton* monolithButton = new CSwitchButton();
-    list->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_MONOLITH"])));
+    list->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_MONOLITH"))));
     list->addWidget(monolithButton, 0, 1);
     connect(monolithButton, &CSwitchButton::toggled, [&]{monolith = true;});
     connect(monolithButton, &CSwitchButton::untoggled, [&]{monolith = false;});
@@ -168,7 +168,7 @@ SettingsBox::SettingsBox () {
      *  For now, let the billet remain in the code.
     */
     CSwitchButton* onlineButton = new CSwitchButton();
-    list->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_ONLINE"])));
+    list->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_ONLINE"))));
     list->addWidget(onlineButton, 1, 1);
     connect(onlineButton, &CSwitchButton::toggled, [&]{online = true;});
     connect(onlineButton, &CSwitchButton::untoggled, [&]{online = false;});

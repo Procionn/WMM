@@ -48,7 +48,7 @@ void ModStorageList::scaner () {
 
 void ModStorageList::RMB (const QPoint&, ModObject*) {
     QMenu* contextMenu = new QMenu(this);
-    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_DELETE")));
     connect(action1, &QAction::triggered, this, &ModStorageList::deletion_signals);
     contextMenu->exec(QCursor::pos());
 }

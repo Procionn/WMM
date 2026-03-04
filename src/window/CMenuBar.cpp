@@ -22,12 +22,12 @@
 CMenuBar::CMenuBar(Window* parent) {
     this->parent = parent;
 
-    QAction* settings       = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_SETTINGS"]), this);
-    QAction* object         = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_NEW_OBJECT"]), this);
-    QAction* assembling     = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_ASSEMBLING"]), this);
-    QAction* reassembly     = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_REASSEMBLY"]), this);
-    QAction* linking        = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_LINKING"]), this);
-    QAction* content        = new QAction(QString::fromStdString(Core::lang["LANG_BUTTON_ADD_COMPONENTS"]), this);
+    QAction* settings       = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_SETTINGS")), this);
+    QAction* object         = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_NEW_OBJECT")), this);
+    QAction* assembling     = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_ASSEMBLING")), this);
+    QAction* reassembly     = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_REASSEMBLY")), this);
+    QAction* linking        = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_LINKING")), this);
+    QAction* content        = new QAction(QString::fromStdString(Core::tr("LANG_BUTTON_ADD_COMPONENTS")), this);
 
     addAction(settings);
     addAction(object);
@@ -53,9 +53,9 @@ void CMenuBar::assembling_clicked () {
                 Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
             );
         }
-        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
+        else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R30"));
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R31"));
 }
 
 
@@ -69,11 +69,11 @@ void CMenuBar::linking_clicked () {
                     Core::get().symlink_creating(parent->target->name);
                 );
             }
-            else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R38"]);
+            else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R38"));
         }
-        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
+        else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R30"));
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R36"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R36"));
 }
 
 
@@ -81,14 +81,14 @@ void CMenuBar::linking_clicked () {
 void CMenuBar::reassembly_clicked () {
     if (parent->target) {
         if (!parent->target->type) {
-            if (!Core::CONFIG_GAME_PATH.empty()) {
-                std::filesystem::remove_all(COLLECTIONS + Core::CONFIG_GAME + "/" + parent->target->name);
+            if (!Core::get().get_game_config("CONFIG_GAME_PATH").empty()) {
+                std::filesystem::remove_all(COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" + parent->target->name);
                 Wait(
                     Core::get().collector(parent->target->name, parent->ObjectList->TypeTarget);
                 );
             }
         }
-        else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R30"]);
+        else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R30"));
     }
-    else ERRORdialog* dialog = new ERRORdialog(Core::lang["LANG_LABEL_R31"]);
+    else ERRORdialog* dialog = new ERRORdialog(Core::tr("LANG_LABEL_R31"));
 }

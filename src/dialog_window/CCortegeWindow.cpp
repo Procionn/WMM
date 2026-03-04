@@ -49,19 +49,19 @@ CCortegeWindow::CCortegeWindow (std::string* ptr, std::string* sPtr, std::string
 
 void CCortegeWindow::set_version (const std::string& version) {
     error = new CLabel("");
-    CLabel* label = new CLabel(Core::lang["LANG_LABEL_CHOOSE_VERSION"]);
+    CLabel* label = new CLabel(Core::tr("LANG_LABEL_CHOOSE_VERSION"));
     lay->addWidget(error, 1, 0, 1, -1);
     lay->addWidget(label, 2, 0, 1, -1);
-    lay->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_VERSION"])), 3, 0);
+    lay->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_VERSION"))), 3, 0);
     verLine = new QLineEdit(QString::fromStdString(version));
     lay->addWidget(verLine, 3, 1);
     connect(apply, &QPushButton::clicked, [this] {
         if (verLine->text().isEmpty()) {
-            error->setText(Core::lang["LANG_LABEL_EMPTY"]);
+            error->setText(Core::tr("LANG_LABEL_EMPTY"));
             return;
         }
         if (ModManager::get().exists(id, verLine->text().toStdString())) {
-            error->setText(Core::lang["LANG_LABEL_VERSION_EXISTS"]);
+            error->setText(Core::tr("LANG_LABEL_VERSION_EXISTS"));
             return;
         }
         *returnedVersion = verLine->text().toStdString();
@@ -84,14 +84,14 @@ void CCortegeWindow::set_items () {
 
 void CCortegeWindow::crt (const std::string& version, const std::string& name, const bool issue) {
     error = new CLabel("");
-    CLabel* label = new CLabel(Core::lang["LANG_LABEL_CREATE_CORTEGE"]);
+    CLabel* label = new CLabel(Core::tr("LANG_LABEL_CREATE_CORTEGE"));
     lay->addWidget(error, 1, 0, 1, -1);
     if (issue)
         lay->addWidget(label, 2, 0, 1, -1);
 
-    lay->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_VERSION"])), 3, 0);
-    lay->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CORTEGE"])), 4, 0);
-    lay->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_CORTEGE"])), 5, 0);
+    lay->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_VERSION"))), 3, 0);
+    lay->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_CORTEGE"))), 4, 0);
+    lay->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_CORTEGE"))), 5, 0);
     verLine = new QLineEdit(QString::fromStdString(version));
     crtLine = new QLineEdit(QString::fromStdString("cortege-"+name));
     set_items();
@@ -100,19 +100,19 @@ void CCortegeWindow::crt (const std::string& version, const std::string& name, c
     lay->addWidget(versions, 5, 1);
     connect(apply, &QPushButton::clicked, [this] {
         if (verLine->text().isEmpty() || crtLine->text().isEmpty()) {
-            error->setText(Core::lang["LANG_LABEL_EMPTY"]);
+            error->setText(Core::tr("LANG_LABEL_EMPTY"));
             return;
         }
         if (ModManager::get().exists(id, crtLine->text().toStdString())) {
-            error->setText(Core::lang["LANG_LABEL_CORTEGE_EXISTS"]);
+            error->setText(Core::tr("LANG_LABEL_CORTEGE_EXISTS"));
             return;
         }
         if (ModManager::get().exists(id, verLine->text().toStdString())) {
-            error->setText(Core::lang["LANG_LABEL_VERSION_EXISTS"]);
+            error->setText(Core::tr("LANG_LABEL_VERSION_EXISTS"));
             return;
         }
         if (versions->currentText().isEmpty()) {
-            error->setText(Core::lang["LANG_LABEL_MAIN_VERSION_NOT_SELECTED"]);
+            error->setText(Core::tr("LANG_LABEL_MAIN_VERSION_NOT_SELECTED"));
             return;
         }
         *returnedVersion = verLine->text().toStdString();
@@ -123,12 +123,12 @@ void CCortegeWindow::crt (const std::string& version, const std::string& name, c
 }
 
 void CCortegeWindow::que (const std::string& version, const std::string& name) {
-    message = new CLabel(Core::lang["LANG_LABEL_CORTEGE_QUESTION"]);
+    message = new CLabel(Core::tr("LANG_LABEL_CORTEGE_QUESTION"));
     mainName = new CLabel(ModManager::get().mod_data_converter(id));
     newName = new CLabel(name);
 
     QPushButton* setVersion =
-        new QPushButton(QString::fromStdString(Core::lang["LANG_BUTTON_SET_VERSION"]));
+        new QPushButton(QString::fromStdString(Core::tr("LANG_BUTTON_SET_VERSION")));
     lay->addWidget(message, 1, 0, 1, -1);
     lay->addWidget(mainName, 2, 0, 1, -1);
     lay->addWidget(newName, 3, 0, 1, -1);

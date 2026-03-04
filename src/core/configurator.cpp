@@ -60,7 +60,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
             continue;
         if (std::get<bool>(v[2])) { // if mod
             if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
-                throw(Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
+                throw(Core::tr("LANG_LABEL_NOT_EXIST_OBJECT") + " mod - " + std::get<std::string>(v[0]));
             if (ModManager::get().is_cortege(std::get<uint64_t>(v[3]), std::get<std::string>(v[1]))) {
                 for (auto* entry : ModManager::get().get_cortege_list(std::get<uint64_t>(v[3]),
                                                                       std::get<std::string>(v[1]))) {
@@ -73,7 +73,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
         }
         else { // if preset
             if (!std::filesystem::exists(stc::cwmm::ram_preset(std::get<std::string>(v[0]))) && except)
-                throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " preset - " + std::get<std::string>(v[0]));
+                throw (Core::tr("LANG_LABEL_NOT_EXIST_OBJECT") + " preset - " + std::get<std::string>(v[0]));
             if (presets)
                 presets->emplace_back(std::get<std::string>(v[0]));
             bool status = std::get<bool>(v[4]);
@@ -83,7 +83,7 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
                 if (!status)
                     v[4] = false;
                 if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
-                    throw (Core::lang["LANG_LABEL_NOT_EXIST_OBJECT"] + " mod - " + std::get<std::string>(v[0]));
+                    throw (Core::tr("LANG_LABEL_NOT_EXIST_OBJECT") + " mod - " + std::get<std::string>(v[0]));
                 list.emplace_back(static_cast<void*>(&v));
             }
         }
@@ -164,7 +164,7 @@ void Core::collection_info(const std::vector<wmmb>& newstruct, const std::filesy
 void Core::collector(const std::filesystem::path& name, bool type) {
     // collected all mods file in directory
     try {
-        fs::path directory = (COLLECTIONS + Core::CONFIG_GAME) / name;
+        fs::path directory = (COLLECTIONS + get_config("WMM_CONFIG_GAME")) / name;
         fs::path oldFile = directory / (CONST_FILE + EXPANSION);
         if (type)
             throw "Exporting presets is not supported";

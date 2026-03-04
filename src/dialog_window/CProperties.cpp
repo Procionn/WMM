@@ -23,7 +23,7 @@
 
 CProperties::CProperties(signed char base) {
     QGridLayout* layout = new QGridLayout(list);
-    layout->addWidget(new QLabel(QString::fromStdString(Core::lang["LANG_LABEL_PRIORITY"])));
+    layout->addWidget(new QLabel(QString::fromStdString(Core::tr("LANG_LABEL_PRIORITY"))));
     priority = new QSpinBox();
     priority->setRange(-127, 127);
     priority->setValue((signed int)(base));

@@ -66,13 +66,13 @@ CObject::CObject(const void* v, bool& counter, const uint64_t& index) :
 void CObject::context (const QPoint& pos) {
     QMenu* contextMenu = new QMenu(this);
     contextMenu->setStyleSheet("border: 1px solid black");
-    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_DELETE"]));
+    QAction* action1 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_DELETE")));
     connect(action1, &QAction::triggered, this, &CObject::DELETE);
     if (type) {
-        QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_INFO"]));
+        QAction* action2 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_INFO")));
         connect(action2, &QAction::triggered, this, &CObject::INFO);
     }
-    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::lang["LANG_BUTTON_PROPERTIES"]));
+    QAction* action3 = contextMenu->addAction(QString::fromStdString(Core::tr("LANG_BUTTON_PROPERTIES")));
     connect(action3, &QAction::triggered, this, &CObject::local_priority);
     contextMenu->exec(this->mapToGlobal(pos));
 }

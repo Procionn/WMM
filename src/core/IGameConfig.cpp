@@ -147,11 +147,11 @@ void WinGameConfig::dir_comparison (const std::filesystem::path& file) {
     QByteArray data;
     QDataStream dataView(&data, QIODevice::WriteOnly);
     dataView << QString::fromStdString(file.string());
-    dataView << QString::fromStdString(Core::get().core_dir_name);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
+    dataView << QString::fromStdString(Core::get().get_game_config("core_dir_name"));
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH"));
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME"));
     QStringList list;
-    for (auto entry : Core::get().MGD)
+    for (auto entry : Core::get().get_MGD())
         list.append(QString::fromStdString(entry));
     dataView << list;
     send_command(data, &ipc);
@@ -164,11 +164,11 @@ void WinGameConfig::symlink_deliting () {
     ipc.comand = ComandList::symlnk_del;
     QByteArray data;
     QDataStream dataView(&data, QIODevice::WriteOnly);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
-    dataView << QString::fromStdString(Core::get().core_dir_name);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH"));
+    dataView << QString::fromStdString(Core::get().get_game_config("core_dir_name"));
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME"));
     QStringList list;
-    for (auto entry : Core::get().MGD)
+    for (auto entry : Core::get().get_MGD())
         list.append(QString::fromStdString(entry));
     dataView << list;
     send_command(data, &ipc);
@@ -183,8 +183,8 @@ void WinGameConfig::symlink_creating (const std::string& targetCollection) {
     QByteArray data;
     QDataStream dataView(&data, QIODevice::WriteOnly);
     dataView << QString::fromStdString(targetCollection);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME_PATH);
-    dataView << QString::fromStdString(Core::get().CONFIG_GAME);
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH"));
+    dataView << QString::fromStdString(Core::get().get_game_config("CONFIG_GAME"));
     send_command(data, &ipc);
 }
 
@@ -203,15 +203,16 @@ void NixGameConfig::dir_comparison (const std::filesystem::path& file) {
         // mixedGameDirectory =  C://Game/Cyberpunk 2077/[MGD]/
         // CONFIG_GAME_PATH   =  C://Game/Cyberpunk 2077/
 
-        fs::path pathToBackupPath = GAME / fs::path(Core::get().core_dir_name);
+        fs::path pathToBackupPath = GAME / fs::path(Core::get().get_game_config("core_dir_name"));
         fs::path mixedGameDirectory;
-        for (const auto& directory : Core::get().MGD) {
-            mixedGameDirectory = Core::get().CONFIG_GAME_PATH / fs::path(directory);
+        for (const auto& directory : Core::get().get_MGD()) {
+            mixedGameDirectory =
+                Core::get().get_game_config("CONFIG_GAME_PATH") / fs::path(directory);
             fs::path relative, pathToBackupFile, collectionFile;
             for (const auto& entry : fs::recursive_directory_iterator(mixedGameDirectory)) {
-                relative = fs::relative(entry.path(), Core::get().CONFIG_GAME_PATH);
+                relative = fs::relative(entry.path(), Core::get().get_game_config("CONFIG_GAME_PATH"));
                 pathToBackupFile = pathToBackupPath / relative;
-                collectionFile = (COLLECTIONS + Core::CONFIG_GAME + "/" +
+                collectionFile = (COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" +
                                   std::get<std::string>(v[0])) / relative;
                 if (!fs::exists(pathToBackupFile)) {
 #ifdef _WIN32
@@ -250,7 +251,8 @@ void NixGameConfig::dir_comparison (const std::filesystem::path& file) {
 
 
 void NixGameConfig::symlink_deliting () {
-    fs::path testFile = (Core::get().CONFIG_GAME_PATH + "/" + CONST_FILE + EXPANSION);
+    fs::path testFile =
+        (Core::get().get_game_config("CONFIG_GAME_PATH") + "/" + CONST_FILE + EXPANSION);
     if (fs::exists(testFile))
         dir_comparison(testFile);
     try {
@@ -260,13 +262,17 @@ void NixGameConfig::symlink_deliting () {
             return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
         };
 
-        for (const auto& entry : fs::recursive_directory_iterator(Core::get().CONFIG_GAME_PATH)) {
+        for (const auto& entry :
+             fs::recursive_directory_iterator(Core::get()..get_game_config("WMM_CONFIG_GAME_PATH")))
+        {
             if (is_symlink(entry.path())) {
                 DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
             }
         }
 #elif defined(__linux__)
-        for (const auto& entry : fs::recursive_directory_iterator(Core::get().CONFIG_GAME_PATH)) {
+        for (const auto& entry :
+             fs::recursive_directory_iterator(Core::get().get_game_config("WMM_CONFIG_GAME_PATH")))
+        {
             const auto& status = entry.symlink_status();
             if (fs::is_symlink(status)) {
 #ifndef NDEBUG
@@ -285,11 +291,11 @@ void NixGameConfig::symlink_deliting () {
 
 void NixGameConfig::symlink_creating (const std::string& targetCollection) {
     Core::get().restorer();
-    std::string collect = COLLECTIONS + Core::CONFIG_GAME + "/" + targetCollection;
+    std::string collect = COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" + targetCollection;
     try {
         for (const auto& entry : fs::recursive_directory_iterator(collect)) {
             fs::path relative = fs::relative(entry.path(), collect);
-            fs::path target_path = Core::get().CONFIG_GAME_PATH / relative;
+            fs::path target_path = Core::get().get_game_config("CONFIG_GAME_PATH") / relative;
             fs::path current_dir = QCoreApplication::applicationDirPath().toStdString();
             fs::path global_target_path = current_dir / entry;
             if (fs::is_directory(entry)){
