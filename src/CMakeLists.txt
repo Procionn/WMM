@@ -188,7 +188,7 @@ if(WIN32)
       winmodule/winrootmain.cpp
       core/InterprocessData.h
       winmodule/winrootbackend.h winmodule/winrootbackend.cpp
-      methods.cpp                methods.h
+      winmodule/methods.h
     )
     target_link_libraries(WinRoot PRIVATE
       Qt${QT_VERSION_MAJOR}::Network

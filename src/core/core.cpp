@@ -26,7 +26,7 @@ Core::Core ()
       CGameConfig(CConfigs::get_config("WMM_CONFIG_USE_EXTERNAL_MODULE"),
                   CConfigs::get_config("WMM_CONFIG_GAME")) {
 
-    func f = (func)(QLibrary::resolve("./" LIB, "start_core_api"));
+    func f = (func)(QLibrary::resolve("./lib" LIB, "start_core_api"));
     if (f)
         f(this);
     else {
