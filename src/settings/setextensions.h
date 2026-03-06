@@ -18,13 +18,13 @@
 #define SETEXTENSIONS_H
 
 #include <QWidget>
+#include <QLabel>
 #include <vector>
 
-class QVBoxLayout;
 class setextensions : public QWidget
 {
     Q_OBJECT
-    QVBoxLayout* list;
+    class QVBoxLayout* list;
 
     std::vector<QWidget*> expansionList;
     void clear_list();
@@ -33,6 +33,38 @@ class setextensions : public QWidget
 public:
     setextensions();
     ~setextensions();
+};
+
+
+
+class PluginInterface;
+class PluginIco : public QFrame
+{
+    class QVBoxLayout* vLay;
+    class CLabel *name, *description;
+    PluginInterface* child;
+
+public:
+    PluginIco(PluginInterface*);
+    ~PluginIco() = default;
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+};
+
+
+
+class CLabel : public QLabel
+{
+    Q_OBJECT
+public:
+    CLabel(const QString& str);
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+
+signals:
+    void clicked(QMouseEvent* event);
 };
 
 #endif // SETEXTENSIONS_H

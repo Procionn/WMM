@@ -15,7 +15,7 @@
 #
 cmake_minimum_required(VERSION 3.16)
 
-project(Wirus VERSION 0.99 LANGUAGES CXX)
+project(Wirus VERSION 1.0 LANGUAGES CXX)
 set(APINAME "wmmAPI")
 
 set(CMAKE_AUTOUIC ON)

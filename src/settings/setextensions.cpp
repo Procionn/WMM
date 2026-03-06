@@ -15,16 +15,19 @@
  *
  */
 #include "setextensions.h"
+#include "../methods.h"
+#include "../patterns/CLinkTumbler.h"
+#include "../patterns/CScrollWindow.h"
+#include "../plugins/PluginInterface.h"
+#include "../plugins/PluginLoader.h"
+#include <QApplication>
+#include <QDir>
+#include <QImage>
+#include <QLabel>
+#include <QMouseEvent>
 #include <QPluginLoader>
 #include <QString>
-#include <QDir>
-#include <QApplication>
 #include <QVBoxLayout>
-#include "../methods.h"
-#include "../patterns/CScrollWindow.h"
-#include "../patterns/CLinkTumbler.h"
-#include "../plugins/PluginLoader.h"
-#include "../plugins/PluginInterface.h"
 
 
 setextensions::setextensions() {
@@ -50,14 +53,32 @@ void setextensions::clear_list() {
 
 void setextensions::generate_buttons() {
     clear_list();
-    CLinkTumbler* last = nullptr;
     for (auto* plugin : PluginLoader::get_plugins_list()) {
-        CLinkTumbler* button = new CLinkTumbler(plugin->name().toStdString(), last);
-        list->addWidget(button);
-        connect(button, &CLinkTumbler::toggled, [plugin]{
-            plugin->main();
-        });
-        last = button;
-        expansionList.emplace_back(button);
+        PluginIco* widget = new PluginIco(plugin);
+        list->addWidget(widget);
+        expansionList.emplace_back(widget);
     }
 }
+
+
+
+PluginIco::PluginIco (PluginInterface* chld) : child(chld) {
+    setFrameStyle(QFrame::Panel | QFrame::Raised);
+    setLineWidth(2);
+    vLay = new QVBoxLayout(this);
+    vLay->addWidget(name = new CLabel(chld->name()));
+    vLay->addWidget(description = new CLabel(chld->description()));
+    connect(name, &CLabel::clicked, this, &PluginIco::mousePressEvent);
+    connect(description, &CLabel::clicked, this, &PluginIco::mousePressEvent);
+}
+
+
+void PluginIco::mousePressEvent (QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton)
+        child->main();
+}
+
+
+
+CLabel::CLabel (const QString& str) : QLabel(str) {}
+void CLabel::mousePressEvent (QMouseEvent* event) { emit clicked(event); }
