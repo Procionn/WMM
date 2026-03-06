@@ -47,14 +47,13 @@ setlang::setlang () {
         if (target) {
             Core::get().set_config_value("WMM_CONFIG_LANGUAGES", LANG + target->name + EXPANSION3);
             Core::get().overwriting_config_data();
-            Core::get().update_lang(Core::config("WMM_WMM_CONFIG_LANGUAGES"));
+            Core::get().update_lang(Core::config("WMM_CONFIG_LANGUAGES"));
             delete target;
             target = nullptr;
             FatalError* dialog = new FatalError(Core::tr("LANG_LABEL_NEW_LANG"));
         }
     });
-
-    connect(button, &QPushButton::clicked, [this, button]{chooseLang(button);});
+    connect(button, &QPushButton::clicked, [this, button] { chooseLang(button); });
 }
 
 
