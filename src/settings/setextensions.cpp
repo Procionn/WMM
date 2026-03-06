@@ -66,10 +66,10 @@ PluginIco::PluginIco (PluginInterface* chld) : child(chld) {
     setFrameStyle(QFrame::Panel | QFrame::Raised);
     setLineWidth(2);
     vLay = new QVBoxLayout(this);
-    vLay->addWidget(name = new CLabel(chld->name()));
-    vLay->addWidget(description = new CLabel(chld->description()));
-    connect(name, &CLabel::clicked, this, &PluginIco::mousePressEvent);
-    connect(description, &CLabel::clicked, this, &PluginIco::mousePressEvent);
+    vLay->addWidget(name = new PCLabel(chld->name()));
+    vLay->addWidget(description = new PCLabel(chld->description()));
+    connect(name, &PCLabel::clicked, this, &PluginIco::mousePressEvent);
+    connect(description, &PCLabel::clicked, this, &PluginIco::mousePressEvent);
 }
 
 
@@ -80,5 +80,5 @@ void PluginIco::mousePressEvent (QMouseEvent* event) {
 
 
 
-CLabel::CLabel (const QString& str) : QLabel(str) {}
-void CLabel::mousePressEvent (QMouseEvent* event) { emit clicked(event); }
+PCLabel::PCLabel (const QString& str) : QLabel(str) {}
+void PCLabel::mousePressEvent (QMouseEvent* event) { emit clicked(event); }

@@ -29,7 +29,6 @@ public:
     CLabel (const std::string& str) : QLabel(QString::fromStdString(str)), s(str) {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
-    ~CLabel() {stc::cerr("clabel deleted " + s);}
     void setText (const std::string& str) { QLabel::setText(QString::fromStdString(str)); }
 };
 

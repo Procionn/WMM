@@ -41,7 +41,7 @@ class PluginInterface;
 class PluginIco : public QFrame
 {
     class QVBoxLayout* vLay;
-    class CLabel *name, *description;
+    class PCLabel *name, *description;
     PluginInterface* child;
 
 public:
@@ -54,11 +54,11 @@ protected:
 
 
 
-class CLabel : public QLabel
+class PCLabel : public QLabel
 {
     Q_OBJECT
 public:
-    CLabel(const QString& str);
+    PCLabel(const QString& str);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
