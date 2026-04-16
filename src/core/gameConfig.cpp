@@ -33,6 +33,7 @@ namespace fs = std::filesystem;
 
 CGameConfig::CGameConfig (const std::string& externalModule, const std::string& game) {
     ConfigGame = game;
+    update_data_from_file();
     object = (externalModule == "true" ? static_cast<IGameConfig*>(new WinGameConfig)
                                        : static_cast<IGameConfig*>(new NixGameConfig));
 }
@@ -53,9 +54,7 @@ void CGameConfig::symlink_creating(const std::string& targetCollection) {
 
 
 
-CBaseGameConfig::CBaseGameConfig () {
-    update_data_from_file();
-}
+CBaseGameConfig::CBaseGameConfig () {}
 
 
 std::vector<std::string> CBaseGameConfig::get_OMD () { return OMD; }
