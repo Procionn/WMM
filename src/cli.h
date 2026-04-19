@@ -27,7 +27,8 @@ namespace cli {
         {"clear-cache",   "CLI_CLEAR_CACHE"},
         {"clear-data",    "CLI_CLEAR_DATA"},
         {"migrate",       "CLI_MIGRATE_DATA"},
-        {"re-gen-config", "CLI_GENERATE_CONFIG"}
+        {"re-gen-config", "CLI_GENERATE_CONFIG"},
+        {"app-reset",     "CLI_APP_RESET"}
         // {"update",        "CLI_APP_UPDATE"}
     };
 
@@ -36,6 +37,7 @@ namespace cli {
     void clear_cache();
     void clear_data();
     void re_gen_config();
+    void app_reset();
 
     void migrate_data();
     void v97_to_v98();
