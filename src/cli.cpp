@@ -90,6 +90,7 @@ void clear_data() {
 
 void re_gen_config() {
     std::filesystem::remove(CONFIG);
+    std::filesystem::remove(SAVE);
     WConfig module;
     std::cout << "The config has been re-generated!" << std::endl;
 }
