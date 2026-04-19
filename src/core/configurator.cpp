@@ -84,7 +84,15 @@ std::vector<Core::wmmb> Core::parser (const std::filesystem::path& file, std::ve
                     v[4] = false;
                 if (!ModManager::get().exists(std::get<std::string>(v[0]), std::get<std::string>(v[1])) && except)
                     throw (Core::tr("LANG_LABEL_NOT_EXIST_OBJECT") + " mod - " + std::get<std::string>(v[0]));
-                list.emplace_back(static_cast<void*>(&v));
+                if (ModManager::get().is_cortege(std::get<uint64_t>(v[3]), std::get<std::string>(v[1]))) {
+                    for (auto* entry : ModManager::get().get_cortege_list(std::get<uint64_t>(v[3]),
+                                                                          std::get<std::string>(v[1]))) {
+                        v[1] = entry->modVersion;
+                        list.emplace_back(static_cast<void*>(&v));
+                    }
+                }
+                else
+                    list.emplace_back(static_cast<void*>(&v));
             }
         }
     }
