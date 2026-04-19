@@ -33,7 +33,7 @@ namespace fs = std::filesystem;
 
 CGameConfig::CGameConfig (const std::string& externalModule, const std::string& game) {
     ConfigGame = game;
-    update_data_from_file();
+    update_data_from_file(true);
     object = (externalModule == "true" ? static_cast<IGameConfig*>(new WinGameConfig)
                                        : static_cast<IGameConfig*>(new NixGameConfig));
 }
@@ -76,7 +76,14 @@ std::string CBaseGameConfig::get_game_config (const std::string_view key) {
 }
 
 
-void CBaseGameConfig::update_data_from_file () {
+void CBaseGameConfig::update_global_variables () {
+    ConfigGame = Core::get().get_config("WMM_CONFIG_GAME");
+}
+
+
+void CBaseGameConfig::update_data_from_file (const bool isFirstStart) {
+    if (!isFirstStart)
+        update_global_variables();
     if (fs::exists(SAVE)) {
         wmml file(SAVE);
         std::vector<wmml::variant> v(wmml_size);
@@ -97,7 +104,10 @@ void CBaseGameConfig::update_data_from_file () {
         CONFIG_EXECUTABLE_FILE = "";
     }
 
-    std::ifstream readedFile ((GAMES + ConfigGame + EXPANSION3).c_str());
+    std::filesystem::path gameConfig = GAMES + ConfigGame + EXPANSION3;
+    if (!std::filesystem::exists(gameConfig))
+        return;
+    std::ifstream readedFile (gameConfig);
     std::string parameter;
     std::string indicator;
     if (!MGD.empty())

@@ -76,6 +76,7 @@ add_library(SETTINGS STATIC
     settings/ModStorage/ModStorageList.h    settings/ModStorage/ModStorageList.cpp
     settings/ModStorage/ModStorageObject.h  settings/ModStorage/ModStorageObject.cpp
     settings/ModStorage/ModVersionList.h    settings/ModStorage/ModVersionList.cpp
+    settings/CSaver.h settings/CSaver.cpp
 
 )
 add_library(PATTERNS STATIC

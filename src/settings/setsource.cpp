@@ -92,22 +92,24 @@ setsource::setsource() {
 
     dirBTN->setText(QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH")));
 
-    connect(CSettings::get(), &CSettings::save, [this]{
+    CSettings::register_saver(10, [this, dirBTN] { // set game path
         if (!buffer.isEmpty()) {
             Core::get().save_game_path(buffer.toStdString());
             buffer.clear();
+            dirBTN->setText(QString::fromStdString(Core::get().get_game_config("CONFIG_GAME_PATH")));
         }
     });
-    connect(CSettings::get(), &CSettings::save, [this]{
+    CSettings::register_saver(1, [this] { // set game
         if (target) {
             Core::get().set_config_value("WMM_CONFIG_GAME", target->name);
             Core::get().overwriting_config_data();
+            delete target;
             target = nullptr;
             Core::get().update_data_from_file();
             ModManager::get().update();
         }
     });
-    connect(CSettings::get(), &CSettings::save, [this]{
+    CSettings::register_saver(100, [this] {
         ModManager::get().set_copy(copyMode);
     });
     connect(dirBTN,         &QPushButton::clicked, [dirBTN, this]{chooseExe(dirBTN);});
@@ -115,7 +117,7 @@ setsource::setsource() {
     connect(gameBTN,        &QPushButton::clicked, [gameBTN, this]{chooseGame(gameBTN);});
     connect(clearBTN,       &QPushButton::clicked, [this]{Wait(Core::get().symlink_deliting(););});
     connect(recoveryBTN,    &QPushButton::clicked, [this]{Wait(Core::get().game_recovery(););});
-    connect(modLoadTypeBTN, &QPushButton::clicked,  [this]{copyMode = !copyMode;});
+    connect(modLoadTypeBTN, &QPushButton::clicked, [this]{copyMode = !copyMode;});
 }
 
 

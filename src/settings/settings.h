@@ -24,6 +24,7 @@
 #include "setextensions.h"
 #include "collections.h"
 #include "ModStorage.h"
+#include "CSaver.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -82,6 +83,7 @@ class CSettings : public QDialog
 {
     Q_OBJECT
     static inline CSettings* object;
+    CSaver saver;
 
 public:
     CSettings();
@@ -89,9 +91,9 @@ public:
     SList* settings_modules_list;
     
     static CSettings* get();
-
-signals:
-    void save();
+    static inline void register_saver (const char priority, std::function<void()> task) {
+        get()->saver.add_task(priority, task);
+    }
 };
 
 #endif // SETTINGS_H

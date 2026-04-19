@@ -87,17 +87,17 @@ protected:
     std::vector<std::string> MGD; // Mixed Game Directory
     std::string core_dir_name;
     unsigned int GAME_CORE_DIR_STAGE;
-
     std::string CONFIG_GAME_PATH;
     std::string CONFIG_EXECUTABLE_FILE;
     std::string CONFIG_URL;
+
     std::string ConfigGame;
 
 public:
     std::string get_game_config(const std::string_view key);
     std::vector<std::string> get_OMD();
     std::vector<std::string> get_MGD();
-    void update_data_from_file();
+    void update_data_from_file(const bool isFirstStart = false);
     void save_game_path(const std::string& path);
     void game_dir_backup();
     void game_recovery();
@@ -109,6 +109,7 @@ public:
 protected:
     CBaseGameConfig ();
     virtual void dir_comparison(const std::filesystem::path& file) = 0;
+    void update_global_variables();
 
 private:
     const int wmml_size = 3;

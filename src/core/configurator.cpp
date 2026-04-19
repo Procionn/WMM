@@ -99,7 +99,9 @@ void Core::compiller (std::vector<wmmb>& list, const std::filesystem::path& dire
     });
     for (const auto& obj : list) {
         if (obj.status) {
-            ArchiveReader archive(ModManager::get().get_path(obj.id, obj.version));
+            fs::path pathToArchive = ModManager::get().get_path(obj.id, obj.version);
+
+            ArchiveReader archive(pathToArchive);
             archive.set_export_directory(directory);
             fs::path entryPath, targetFilePath;
             for (auto* entry : archive) {

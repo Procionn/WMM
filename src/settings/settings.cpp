@@ -45,7 +45,7 @@ CSettings::CSettings () {
     line->setFrameShadow(QFrame::Sunken);
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     connect(cansel, &QPushButton::clicked, [this]{this->reject();});
-    connect(accept, &QPushButton::clicked, [this]{emit save();});
+    connect(accept, &QPushButton::clicked, [this]{saver.run_all();});
 
 #define X(button, class_, object, lang_str) \
     connect(sobjects->button, &CLinkTumbler::toggled, [this]{  \

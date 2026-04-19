@@ -43,7 +43,7 @@ setlang::setlang () {
     hbox->addWidget(button);
     list->addWidget(community);
 
-    connect(CSettings::get(), &CSettings::save, [this]{
+    CSettings::register_saver(120, [this] {
         if (target) {
             Core::get().set_config_value("WMM_CONFIG_LANGUAGES", LANG + target->name + EXPANSION3);
             Core::get().overwriting_config_data();
