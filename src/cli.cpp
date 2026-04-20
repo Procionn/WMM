@@ -63,6 +63,8 @@ bool parser () {
             migrate_data();
         if (flag == FlagsList[3].first)
             re_gen_config();
+        if (flag == FlagsList[4].first)
+            app_reset();
     }
     return true;
 }
