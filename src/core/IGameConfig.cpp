@@ -263,16 +263,15 @@ void NixGameConfig::symlink_deliting () {
         };
 
         for (const auto& entry :
-             fs::recursive_directory_iterator(Core::get().get_game_config("WMM_CONFIG_GAME_PATH")))
+             fs::recursive_directory_iterator(Core::get().get_game_config("CONFIG_GAME_PATH")))
         {
             if (is_symlink(entry.path())) {
                 DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
             }
         }
 #elif defined(__linux__)
-        for (const auto& entry :
-             fs::recursive_directory_iterator(Core::get().get_game_config("WMM_CONFIG_GAME_PATH")))
-        {
+        for (const auto& entry : fs::recursive_directory_iterator(
+                 Core::get().get_game_config("CONFIG_GAME_PATH"))) {
             const auto& status = entry.symlink_status();
             if (fs::is_symlink(status)) {
 #ifndef NDEBUG
