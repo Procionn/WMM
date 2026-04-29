@@ -193,53 +193,41 @@ void WinGameConfig::symlink_creating (const std::string& targetCollection) {
 
 
 void NixGameConfig::dir_comparison (const std::filesystem::path& file) {
-    wmml targetFile(file);
-    std::vector<wmml::variant> v(GRID_WIDTH);
-    while(targetFile.read(v))
-        if (std::get<std::string>(v[1]) == "this")
-            break;
+    const std::string collectionName = [] (const fs::path& file) {
+        wmml targetFile(file);
+        std::vector<wmml::variant> v(GRID_WIDTH);
+        while (targetFile.read(v))
+            if (std::get<std::string>(v[1]) == "this")
+                break;
+        return std::get<std::string>(v[0]);
+    }(file);
+    const fs::path gamePath = Core::get().get_game_config("CONFIG_GAME_PATH");
+    const fs::path backupDir = GAME / fs::path(Core::get().get_game_config("core_dir_name"));
+    const fs::path collectionDir = COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" + collectionName;
+    fs::path mgd, relative, inBackupFile, inCollectionFile;
+    // backupDir    =  game/Cyberpunk 2077/
+    // mgd          =  C://Game/Cyberpunk 2077/[MGD]/
+    // gamePath     =  C://Game/Cyberpunk 2077/
+
     try {
-        // pathToBackupPath   =  game/Cyberpunk 2077/
-        // mixedGameDirectory =  C://Game/Cyberpunk 2077/[MGD]/
-        // CONFIG_GAME_PATH   =  C://Game/Cyberpunk 2077/
-
-        fs::path pathToBackupPath = GAME / fs::path(Core::get().get_game_config("core_dir_name"));
-        fs::path mixedGameDirectory;
-        for (const auto& directory : Core::get().get_MGD()) {
-            mixedGameDirectory =
-                Core::get().get_game_config("CONFIG_GAME_PATH") / fs::path(directory);
-            fs::path relative, pathToBackupFile, collectionFile;
-            for (const auto& entry : fs::recursive_directory_iterator(mixedGameDirectory)) {
-                relative = fs::relative(entry.path(), Core::get().get_game_config("CONFIG_GAME_PATH"));
-                pathToBackupFile = pathToBackupPath / relative;
-                collectionFile = (COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" +
-                                  std::get<std::string>(v[0])) / relative;
-                if (!fs::exists(pathToBackupFile)) {
-#ifdef _WIN32
-                    auto is_symlink = [](const std::filesystem::path& p) -> bool {
-                        DWORD attrs = GetFileAttributesA(p.string().c_str());
-                        return (attrs != INVALID_FILE_ATTRIBUTES) &&
-                               (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
-                    };
-
-                    if (is_symlink(entry.path()))
-                        continue;
-                    struct stat info;
-                    if (stat(entry.path().string().c_str(), &info) == 0 &&
-                        S_ISDIR(info.st_mode))
-                        continue;
-
-                    fs::create_directories(collectionFile.parent_path());
-                    if (fs::exists(collectionFile))
-                        fs::remove(collectionFile);
-                    fs::rename(stc::string::replace(entry.path(), '\\', '/'),
-                               stc::string::replace(collectionFile, '\\', '/'));
-#elif defined(__linux__)
-                    if (fs::is_directory(entry.path()) || fs::is_symlink(entry.path()))
-                        continue;
-                    fs::create_directories(collectionFile.parent_path());
-                    fs::rename(entry.path(), collectionFile);
+        for (const auto& branch : Core::get().get_MGD()) {
+            mgd = gamePath / branch;
+            for (const auto& entry : fs::recursive_directory_iterator(mgd)) {
+                relative = fs::relative(entry.path(), gamePath);
+                inBackupFile = backupDir / relative;
+                if (!fs::exists(inBackupFile)) {
+                    if (!fs::is_directory(inBackupFile) && !fs::is_symlink(inBackupFile)) {
+                        inCollectionFile = collectionDir / relative;
+                        fs::create_directories(inCollectionFile.parent_path());
+                        if (fs::exists(inCollectionFile))
+                            fs::remove(inCollectionFile);
+#ifndef NDEBUG
+                        stc::cerr(entry.path().string() + std::string(" file moved to ") +
+                                  inCollectionFile.string());
 #endif
+                        fs::copy_file(entry.path(), inCollectionFile);
+                        fs::remove(entry.path());
+                    }
                 }
             }
         }
@@ -250,9 +238,9 @@ void NixGameConfig::dir_comparison (const std::filesystem::path& file) {
 }
 
 
+
 void NixGameConfig::symlink_deliting () {
-    fs::path testFile =
-        (Core::get().get_game_config("CONFIG_GAME_PATH") + "/" + CONST_FILE + EXPANSION);
+    fs::path testFile = (Core::get().get_game_config("CONFIG_GAME_PATH") + "/" + CONST_FILE + EXPANSION);
     if (fs::exists(testFile))
         dir_comparison(testFile);
     try {
@@ -266,7 +254,7 @@ void NixGameConfig::symlink_deliting () {
              fs::recursive_directory_iterator(Core::get().get_game_config("CONFIG_GAME_PATH")))
         {
             if (is_symlink(entry.path())) {
-                DeleteFileA(stc::string::replace(entry.path(), '\\', '/').string().c_str());
+                DeleteFileA(entry.path().string().c_str());
             }
         }
 #elif defined(__linux__)
@@ -290,15 +278,21 @@ void NixGameConfig::symlink_deliting () {
 
 void NixGameConfig::symlink_creating (const std::string& targetCollection) {
     Core::get().restorer();
-    std::string collect = COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" + targetCollection;
+    fs::path collect = COLLECTIONS + Core::config("WMM_CONFIG_GAME") + "/" + targetCollection;
     try {
-        for (const auto& entry : fs::recursive_directory_iterator(collect)) {
-            fs::path relative = fs::relative(entry.path(), collect);
+        fs::path entry;
+        for (auto i = fs::recursive_directory_iterator(collect);
+                  i != fs::recursive_directory_iterator(); ++i) {
+            entry = (*i).path();
+            fs::path relative = fs::relative(entry, collect);
             fs::path target_path = Core::get().get_game_config("CONFIG_GAME_PATH") / relative;
             fs::path current_dir = QCoreApplication::applicationDirPath().toStdString();
             fs::path global_target_path = current_dir / entry;
             if (fs::is_directory(entry)){
-                fs::create_directories(target_path);
+                if (!fs::exists(target_path)) {
+                    stc::fs::symlink(global_target_path, target_path);
+                    i.disable_recursion_pending();
+                }
             }
             if (fs::exists(target_path)) {
                 if (!fs::is_directory(target_path)) {

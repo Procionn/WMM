@@ -96,7 +96,7 @@ std::string stc::cwmm::cortege_path(const std::string& name, const uint64_t& id)
 
 
 std::string stc::cwmm::modsURL (const std::string& id) {
-    std::string tmp = Core::get().get_game_config("WMM_CONFIG_GAME");
+    std::string tmp = Core::get().get_game_config("CONFIG_URL");
     size_t mark1 = tmp.find_last_of('[');
     size_t mark2 = tmp.find_last_of(']');
 #ifndef NDEBUG
