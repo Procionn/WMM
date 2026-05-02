@@ -31,9 +31,7 @@
 #endif
 
 void stc::string::replace (std::string& input, const char replaceable, const char target) {
-    for (int i = 0; input[i]; ++i)
-        if (input[i] == replaceable)
-            input[i] = target;
+    std::replace(input.begin(), input.end(), replaceable, target);
 }
 
 std::filesystem::path stc::string::replace (const std::filesystem::path& input, const char& replaceable, const char& target) {
@@ -108,12 +106,10 @@ std::string stc::cwmm::modsURL (const std::string& id) {
 
 
 void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem::path& name) {
-    std::filesystem::path newName = stc::string::replace(name, '\\', '/');
-    std::filesystem::path newFile = stc::string::replace(file, '\\', '/');
-    std::filesystem::create_directories(newName.parent_path());
+    std::filesystem::create_directories(name.parent_path());
     try {
 #ifdef _WIN32
-        if (!CreateSymbolicLinkW(newName.wstring().c_str(), newFile.wstring().c_str(), 0x0)) {
+        if (!CreateSymbolicLinkW(name.wstring().c_str(), file.wstring().c_str(), 0x0)) {
             LPSTR messageBuffer = nullptr;
             FormatMessageA(
                 FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -125,12 +121,12 @@ void stc::fs::symlink (const std::filesystem::path& file, const std::filesystem:
                 0,
                 nullptr
                 );
-            stc::cerr("Error with linking [" + newName.string() + "] to [" + newFile.string() + "]");
+            stc::cerr("Error with linking [" + name.string() + "] to [" + file.string() + "]");
             stc::cerr(messageBuffer);
             LocalFree(messageBuffer);
         }
 #elif linux
-        std::filesystem::create_symlink(newFile, newName);
+        std::filesystem::create_symlink(file, name);
 #endif
     }
     catch (const std::exception& e) {
