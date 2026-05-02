@@ -15,6 +15,7 @@
  *
  */
 #include "../core.h"
+#include "../methods.h"
 
 Lang::Lang (const std::string& configLang) {
     update_lang(configLang);
@@ -41,5 +42,6 @@ std::string Lang::get_lang (const std::string& key) {
     auto it = langStorage.find(key);
     if (it != langStorage.end())
         return it->second;
+    stc::cerr(key + " is not founded");
     return key;
 }

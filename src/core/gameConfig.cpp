@@ -172,8 +172,7 @@ void CBaseGameConfig::game_dir_backup () {
                     fs::path new_target_path(fs::relative(entry.path(), sorce_path));
                     new_target_path = target_path / (directory) / new_target_path;
                     fs::create_directories(new_target_path.parent_path());
-                    fs::copy_file(stc::string::replace(entry.path(), '\\', '/'),
-                                  stc::string::replace(new_target_path, '\\', '/'));
+                    fs::copy_file(entry.path(), new_target_path);
                 }
             }
         }

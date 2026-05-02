@@ -17,6 +17,7 @@
 #include "../core.h"
 
 #include "../CONSTANTS.h"
+#include "../methods.h"
 
 bool CBaseConfig::configRead (std::ifstream& input, std::string& firstReturned, std::string& lastReturned) {
     std::string readedLine;
@@ -85,7 +86,14 @@ void CConfigs::set_default (const std::string& key, const std::string& value) {
 }
 
 
-std::string CConfigs::get_config (const std::string& key) { return configs[key]; }
+std::string CConfigs::get_config (const std::string& key) {
+    auto it = configs.find(key);
+    if (it == configs.end() || it->second.empty()) {
+        stc::cerr(key + " is not founded");
+        return "";
+    }
+    return it->second;
+}
 
 
 void CConfigs::set_config_value (const std::string& key, const std::string& value) {
