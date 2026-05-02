@@ -37,4 +37,9 @@ void Lang::load_lang_pack(const std::string& pathToFile) {
 }
 
 
-std::string Lang::get_lang (const std::string& key) { return langStorage[key]; }
+std::string Lang::get_lang (const std::string& key) {
+    auto it = langStorage.find(key);
+    if (it != langStorage.end())
+        return it->second;
+    return key;
+}
