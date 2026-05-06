@@ -11,6 +11,8 @@ Main features:
 - Import and export builds
 - Linux and Windows support
 
+### [How to use](HowToUse.md)
+
 ## Dependencies
 WMM requires **Qt6** and **libarchive** to run.  
 On **Windows**, all dependencies are shipped with the executable.  
