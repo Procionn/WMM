@@ -20,6 +20,7 @@
 #include <QCoreApplication>
 #include <QRandomGenerator>
 #include <QLocalSocket>
+#include <mutex>
 #ifdef WIN64
     #include <windows.h>
     #include <sys/stat.h>
@@ -71,7 +72,7 @@ namespace {
         static QLocalSocket process;
 #ifdef WIN64
         if (process.state() != QLocalSocket::ConnectedState) {
-            sockeEstablished = true;
+            std::lock_guard<std::mutex> mutex;
             STARTUPINFOW si{sizeof(si)};
             PROCESS_INFORMATION pi;
             std::wstring cmd = std::wstring(L"\"WinRoot.exe\" --pipe=") + get_pipe().toStdWString() + L" --token=" + get_token().toStdWString();
@@ -97,13 +98,13 @@ namespace {
 
             process.connectToServer(get_pipe());
             if (!process.waitForConnected(30000))
-                std::runtime_error("Couldn't start admin process");
+                throw std::runtime_error("Couldn't start admin process");
         }
 
-        std::runtime_error("This programm module is not supported on this platform!");
 #else
-        std::runtime_error("This programm module is not supported on this platform!");
+        throw std::runtime_error("This programm module is not supported on this platform!");
 #endif
+        sockeEstablished = true;
         return &process;
     }
 

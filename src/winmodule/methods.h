@@ -15,20 +15,21 @@
  */
 
 #pragma once
-#include <string>
+#include <QDateTime>
 #include <filesystem>
 #include <fstream>
-#include <QDateTime>
 #include <mutex>
+#include <string>
 #include <windows.h>
 #ifndef NDEBUG
 #include <iostream>
 #endif
 
 using namespace std::literals;
-namespace stc{
+namespace stc {
 
-inline std::filesystem::path replace (const std::filesystem::path& input, const char& replaceable, const char& target) {
+inline std::filesystem::path replace (const std::filesystem::path& input, const char& replaceable,
+                                      const char& target) {
     std::string sorce = input.string();
     std::replace(sorce.begin(), sorce.end(), replaceable, target);
     std::filesystem::path out = sorce;
@@ -41,53 +42,48 @@ inline std::string replace (std::string source, const char& replaceable, const c
 
 
 namespace {
-    std::ofstream& log () {
-        if (!std::filesystem::exists("logs/"))
-            std::filesystem::create_directories("logs/");
-        static std::ofstream logFile(("logs/"s + "root"s + QDateTime::currentDateTime().toString("dd_MM_yy-hh_mm_ss").toStdString() + ".log").c_str());
-        return logFile;
-    }
-    std::mutex thisIsMutex;
+std::ofstream& log () {
+    if (!std::filesystem::exists("logs/"))
+        std::filesystem::create_directories("logs/");
+    static std::ofstream logFile(
+        ("logs/"s + "root"s +
+         QDateTime::currentDateTime().toString("dd_MM_yy-hh_mm_ss").toStdString() + ".log")
+            .c_str());
+    return logFile;
 }
+std::mutex thisIsMutex;
+} // namespace
 
-template<typename T>
-void cerr(const T& t) noexcept {
+template <typename T> void cerr (const T& t) noexcept {
 #ifndef NDEBUG
-     std::cerr << t << std::endl;
+    std::cerr << t << std::endl;
 #endif
     std::lock_guard<std::mutex> lock(thisIsMutex);
     log() << t << std::endl << std::flush;
 }
 
+namespace fs {
+
 inline void symlink (const std::filesystem::path& file, const std::filesystem::path& name) {
-    std::filesystem::path newName = stc::replace(name, '\\', '/');
-    std::filesystem::path newFile = stc::replace(file, '\\', '/');
-    std::filesystem::create_directories(newName.parent_path());
+    std::filesystem::create_directories(name.parent_path());
     try {
 #ifdef _WIN32
-        if (!CreateSymbolicLinkW(newName.wstring().c_str(), newFile.wstring().c_str(), 0x0)) {
+        if (!CreateSymbolicLinkW(name.wstring().c_str(), file.wstring().c_str(), 0x0)) {
             LPSTR messageBuffer = nullptr;
-            FormatMessageA(
-                FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                    FORMAT_MESSAGE_FROM_SYSTEM,
-                nullptr,
-                GetLastError(),
-                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                (LPSTR)&messageBuffer,
-                0,
-                nullptr
-                );
-            cerr("Error with linking [" + newName.string() + "] to [" + newFile.string() + "]");
+            FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr,
+                           GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                           (LPSTR)&messageBuffer, 0, nullptr);
+            cerr("Error with linking [" + name.string() + "] to [" + file.string() + "]");
             cerr(messageBuffer);
             LocalFree(messageBuffer);
         }
 #elif linux
-        std::filesystem::create_symlink(newFile, newName);
+        std::filesystem::create_symlink(file, name);
 #endif
     }
     catch (const std::exception& e) {
         cerr("Error: "s + e.what() + "\n"s);
     }
 }
-
-}
+} // namespace fs
+} // namespace stc

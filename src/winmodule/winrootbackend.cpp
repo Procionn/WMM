@@ -34,11 +34,6 @@ winrootbackend::winrootbackend(const QString& pipe, const QString& newToken)
         QCoreApplication::exit(1);
 
     connect(&server, &QLocalServer::newConnection, this, &winrootbackend::connection);
-
-    QTimer::singleShot(1500, []{
-        stc::cerr("auto-exit");
-        QCoreApplication::exit(0);
-    });
 }
 
 
@@ -48,6 +43,11 @@ void winrootbackend::connection () {
         return;
     }
     client = server.nextPendingConnection();
+
+    connect(client, &QLocalSocket::disconnected, []{
+        QCoreApplication::exit(0);
+    });
+
     connect(client, &QLocalSocket::readyRead, [this]{
         QDataStream pack(client);
         IpcHeader ipc;
@@ -118,53 +118,7 @@ void winrootbackend::dir_comparison (QByteArray& data) {
     CONFIG_GAME = QCONFIG_GAME.toStdString();
     dir_comparison(file, core_dir_name, CONFIG_GAME_PATH, CONFIG_GAME, list);
 }
-#if 0
-void winrootbackend::dir_comparison (const fs::path& file, const std::string& core_dir_name,
-                                     const std::string& CONFIG_GAME_PATH, const std::string& CONFIG_GAME,
-                                     const QStringList& MGD) {
-    wmml targetFile(file);
-    std::vector<wmml::variant> v(GRID_WIDTH);
-    while(targetFile.read(v))
-        if (std::get<std::string>(v[1]) == "this")
-            break;
-    try {
-        fs::path pathToBackupPath = GAME / fs::path(core_dir_name);
-        fs::path mixedGameDirectory;
-        for (const auto& directory : MGD) { // std::string vector changed to QStringList
-            mixedGameDirectory = CONFIG_GAME_PATH / fs::path(directory.toStdString());
-            fs::path relative, pathToBackupFile, collectionFile;
-            for (const auto& entry : fs::recursive_directory_iterator(mixedGameDirectory)) {
-                relative = fs::relative(entry.path(), CONFIG_GAME_PATH);
-                pathToBackupFile = pathToBackupPath / relative;
-                collectionFile = (COLLECTIONS + CONFIG_GAME + "/" +
-                                  std::get<std::string>(v[0])) / relative;
-                if (!fs::exists(pathToBackupFile)) {
-                    auto is_symlink = [](const std::filesystem::path& p) -> bool {
-                        DWORD attrs = GetFileAttributesA(p.string().c_str());
-                        return (attrs != INVALID_FILE_ATTRIBUTES) &&
-                               (attrs & FILE_ATTRIBUTE_REPARSE_POINT);
-                    };
 
-                    if (is_symlink(entry.path()))
-                        continue;
-                    struct stat info;
-                    if (stat(entry.path().string().c_str(), &info) == 0 &&
-                        S_ISDIR(info.st_mode))
-                        continue;
-
-                    fs::create_directories(collectionFile.parent_path());
-                    if (fs::exists(collectionFile))
-                        fs::remove(collectionFile);
-                    fs::rename(entry.path(), collectionFile);
-                }
-            }
-        }
-    }
-    catch (const std::exception& e) {
-        stc::cerr("Error: "s + e.what());
-    }
-}
-#endif
 
 void winrootbackend::dir_comparison (const fs::path& file, const std::string& core_dir_name,
                                      const std::string& CONFIG_GAME_PATH,
@@ -196,7 +150,7 @@ void winrootbackend::dir_comparison (const fs::path& file, const std::string& co
 
     try {
         for (const auto& branch : MGD) {
-            mgd = gamePath / branch;
+            mgd = gamePath / branch.toStdString();
             for (const auto& entry : fs::recursive_directory_iterator(mgd)) {
                 relative = fs::relative(entry.path(), gamePath);
                 inBackupFile = backupDir / relative;
@@ -275,7 +229,7 @@ void winrootbackend::symlink_creating (QByteArray& data) {
              i != fs::recursive_directory_iterator(); ++i) {
             entry = (*i).path();
             fs::path relative = fs::relative(entry, collect);
-            fs::path target_path = Core::get().get_game_config("CONFIG_GAME_PATH") / relative;
+            fs::path target_path = QCONFIG_GAME_PATH.toStdString() / relative;
             fs::path current_dir = QCoreApplication::applicationDirPath().toStdString();
             fs::path global_target_path = current_dir / entry;
             if (fs::is_directory(entry)){
