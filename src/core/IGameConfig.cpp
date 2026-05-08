@@ -34,6 +34,7 @@ namespace fs = std::filesystem;
 
 namespace {
     bool sockeEstablished = false;
+    std::mutex m;
 
     void platform_test () {
 #ifdef WIN64
@@ -72,7 +73,6 @@ namespace {
         static QLocalSocket process;
 #ifdef WIN64
         if (process.state() != QLocalSocket::ConnectedState) {
-            std::lock_guard<std::mutex> mutex;
             STARTUPINFOW si{sizeof(si)};
             PROCESS_INFORMATION pi;
             std::wstring cmd = std::wstring(L"\"WinRoot.exe\" --pipe=") + get_pipe().toStdWString() + L" --token=" + get_token().toStdWString();
@@ -110,6 +110,7 @@ namespace {
 
 
     void send_command (QByteArray& data, IpcHeader* ipc) {
+        std::lock_guard<std::mutex> guard(m);
         auto rootProcess = get_admin_process();
 
         QByteArray metaInfo;
