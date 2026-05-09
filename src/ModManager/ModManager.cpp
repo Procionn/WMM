@@ -109,7 +109,7 @@ void ModManager::mod_log (const std::string& path, const uint64_t id, const std:
 std::tuple<std::string, uint64_t, std::string> ModManager::regex (const std::string& filename) {
     std::string nameArchive = stc::string::get_name(filename);
     std::smatch matches;
-    std::regex archiveRegex(R"(^(.+?)-(\d+)-(\d+(?:-\d+)*)-(\d+)(?:\((\d+)\))?$)");
+    std::regex archiveRegex(R"(^(.+?)-(\d+)-(\w+(?:-\w+)*)-(\d+)(?:\((\d+)\))?$)");
     if (!std::regex_match(nameArchive, matches, archiveRegex))
         throw ("ERROR:  REGULAR NAME ERROR");
     return {matches[1], std::stoi(matches[2]), matches[3]};
